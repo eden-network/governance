@@ -2,9 +2,6 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log, deterministic } = deployments;
   const { deployer, admin } = await getNamedAccounts();
 
-  // Unix timestamp = 2020/05/19 @ 12:00pm UTC
-  const firstSupplyChangeAllowed = 1621425600
-
   log(`1) Eden Token`)
   // Deploy EdenToken contract
   const deployResult = await deploy("EdenToken", {

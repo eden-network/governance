@@ -66,13 +66,6 @@ describe("VotingPower", function() {
             })
         })
 
-        context("vestingContract", async () => {
-            it("returns the current vesting contract address", async function() {
-                expect(await votingPower.vestingContract()).to.eq(vesting.address)
-                expect(await votingPowerImplementation.vestingContract()).to.eq(ZERO_ADDRESS)
-            })
-        })
-
         context("stake", async () => {
             it("allows a valid stake", async function() {
                 const userBalanceBefore = await edenToken.balanceOf(deployer.address)

@@ -1,7 +1,7 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
   const { validatePrism } = require("../scripts/validatePrism")
   const { deploy, log } = deployments;
-  const { deployer, vpDeployer } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
 
   log(`2) Voting Power Prism`)
   // Check whether there are any issues with the voting power prism (selector clashes, etc.)
@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   if(prismValid) {
     // Deploy VotingPowerPrism contract
     const deployResult = await deploy("VotingPowerPrism", {
-      from: vpDeployer,
+      from: deployer,
       contract: "VotingPowerPrism",
       gas: 4000000,
       args: [deployer],

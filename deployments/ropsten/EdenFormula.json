@@ -1,0 +1,75 @@
+{
+  "address": "0x6EFc5A3077ECc13eFb04594d9AcB3CCa3B789A83",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "convertTokensToVotingPower",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "pure",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0x351610e55ea84f3832db4e6d8d673ec7b68d8e09dfbb895cfe90deb53a9cd3c2",
+  "receipt": {
+    "to": null,
+    "from": "0xa52422BB8c29E4d55243d310fB6BAe793162452e",
+    "contractAddress": "0x6EFc5A3077ECc13eFb04594d9AcB3CCa3B789A83",
+    "transactionIndex": 0,
+    "gasUsed": "86909",
+    "logsBloom": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x148901ded22f7d999637c21cc739099efea57997bcc22fb2d928ef26dd67a14f",
+    "transactionHash": "0x351610e55ea84f3832db4e6d8d673ec7b68d8e09dfbb895cfe90deb53a9cd3c2",
+    "logs": [],
+    "blockNumber": 10692331,
+    "cumulativeGasUsed": "86909",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [],
+  "solcInputHash": "6865174a712c3742a5eca03d64e69168",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"convertTokensToVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"pure\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Convert EDEN to voting power\",\"kind\":\"dev\",\"methods\":{\"convertTokensToVotingPower(uint256)\":{\"details\":\"Always converts 1-1\",\"params\":{\"amount\":\"token amount\"},\"returns\":{\"_0\":\"voting power amount\"}}},\"title\":\"EdenFormula\",\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{\"convertTokensToVotingPower(uint256)\":{\"notice\":\"Convert EDEN amount to voting power\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/formulas/EdenFormula.sol\":\"EdenFormula\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[]},\"sources\":{\"contracts/formulas/EdenFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"../lib/VotingPowerFormula.sol\\\";\\n\\n/**\\n * @title EdenFormula\\n * @dev Convert EDEN to voting power\\n */\\ncontract EdenFormula is VotingPowerFormula {\\n    /**\\n     * @notice Convert EDEN amount to voting power\\n     * @dev Always converts 1-1\\n     * @param amount token amount\\n     * @return voting power amount\\n     */\\n    function convertTokensToVotingPower(uint256 amount) external pure override returns (uint256) {\\n        return amount;\\n    }\\n}\",\"keccak256\":\"0x001d690c1b7d1d881b4d912067498d08324d65bf2c01bfc9eff375faaf511875\",\"license\":\"MIT\"},\"contracts/lib/VotingPowerFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nabstract contract VotingPowerFormula {\\n   function convertTokensToVotingPower(uint256 amount) external view virtual returns (uint256);\\n}\",\"keccak256\":\"0x067d899007ec85668b5c0ee9401b42dcd3d341961b662e5782922a075d1c2293\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x6080604052348015600f57600080fd5b50609b8061001e6000396000f3fe6080604052348015600f57600080fd5b506004361060285760003560e01c8063b69fb7f914602d575b600080fd5b603b6038366004604d565b90565b60405190815260200160405180910390f35b600060208284031215605e57600080fd5b503591905056fea2646970667358221220dd8ec1929d6e4acbaea78a3846dee0270e83c18f0cf5fe3e319b7d87710fb95164736f6c63430008060033",
+  "deployedBytecode": "0x6080604052348015600f57600080fd5b506004361060285760003560e01c8063b69fb7f914602d575b600080fd5b603b6038366004604d565b90565b60405190815260200160405180910390f35b600060208284031215605e57600080fd5b503591905056fea2646970667358221220dd8ec1929d6e4acbaea78a3846dee0270e83c18f0cf5fe3e319b7d87710fb95164736f6c63430008060033",
+  "devdoc": {
+    "details": "Convert EDEN to voting power",
+    "kind": "dev",
+    "methods": {
+      "convertTokensToVotingPower(uint256)": {
+        "details": "Always converts 1-1",
+        "params": {
+          "amount": "token amount"
+        },
+        "returns": {
+          "_0": "voting power amount"
+        }
+      }
+    },
+    "title": "EdenFormula",
+    "version": 1
+  },
+  "userdoc": {
+    "kind": "user",
+    "methods": {
+      "convertTokensToVotingPower(uint256)": {
+        "notice": "Convert EDEN amount to voting power"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [],
+    "types": null
+  }
+}

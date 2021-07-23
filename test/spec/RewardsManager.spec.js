@@ -23,7 +23,6 @@ describe('RewardsManager', () => {
     let admin
     let alice
     let bob
-    let rewardsStartBlock
 
     beforeEach(async () => {
         const fix = await rewardsFixture()

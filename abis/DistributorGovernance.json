@@ -7,14 +7,14 @@
         "type": "address"
       },
       {
-        "internalType": "address",
-        "name": "_governor",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "_blockProducers",
+        "type": "address[]"
       },
       {
-        "internalType": "address",
-        "name": "_delegator",
-        "type": "address"
+        "internalType": "address[]",
+        "name": "_collectors",
+        "type": "address[]"
       }
     ],
     "stateMutability": "nonpayable",
@@ -201,6 +201,19 @@
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "producers",
+        "type": "address[]"
+      }
+    ],
+    "name": "addBatch",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "",
         "type": "address"
@@ -231,6 +244,24 @@
       }
     ],
     "name": "delegate",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "producers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "collectors",
+        "type": "address[]"
+      }
+    ],
+    "name": "delegateBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -305,6 +336,19 @@
       }
     ],
     "name": "remove",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "producers",
+        "type": "address[]"
+      }
+    ],
+    "name": "removeBatch",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

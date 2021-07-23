@@ -20,10 +20,9 @@ interface IVotingPower {
     function pendingProxyImplementation() external view returns (address);
     function proxyImplementationVersion() external view returns (uint8);
     function become(PrismProxy prism) external;
-    function initialize(address _edenToken, address _vestingContract) external;
+    function initialize(address _edenToken, address _owner) external;
     function owner() external view returns (address);
     function edenToken() external view returns (address);
-    function vestingContract() external view returns (address);
     function tokenRegistry() external view returns (address);
     function lockManager() external view returns (address);
     function changeOwner(address newOwner) external;
@@ -32,8 +31,6 @@ interface IVotingPower {
     function stake(uint256 amount) external;
     function stakeWithPermit(uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;
     function withdraw(uint256 amount) external;
-    function addVotingPowerForVestingTokens(address account, uint256 amount) external;
-    function removeVotingPowerForClaimedTokens(address account, uint256 amount) external;
     function addVotingPowerForLockedTokens(address account, uint256 amount) external;
     function removeVotingPowerForUnlockedTokens(address account, uint256 amount) external;
     function getEDENAmountStaked(address staker) external view returns (uint256);

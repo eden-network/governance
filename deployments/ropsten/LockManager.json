@@ -1,0 +1,741 @@
+{
+  "address": "0xed4D0430499bbF6F56710Eebd87DEF693E6B69B4",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_votingPower",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_roleManager",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "previousAdminRole",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "newAdminRole",
+          "type": "bytes32"
+        }
+      ],
+      "name": "RoleAdminChanged",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleGranted",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "sender",
+          "type": "address"
+        }
+      ],
+      "name": "RoleRevoked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "votingPower",
+          "type": "uint256"
+        }
+      ],
+      "name": "StakeLocked",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "user",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "votingPower",
+          "type": "uint256"
+        }
+      ],
+      "name": "StakeUnlocked",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "DEFAULT_ADMIN_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "LOCKER_ROLE",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "calculateVotingPower",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "staker",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "stakedToken",
+          "type": "address"
+        }
+      ],
+      "name": "getAmountStaked",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getRoleAdmin",
+      "outputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "staker",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "stakedToken",
+          "type": "address"
+        }
+      ],
+      "name": "getStake",
+      "outputs": [
+        {
+          "components": [
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "uint256",
+              "name": "votingPower",
+              "type": "uint256"
+            }
+          ],
+          "internalType": "struct ILockManager.LockedStake",
+          "name": "",
+          "type": "tuple"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "grantRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "grantVotingPower",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "votingPowerGranted",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "hasRole",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "receiver",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "token",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "tokenAmount",
+          "type": "uint256"
+        }
+      ],
+      "name": "removeVotingPower",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "votingPowerRemoved",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "renounceRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "role",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "account",
+          "type": "address"
+        }
+      ],
+      "name": "revokeRole",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes4",
+          "name": "interfaceId",
+          "type": "bytes4"
+        }
+      ],
+      "name": "supportsInterface",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "votingPower",
+      "outputs": [
+        {
+          "internalType": "contract IVotingPower",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xf983f94f64b8c0047cfca30c02d5ef7c5327c5b2282c4e071402e21280584e34",
+  "receipt": {
+    "to": null,
+    "from": "0xa52422BB8c29E4d55243d310fB6BAe793162452e",
+    "contractAddress": "0xed4D0430499bbF6F56710Eebd87DEF693E6B69B4",
+    "transactionIndex": 0,
+    "gasUsed": "1374930",
+    "logsBloom": "0x00000004000000000000000000000000000000000000000000000208000000000000000000000000000000000000000040000000000000000000000008000000000000000000000001000000000000000000000000000000000000000000000000000008020000000000000000000800000000000000000000000000000000000000000000000000000000000000000100000000000000001000000000000000000000000000000000000000080000000000000000000000001000000000000000000000000000000000000000000000000000000000000100000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x5cc77a90639d0ac25110545042d24c75bc6542fc36363b1f7bfc296eb343826b",
+    "transactionHash": "0xf983f94f64b8c0047cfca30c02d5ef7c5327c5b2282c4e071402e21280584e34",
+    "logs": [
+      {
+        "transactionIndex": 0,
+        "blockNumber": 10692328,
+        "transactionHash": "0xf983f94f64b8c0047cfca30c02d5ef7c5327c5b2282c4e071402e21280584e34",
+        "address": "0xed4D0430499bbF6F56710Eebd87DEF693E6B69B4",
+        "topics": [
+          "0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000005b0ac3279dbf84bb8da59be1ecab118198f022e5",
+          "0x000000000000000000000000a52422bb8c29e4d55243d310fb6bae793162452e"
+        ],
+        "data": "0x",
+        "logIndex": 0,
+        "blockHash": "0x5cc77a90639d0ac25110545042d24c75bc6542fc36363b1f7bfc296eb343826b"
+      }
+    ],
+    "blockNumber": 10692328,
+    "cumulativeGasUsed": "1374930",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0xAf6752779fA28746D803ec4A9aBb9854CF8Cd547",
+    "0x5b0aC3279dBf84Bb8DA59Be1EcaB118198f022E5"
+  ],
+  "solcInputHash": "9b228480b86a17f9c201c188a1dfb6af",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_votingPower\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"_roleManager\",\"type\":\"address\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"previousAdminRole\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"newAdminRole\",\"type\":\"bytes32\"}],\"name\":\"RoleAdminChanged\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleGranted\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"sender\",\"type\":\"address\"}],\"name\":\"RoleRevoked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"votingPower\",\"type\":\"uint256\"}],\"name\":\"StakeLocked\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"votingPower\",\"type\":\"uint256\"}],\"name\":\"StakeUnlocked\",\"type\":\"event\"},{\"inputs\":[],\"name\":\"DEFAULT_ADMIN_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"LOCKER_ROLE\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"calculateVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakedToken\",\"type\":\"address\"}],\"name\":\"getAmountStaked\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"}],\"name\":\"getRoleAdmin\",\"outputs\":[{\"internalType\":\"bytes32\",\"name\":\"\",\"type\":\"bytes32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"staker\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"stakedToken\",\"type\":\"address\"}],\"name\":\"getStake\",\"outputs\":[{\"components\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"votingPower\",\"type\":\"uint256\"}],\"internalType\":\"struct ILockManager.LockedStake\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"grantRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenAmount\",\"type\":\"uint256\"}],\"name\":\"grantVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"votingPowerGranted\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"hasRole\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"receiver\",\"type\":\"address\"},{\"internalType\":\"address\",\"name\":\"token\",\"type\":\"address\"},{\"internalType\":\"uint256\",\"name\":\"tokenAmount\",\"type\":\"uint256\"}],\"name\":\"removeVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"votingPowerRemoved\",\"type\":\"uint256\"}],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"renounceRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes32\",\"name\":\"role\",\"type\":\"bytes32\"},{\"internalType\":\"address\",\"name\":\"account\",\"type\":\"address\"}],\"name\":\"revokeRole\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"bytes4\",\"name\":\"interfaceId\",\"type\":\"bytes4\"}],\"name\":\"supportsInterface\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"votingPower\",\"outputs\":[{\"internalType\":\"contract IVotingPower\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Manages voting power for stakes that are locked within the Eden ecosystem, but not in the Voting Power prism\",\"kind\":\"dev\",\"methods\":{\"calculateVotingPower(address,uint256)\":{\"params\":{\"amount\":\"amount of token that will be locked\",\"token\":\"token that will be locked\"},\"returns\":{\"_0\":\"resulting voting power\"}},\"constructor\":{\"params\":{\"_roleManager\":\"address that is in charge of assigning roles\",\"_votingPower\":\"VotingPower prism contract\"}},\"getAmountStaked(address,address)\":{\"params\":{\"stakedToken\":\"The staked token\",\"staker\":\"The user with staked tokens\"},\"returns\":{\"_0\":\"total amount staked\"}},\"getRoleAdmin(bytes32)\":{\"details\":\"Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}.\"},\"getStake(address,address)\":{\"params\":{\"stakedToken\":\"The staked token\",\"staker\":\"The user with staked tokens\"},\"returns\":{\"_0\":\"total staked\"}},\"grantRole(bytes32,address)\":{\"details\":\"Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role.\"},\"grantVotingPower(address,address,uint256)\":{\"params\":{\"receiver\":\"recipient of voting power\",\"token\":\"token that is locked\",\"tokenAmount\":\"amount of token that is locked\"},\"returns\":{\"votingPowerGranted\":\"amount of voting power granted\"}},\"hasRole(bytes32,address)\":{\"details\":\"Returns `true` if `account` has been granted `role`.\"},\"removeVotingPower(address,address,uint256)\":{\"params\":{\"receiver\":\"holder of voting power\",\"token\":\"token that is being unlocked\",\"tokenAmount\":\"amount of token that is being unlocked\"},\"returns\":{\"votingPowerRemoved\":\"amount of voting power removed\"}},\"renounceRole(bytes32,address)\":{\"details\":\"Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`.\"},\"revokeRole(bytes32,address)\":{\"details\":\"Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role.\"},\"supportsInterface(bytes4)\":{\"details\":\"See {IERC165-supportsInterface}.\"}},\"title\":\"LockManager\",\"version\":1},\"userdoc\":{\"events\":{\"StakeLocked(address,address,uint256,uint256)\":{\"notice\":\"An event that's emitted when a user's staked balance increases\"},\"StakeUnlocked(address,address,uint256,uint256)\":{\"notice\":\"An event that's emitted when a user's staked balance decreases\"}},\"kind\":\"user\",\"methods\":{\"LOCKER_ROLE()\":{\"notice\":\"Admin role to create voting power from locked stakes\"},\"calculateVotingPower(address,uint256)\":{\"notice\":\"Calculate the voting power that will result from locking `amount` of `token`\"},\"constructor\":{\"notice\":\"Create new LockManager contract\"},\"getAmountStaked(address,address)\":{\"notice\":\"Get total amount of tokens staked in contract by `staker`\"},\"getStake(address,address)\":{\"notice\":\"Get total staked amount and voting power from `stakedToken` staked in contract by `staker`\"},\"grantVotingPower(address,address,uint256)\":{\"notice\":\"Grant voting power from locked `tokenAmount` of `token`\"},\"removeVotingPower(address,address,uint256)\":{\"notice\":\"Remove voting power by unlocking `tokenAmount` of `token`\"},\"votingPower()\":{\"notice\":\"Voting power contract\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/LockManager.sol\":\"LockManager\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[]},\"sources\":{\"contracts/LockManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./interfaces/IVotingPower.sol\\\";\\nimport \\\"./interfaces/ITokenRegistry.sol\\\";\\nimport \\\"./interfaces/IVotingPowerFormula.sol\\\";\\nimport \\\"./interfaces/ILockManager.sol\\\";\\nimport \\\"./lib/AccessControl.sol\\\";\\n\\n/**\\n * @title LockManager\\n * @dev Manages voting power for stakes that are locked within the Eden ecosystem, but not in the Voting Power prism\\n */\\ncontract LockManager is AccessControl, ILockManager {\\n\\n    /// @notice Admin role to create voting power from locked stakes\\n    bytes32 public constant LOCKER_ROLE = keccak256(\\\"LOCKER_ROLE\\\");\\n\\n    // Official record of staked balances for each account > token > locked stake\\n    mapping (address => mapping (address => LockedStake)) internal lockedStakes;\\n\\n    /// @notice Voting power contract\\n    IVotingPower public votingPower;\\n\\n    /// @notice modifier to restrict functions to only contracts that have been added as lockers\\n    modifier onlyLockers() {\\n        require(hasRole(LOCKER_ROLE, msg.sender), \\\"Caller must have LOCKER_ROLE role\\\");\\n        _;\\n    }\\n\\n    /// @notice An event that's emitted when a user's staked balance increases\\n    event StakeLocked(address indexed user, address indexed token, uint256 indexed amount, uint256 votingPower);\\n\\n    /// @notice An event that's emitted when a user's staked balance decreases\\n    event StakeUnlocked(address indexed user, address indexed token, uint256 indexed amount, uint256 votingPower);\\n\\n    /**\\n     * @notice Create new LockManager contract\\n     * @param _votingPower VotingPower prism contract\\n     * @param _roleManager address that is in charge of assigning roles\\n     */\\n    constructor(address _votingPower, address _roleManager) {\\n        votingPower = IVotingPower(_votingPower);\\n        _setupRole(DEFAULT_ADMIN_ROLE, _roleManager);\\n    }\\n\\n    /**\\n     * @notice Get total amount of tokens staked in contract by `staker`\\n     * @param staker The user with staked tokens\\n     * @param stakedToken The staked token\\n     * @return total amount staked\\n     */\\n    function getAmountStaked(address staker, address stakedToken) external view override returns (uint256) {\\n        return getStake(staker, stakedToken).amount;\\n    }\\n\\n    /**\\n     * @notice Get total staked amount and voting power from `stakedToken` staked in contract by `staker`\\n     * @param staker The user with staked tokens\\n     * @param stakedToken The staked token\\n     * @return total staked\\n     */\\n    function getStake(address staker, address stakedToken) public view override returns (LockedStake memory) {\\n        return lockedStakes[staker][stakedToken];\\n    }\\n\\n    /**\\n     * @notice Calculate the voting power that will result from locking `amount` of `token`\\n     * @param token token that will be locked\\n     * @param amount amount of token that will be locked\\n     * @return resulting voting power\\n     */\\n    function calculateVotingPower(address token, uint256 amount) public view override returns (uint256) {\\n        address registry = votingPower.tokenRegistry();\\n        require(registry != address(0), \\\"LM::calculateVotingPower: registry not set\\\");\\n        address tokenFormulaAddress = ITokenRegistry(registry).tokenFormulas(token);\\n        require(tokenFormulaAddress != address(0), \\\"LM::calculateVotingPower: token not supported\\\");\\n        \\n        IVotingPowerFormula tokenFormula = IVotingPowerFormula(tokenFormulaAddress);\\n        return tokenFormula.convertTokensToVotingPower(amount);\\n    }\\n\\n    /**\\n     * @notice Grant voting power from locked `tokenAmount` of `token`\\n     * @param receiver recipient of voting power\\n     * @param token token that is locked\\n     * @param tokenAmount amount of token that is locked\\n     * @return votingPowerGranted amount of voting power granted\\n     */\\n    function grantVotingPower(\\n        address receiver, \\n        address token, \\n        uint256 tokenAmount\\n    ) external override onlyLockers returns (uint256 votingPowerGranted){\\n        votingPowerGranted = calculateVotingPower(token, tokenAmount);\\n        lockedStakes[receiver][token].amount = lockedStakes[receiver][token].amount + tokenAmount;\\n        lockedStakes[receiver][token].votingPower = lockedStakes[receiver][token].votingPower + votingPowerGranted;\\n        votingPower.addVotingPowerForLockedTokens(receiver, votingPowerGranted);\\n        emit StakeLocked(receiver, token, tokenAmount, votingPowerGranted);\\n    }\\n\\n    /**\\n     * @notice Remove voting power by unlocking `tokenAmount` of `token`\\n     * @param receiver holder of voting power\\n     * @param token token that is being unlocked\\n     * @param tokenAmount amount of token that is being unlocked\\n     * @return votingPowerRemoved amount of voting power removed\\n     */\\n    function removeVotingPower(\\n        address receiver, \\n        address token, \\n        uint256 tokenAmount\\n    ) external override onlyLockers returns (uint256 votingPowerRemoved) {\\n        require(lockedStakes[receiver][token].amount >= tokenAmount, \\\"LM::removeVotingPower: not enough tokens staked\\\");\\n        LockedStake memory s = getStake(receiver, token);\\n        votingPowerRemoved = tokenAmount * s.votingPower / s.amount;\\n        lockedStakes[receiver][token].amount = lockedStakes[receiver][token].amount - tokenAmount;\\n        lockedStakes[receiver][token].votingPower = lockedStakes[receiver][token].votingPower - votingPowerRemoved;\\n        votingPower.removeVotingPowerForUnlockedTokens(receiver, votingPowerRemoved);\\n        emit StakeUnlocked(receiver, token, tokenAmount, votingPowerRemoved);\\n    }\\n}\",\"keccak256\":\"0x0cf22a6fd162e5026c56e5579b3a5e442a219c65ee79bf6cbab30acb11e54ae1\",\"license\":\"MIT\"},\"contracts/interfaces/IERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Interface of the ERC165 standard, as defined in the\\n * https://eips.ethereum.org/EIPS/eip-165[EIP].\\n *\\n * Implementers can declare support of contract interfaces, which can then be\\n * queried by others ({ERC165Checker}).\\n *\\n * For an implementation, see {ERC165}.\\n */\\ninterface IERC165 {\\n    /**\\n     * @dev Returns true if this contract implements the interface defined by\\n     * `interfaceId`. See the corresponding\\n     * https://eips.ethereum.org/EIPS/eip-165#how-interfaces-are-identified[EIP section]\\n     * to learn more about how these ids are created.\\n     *\\n     * This function call must use less than 30 000 gas.\\n     */\\n    function supportsInterface(bytes4 interfaceId) external view returns (bool);\\n}\\n\",\"keccak256\":\"0x3ce2766250b7eb013230440109b986c249573218bd3f587348018643ec55e501\",\"license\":\"MIT\"},\"contracts/interfaces/ILockManager.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface ILockManager {\\n    struct LockedStake {\\n        uint256 amount;\\n        uint256 votingPower;\\n    }\\n\\n    function getAmountStaked(address staker, address stakedToken) external view returns (uint256);\\n    function getStake(address staker, address stakedToken) external view returns (LockedStake memory);\\n    function calculateVotingPower(address token, uint256 amount) external view returns (uint256);\\n    function grantVotingPower(address receiver, address token, uint256 tokenAmount) external returns (uint256 votingPowerGranted);\\n    function removeVotingPower(address receiver, address token, uint256 tokenAmount) external returns (uint256 votingPowerRemoved);\\n}\",\"keccak256\":\"0x97e5871f0e670c74aafff3dcba78f437f8b4981c7ce617b6c6886433072f7130\",\"license\":\"MIT\"},\"contracts/interfaces/ITokenRegistry.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface ITokenRegistry {\\n    function owner() external view returns (address);\\n    function tokenFormulas(address) external view returns (address);\\n    function setTokenFormula(address token, address formula) external;\\n    function removeToken(address token) external;\\n    function changeOwner(address newOwner) external;\\n    event ChangedOwner(address indexed oldOwner, address indexed newOwner);\\n    event TokenAdded(address indexed token, address indexed formula);\\n    event TokenRemoved(address indexed token);\\n    event TokenFormulaUpdated(address indexed token, address indexed formula);\\n}\",\"keccak256\":\"0x8a3b047255ad9dbd425ee0e1aac612292e25b08d3651e73601e8923c4fd565c5\",\"license\":\"MIT\"},\"contracts/interfaces/IVotingPower.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"../lib/PrismProxy.sol\\\";\\n\\ninterface IVotingPower {\\n\\n    struct Stake {\\n        uint256 amount;\\n        uint256 votingPower;\\n    }\\n\\n    function setPendingProxyImplementation(address newPendingImplementation) external returns (bool);\\n    function acceptProxyImplementation() external returns (bool);\\n    function setPendingProxyAdmin(address newPendingAdmin) external returns (bool);\\n    function acceptProxyAdmin() external returns (bool);\\n    function proxyAdmin() external view returns (address);\\n    function pendingProxyAdmin() external view returns (address);\\n    function proxyImplementation() external view returns (address);\\n    function pendingProxyImplementation() external view returns (address);\\n    function proxyImplementationVersion() external view returns (uint8);\\n    function become(PrismProxy prism) external;\\n    function initialize(address _edenToken, address _owner) external;\\n    function owner() external view returns (address);\\n    function edenToken() external view returns (address);\\n    function tokenRegistry() external view returns (address);\\n    function lockManager() external view returns (address);\\n    function changeOwner(address newOwner) external;\\n    function setTokenRegistry(address registry) external;\\n    function setLockManager(address newLockManager) external;\\n    function stake(uint256 amount) external;\\n    function stakeWithPermit(uint256 amount, uint256 deadline, uint8 v, bytes32 r, bytes32 s) external;\\n    function withdraw(uint256 amount) external;\\n    function addVotingPowerForLockedTokens(address account, uint256 amount) external;\\n    function removeVotingPowerForUnlockedTokens(address account, uint256 amount) external;\\n    function getEDENAmountStaked(address staker) external view returns (uint256);\\n    function getAmountStaked(address staker, address stakedToken) external view returns (uint256);\\n    function getEDENStake(address staker) external view returns (Stake memory);\\n    function getStake(address staker, address stakedToken) external view returns (Stake memory);\\n    function balanceOf(address account) external view returns (uint256);\\n    function balanceOfAt(address account, uint256 blockNumber) external view returns (uint256);\\n    event NewPendingImplementation(address indexed oldPendingImplementation, address indexed newPendingImplementation);\\n    event NewImplementation(address indexed oldImplementation, address indexed newImplementation);\\n    event NewPendingAdmin(address indexed oldPendingAdmin, address indexed newPendingAdmin);\\n    event NewAdmin(address indexed oldAdmin, address indexed newAdmin);\\n    event Staked(address indexed user, address indexed token, uint256 indexed amount, uint256 votingPower);\\n    event Withdrawn(address indexed user, address indexed token, uint256 indexed amount, uint256 votingPower);\\n    event VotingPowerChanged(address indexed voter, uint256 indexed previousBalance, uint256 indexed newBalance);\\n}\",\"keccak256\":\"0x61819426d4b069eb48b8409c30d7626e5841ab2d46ae55081f9043748949d589\",\"license\":\"MIT\"},\"contracts/interfaces/IVotingPowerFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ninterface IVotingPowerFormula {\\n    function convertTokensToVotingPower(uint256 amount) external view returns (uint256);\\n}\",\"keccak256\":\"0x12741c11d225526eeaa96b3735198300fc3cd6092fb88832ba835c35d68f5f09\",\"license\":\"MIT\"},\"contracts/lib/AccessControl.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"./Context.sol\\\";\\nimport \\\"./Strings.sol\\\";\\nimport \\\"./ERC165.sol\\\";\\n\\n/**\\n * @dev External interface of AccessControl declared to support ERC165 detection.\\n */\\ninterface IAccessControl {\\n    function hasRole(bytes32 role, address account) external view returns (bool);\\n\\n    function getRoleAdmin(bytes32 role) external view returns (bytes32);\\n\\n    function grantRole(bytes32 role, address account) external;\\n\\n    function revokeRole(bytes32 role, address account) external;\\n\\n    function renounceRole(bytes32 role, address account) external;\\n}\\n\\n/**\\n * @dev Contract module that allows children to implement role-based access\\n * control mechanisms. This is a lightweight version that doesn't allow enumerating role\\n * members except through off-chain means by accessing the contract event logs. Some\\n * applications may benefit from on-chain enumerability, for those cases see\\n * {AccessControlEnumerable}.\\n *\\n * Roles are referred to by their `bytes32` identifier. These should be exposed\\n * in the external API and be unique. The best way to achieve this is by\\n * using `public constant` hash digests:\\n *\\n * ```\\n * bytes32 public constant MY_ROLE = keccak256(\\\"MY_ROLE\\\");\\n * ```\\n *\\n * Roles can be used to represent a set of permissions. To restrict access to a\\n * function call, use {hasRole}:\\n *\\n * ```\\n * function foo() public {\\n *     require(hasRole(MY_ROLE, msg.sender));\\n *     ...\\n * }\\n * ```\\n *\\n * Roles can be granted and revoked dynamically via the {grantRole} and\\n * {revokeRole} functions. Each role has an associated admin role, and only\\n * accounts that have a role's admin role can call {grantRole} and {revokeRole}.\\n *\\n * By default, the admin role for all roles is `DEFAULT_ADMIN_ROLE`, which means\\n * that only accounts with this role will be able to grant or revoke other\\n * roles. More complex role relationships can be created by using\\n * {_setRoleAdmin}.\\n *\\n * WARNING: The `DEFAULT_ADMIN_ROLE` is also its own admin: it has permission to\\n * grant and revoke this role. Extra precautions should be taken to secure\\n * accounts that have been granted it.\\n */\\nabstract contract AccessControl is Context, IAccessControl, ERC165 {\\n    struct RoleData {\\n        mapping(address => bool) members;\\n        bytes32 adminRole;\\n    }\\n\\n    mapping(bytes32 => RoleData) private _roles;\\n\\n    bytes32 public constant DEFAULT_ADMIN_ROLE = 0x00;\\n\\n    /**\\n     * @dev Emitted when `newAdminRole` is set as ``role``'s admin role, replacing `previousAdminRole`\\n     *\\n     * `DEFAULT_ADMIN_ROLE` is the starting admin for all roles, despite\\n     * {RoleAdminChanged} not being emitted signaling this.\\n     *\\n     * _Available since v3.1._\\n     */\\n    event RoleAdminChanged(bytes32 indexed role, bytes32 indexed previousAdminRole, bytes32 indexed newAdminRole);\\n\\n    /**\\n     * @dev Emitted when `account` is granted `role`.\\n     *\\n     * `sender` is the account that originated the contract call, an admin role\\n     * bearer except when using {_setupRole}.\\n     */\\n    event RoleGranted(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Emitted when `account` is revoked `role`.\\n     *\\n     * `sender` is the account that originated the contract call:\\n     *   - if using `revokeRole`, it is the admin role bearer\\n     *   - if using `renounceRole`, it is the role bearer (i.e. `account`)\\n     */\\n    event RoleRevoked(bytes32 indexed role, address indexed account, address indexed sender);\\n\\n    /**\\n     * @dev Modifier that checks that an account has a specific role. Reverts\\n     * with a standardized message including the required role.\\n     *\\n     * The format of the revert reason is given by the following regular expression:\\n     *\\n     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/\\n     *\\n     * _Available since v4.1._\\n     */\\n    modifier onlyRole(bytes32 role) {\\n        _checkRole(role, _msgSender());\\n        _;\\n    }\\n\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IAccessControl).interfaceId || super.supportsInterface(interfaceId);\\n    }\\n\\n    /**\\n     * @dev Returns `true` if `account` has been granted `role`.\\n     */\\n    function hasRole(bytes32 role, address account) public view override returns (bool) {\\n        return _roles[role].members[account];\\n    }\\n\\n    /**\\n     * @dev Revert with a standard message if `account` is missing `role`.\\n     *\\n     * The format of the revert reason is given by the following regular expression:\\n     *\\n     *  /^AccessControl: account (0x[0-9a-f]{40}) is missing role (0x[0-9a-f]{64})$/\\n     */\\n    function _checkRole(bytes32 role, address account) internal view {\\n        if (!hasRole(role, account)) {\\n            revert(\\n                string(\\n                    abi.encodePacked(\\n                        \\\"AccessControl: account \\\",\\n                        Strings.toHexString(uint160(account), 20),\\n                        \\\" is missing role \\\",\\n                        Strings.toHexString(uint256(role), 32)\\n                    )\\n                )\\n            );\\n        }\\n    }\\n\\n    /**\\n     * @dev Returns the admin role that controls `role`. See {grantRole} and\\n     * {revokeRole}.\\n     *\\n     * To change a role's admin, use {_setRoleAdmin}.\\n     */\\n    function getRoleAdmin(bytes32 role) public view override returns (bytes32) {\\n        return _roles[role].adminRole;\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function grantRole(bytes32 role, address account) public virtual override onlyRole(getRoleAdmin(role)) {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from `account`.\\n     *\\n     * If `account` had been granted `role`, emits a {RoleRevoked} event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must have ``role``'s admin role.\\n     */\\n    function revokeRole(bytes32 role, address account) public virtual override onlyRole(getRoleAdmin(role)) {\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Revokes `role` from the calling account.\\n     *\\n     * Roles are often managed via {grantRole} and {revokeRole}: this function's\\n     * purpose is to provide a mechanism for accounts to lose their privileges\\n     * if they are compromised (such as when a trusted device is misplaced).\\n     *\\n     * If the calling account had been granted `role`, emits a {RoleRevoked}\\n     * event.\\n     *\\n     * Requirements:\\n     *\\n     * - the caller must be `account`.\\n     */\\n    function renounceRole(bytes32 role, address account) public virtual override {\\n        require(account == _msgSender(), \\\"AccessControl: can only renounce roles for self\\\");\\n\\n        _revokeRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Grants `role` to `account`.\\n     *\\n     * If `account` had not been already granted `role`, emits a {RoleGranted}\\n     * event. Note that unlike {grantRole}, this function doesn't perform any\\n     * checks on the calling account.\\n     *\\n     * [WARNING]\\n     * ====\\n     * This function should only be called from the constructor when setting\\n     * up the initial roles for the system.\\n     *\\n     * Using this function in any other way is effectively circumventing the admin\\n     * system imposed by {AccessControl}.\\n     * ====\\n     */\\n    function _setupRole(bytes32 role, address account) internal virtual {\\n        _grantRole(role, account);\\n    }\\n\\n    /**\\n     * @dev Sets `adminRole` as ``role``'s admin role.\\n     *\\n     * Emits a {RoleAdminChanged} event.\\n     */\\n    function _setRoleAdmin(bytes32 role, bytes32 adminRole) internal virtual {\\n        bytes32 previousAdminRole = getRoleAdmin(role);\\n        _roles[role].adminRole = adminRole;\\n        emit RoleAdminChanged(role, previousAdminRole, adminRole);\\n    }\\n\\n    function _grantRole(bytes32 role, address account) private {\\n        if (!hasRole(role, account)) {\\n            _roles[role].members[account] = true;\\n            emit RoleGranted(role, account, _msgSender());\\n        }\\n    }\\n\\n    function _revokeRole(bytes32 role, address account) private {\\n        if (hasRole(role, account)) {\\n            _roles[role].members[account] = false;\\n            emit RoleRevoked(role, account, _msgSender());\\n        }\\n    }\\n}\",\"keccak256\":\"0x18880461ce766cba7a0b97f4c4ee27c8760af28274f2561efb91a53aab7388aa\",\"license\":\"MIT\"},\"contracts/lib/Context.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev Provides information about the current execution context, including the\\n * sender of the transaction and its data. While these are generally available\\n * via msg.sender and msg.data, they should not be accessed in such a direct\\n * manner, since when dealing with meta-transactions the account sending and\\n * paying for execution may not be the actual sender (as far as an application\\n * is concerned).\\n *\\n * This contract is only required for intermediate, library-like contracts.\\n */\\nabstract contract Context {\\n    function _msgSender() internal view virtual returns (address) {\\n        return msg.sender;\\n    }\\n\\n    function _msgData() internal view virtual returns (bytes calldata) {\\n        return msg.data;\\n    }\\n}\",\"keccak256\":\"0xb53122e1b41825143486e6e0a288593a60bb924cfdc8e15309c9b86095becb7f\",\"license\":\"MIT\"},\"contracts/lib/ERC165.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\nimport \\\"../interfaces/IERC165.sol\\\";\\n\\n/**\\n * @dev Implementation of the {IERC165} interface.\\n *\\n * Contracts that want to implement ERC165 should inherit from this contract and override {supportsInterface} to check\\n * for the additional interface id that will be supported. For example:\\n *\\n * ```solidity\\n * function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n *     return interfaceId == type(MyInterface).interfaceId || super.supportsInterface(interfaceId);\\n * }\\n * ```\\n *\\n * Alternatively, {ERC165Storage} provides an easier to use but more expensive implementation.\\n */\\nabstract contract ERC165 is IERC165 {\\n    /**\\n     * @dev See {IERC165-supportsInterface}.\\n     */\\n    function supportsInterface(bytes4 interfaceId) public view virtual override returns (bool) {\\n        return interfaceId == type(IERC165).interfaceId;\\n    }\\n}\\n\",\"keccak256\":\"0x46df8f85a9cee339d42e0b6b74f09062e428a0cf79f56843bb560f74cfa760de\",\"license\":\"MIT\"},\"contracts/lib/PrismProxy.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\ncontract PrismProxy {\\n\\n    /// @notice Proxy admin and implementation storage variables\\n    struct ProxyStorage {\\n        // Administrator for this contract\\n        address admin;\\n\\n        // Pending administrator for this contract\\n        address pendingAdmin;\\n\\n        // Active implementation of this contract\\n        address implementation;\\n\\n        // Pending implementation of this contract\\n        address pendingImplementation;\\n\\n        // Implementation version of this contract\\n        uint8 version;\\n    }\\n\\n    /// @dev Position in contract storage where prism ProxyStorage struct will be stored\\n    bytes32 constant PRISM_PROXY_STORAGE_POSITION = keccak256(\\\"prism.proxy.storage\\\");\\n\\n    /// @notice Emitted when pendingImplementation is changed\\n    event NewPendingImplementation(address indexed oldPendingImplementation, address indexed newPendingImplementation);\\n\\n    /// @notice Emitted when pendingImplementation is accepted, which means implementation is updated\\n    event NewImplementation(address indexed oldImplementation, address indexed newImplementation);\\n\\n    /// @notice Emitted when pendingAdmin is changed\\n    event NewPendingAdmin(address indexed oldPendingAdmin, address indexed newPendingAdmin);\\n\\n    /// @notice Emitted when pendingAdmin is accepted, which means admin is updated\\n    event NewAdmin(address indexed oldAdmin, address indexed newAdmin);\\n\\n    /**\\n     * @notice Load proxy storage struct from specified PRISM_PROXY_STORAGE_POSITION\\n     * @return ps ProxyStorage struct\\n     */\\n    function proxyStorage() internal pure returns (ProxyStorage storage ps) {        \\n        bytes32 position = PRISM_PROXY_STORAGE_POSITION;\\n        assembly {\\n            ps.slot := position\\n        }\\n    }\\n\\n    /*** Admin Functions ***/\\n    \\n    /**\\n     * @notice Create new pending implementation for prism. msg.sender must be admin\\n     * @dev Admin function for proposing new implementation contract\\n     * @return boolean indicating success of operation\\n     */\\n    function setPendingProxyImplementation(address newPendingImplementation) public returns (bool) {\\n        ProxyStorage storage s = proxyStorage();\\n        require(msg.sender == s.admin, \\\"Prism::setPendingProxyImp: caller must be admin\\\");\\n\\n        address oldPendingImplementation = s.pendingImplementation;\\n\\n        s.pendingImplementation = newPendingImplementation;\\n\\n        emit NewPendingImplementation(oldPendingImplementation, s.pendingImplementation);\\n\\n        return true;\\n    }\\n\\n    /**\\n     * @notice Accepts new implementation for prism. msg.sender must be pendingImplementation\\n     * @dev Admin function for new implementation to accept it's role as implementation\\n     * @return boolean indicating success of operation\\n     */\\n    function acceptProxyImplementation() public returns (bool) {\\n        ProxyStorage storage s = proxyStorage();\\n        // Check caller is pendingImplementation and pendingImplementation \\u2260 address(0)\\n        require(msg.sender == s.pendingImplementation && s.pendingImplementation != address(0), \\\"Prism::acceptProxyImp: caller must be pending implementation\\\");\\n \\n        // Save current values for inclusion in log\\n        address oldImplementation = s.implementation;\\n        address oldPendingImplementation = s.pendingImplementation;\\n\\n        s.implementation = s.pendingImplementation;\\n\\n        s.pendingImplementation = address(0);\\n        s.version++;\\n\\n        emit NewImplementation(oldImplementation, s.implementation);\\n        emit NewPendingImplementation(oldPendingImplementation, s.pendingImplementation);\\n\\n        return true;\\n    }\\n\\n    /**\\n     * @notice Begins transfer of admin rights. The newPendingAdmin must call `acceptAdmin` to finalize the transfer.\\n     * @dev Admin function to begin change of admin. The newPendingAdmin must call `acceptAdmin` to finalize the transfer.\\n     * @param newPendingAdmin New pending admin.\\n     * @return boolean indicating success of operation\\n     */\\n    function setPendingProxyAdmin(address newPendingAdmin) public returns (bool) {\\n        ProxyStorage storage s = proxyStorage();\\n        // Check caller = admin\\n        require(msg.sender == s.admin, \\\"Prism::setPendingProxyAdmin: caller must be admin\\\");\\n\\n        // Save current value, if any, for inclusion in log\\n        address oldPendingAdmin = s.pendingAdmin;\\n\\n        // Store pendingAdmin with value newPendingAdmin\\n        s.pendingAdmin = newPendingAdmin;\\n\\n        // Emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin)\\n        emit NewPendingAdmin(oldPendingAdmin, newPendingAdmin);\\n\\n        return true;\\n    }\\n\\n    /**\\n     * @notice Accepts transfer of admin rights. msg.sender must be pendingAdmin\\n     * @dev Admin function for pending admin to accept role and update admin\\n     * @return boolean indicating success of operation\\n     */\\n    function acceptProxyAdmin() public returns (bool) {\\n        ProxyStorage storage s = proxyStorage();\\n        // Check caller is pendingAdmin and pendingAdmin \\u2260 address(0)\\n        require(msg.sender == s.pendingAdmin && msg.sender != address(0), \\\"Prism::acceptProxyAdmin: caller must be pending admin\\\");\\n\\n        // Save current values for inclusion in log\\n        address oldAdmin = s.admin;\\n        address oldPendingAdmin = s.pendingAdmin;\\n\\n        // Store admin with value pendingAdmin\\n        s.admin = s.pendingAdmin;\\n\\n        // Clear the pending value\\n        s.pendingAdmin = address(0);\\n\\n        emit NewAdmin(oldAdmin, s.admin);\\n        emit NewPendingAdmin(oldPendingAdmin, s.pendingAdmin);\\n\\n        return true;\\n    }\\n\\n    /**\\n     * @notice Get current admin for prism proxy\\n     * @return admin address\\n     */\\n    function proxyAdmin() public view returns (address) {\\n        ProxyStorage storage s = proxyStorage();\\n        return s.admin;\\n    }\\n\\n    /**\\n     * @notice Get pending admin for prism proxy\\n     * @return admin address\\n     */\\n    function pendingProxyAdmin() public view returns (address) {\\n        ProxyStorage storage s = proxyStorage();\\n        return s.pendingAdmin;\\n    }\\n\\n    /**\\n     * @notice Address of implementation contract\\n     * @return implementation address\\n     */\\n    function proxyImplementation() public view returns (address) {\\n        ProxyStorage storage s = proxyStorage();\\n        return s.implementation;\\n    }\\n\\n    /**\\n     * @notice Address of pending implementation contract\\n     * @return pending implementation address\\n     */\\n    function pendingProxyImplementation() public view returns (address) {\\n        ProxyStorage storage s = proxyStorage();\\n        return s.pendingImplementation;\\n    }\\n\\n    /**\\n     * @notice Current implementation version for proxy\\n     * @return version number\\n     */\\n    function proxyImplementationVersion() public view returns (uint8) {\\n        ProxyStorage storage s = proxyStorage();\\n        return s.version;\\n    }\\n\\n    /**\\n     * @notice Delegates execution to an implementation contract.\\n     * @dev Returns to the external caller whatever the implementation returns or forwards reverts\\n     */\\n    function _forwardToImplementation() internal {\\n        ProxyStorage storage s = proxyStorage();\\n        // delegate all other functions to current implementation\\n        (bool success, ) = s.implementation.delegatecall(msg.data);\\n\\n        assembly {\\n              let free_mem_ptr := mload(0x40)\\n              returndatacopy(free_mem_ptr, 0, returndatasize())\\n\\n              switch success\\n              case 0 { revert(free_mem_ptr, returndatasize()) }\\n              default { return(free_mem_ptr, returndatasize()) }\\n        }\\n    }\\n}\",\"keccak256\":\"0xb1402780eddcac8f334014689fda8be46a274344e4d1c8364c819a861a2a6f0e\",\"license\":\"MIT\"},\"contracts/lib/Strings.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\n\\npragma solidity ^0.8.0;\\n\\n/**\\n * @dev String operations.\\n */\\nlibrary Strings {\\n    bytes16 private constant _HEX_SYMBOLS = \\\"0123456789abcdef\\\";\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` decimal representation.\\n     */\\n    function toString(uint256 value) internal pure returns (string memory) {\\n        // Inspired by OraclizeAPI's implementation - MIT licence\\n        // https://github.com/oraclize/ethereum-api/blob/b42146b063c7d6ee1358846c198246239e9360e8/oraclizeAPI_0.4.25.sol\\n\\n        if (value == 0) {\\n            return \\\"0\\\";\\n        }\\n        uint256 temp = value;\\n        uint256 digits;\\n        while (temp != 0) {\\n            digits++;\\n            temp /= 10;\\n        }\\n        bytes memory buffer = new bytes(digits);\\n        while (value != 0) {\\n            digits -= 1;\\n            buffer[digits] = bytes1(uint8(48 + uint256(value % 10)));\\n            value /= 10;\\n        }\\n        return string(buffer);\\n    }\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation.\\n     */\\n    function toHexString(uint256 value) internal pure returns (string memory) {\\n        if (value == 0) {\\n            return \\\"0x00\\\";\\n        }\\n        uint256 temp = value;\\n        uint256 length = 0;\\n        while (temp != 0) {\\n            length++;\\n            temp >>= 8;\\n        }\\n        return toHexString(value, length);\\n    }\\n\\n    /**\\n     * @dev Converts a `uint256` to its ASCII `string` hexadecimal representation with fixed length.\\n     */\\n    function toHexString(uint256 value, uint256 length) internal pure returns (string memory) {\\n        bytes memory buffer = new bytes(2 * length + 2);\\n        buffer[0] = \\\"0\\\";\\n        buffer[1] = \\\"x\\\";\\n        for (uint256 i = 2 * length + 1; i > 1; --i) {\\n            buffer[i] = _HEX_SYMBOLS[value & 0xf];\\n            value >>= 4;\\n        }\\n        require(value == 0, \\\"Strings: hex length insufficient\\\");\\n        return string(buffer);\\n    }\\n}\\n\",\"keccak256\":\"0x391d3ba97ab6856a16b225d6ee29617ad15ff00db70f3b4df1ab5ea33aa47c9d\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x60806040523480156200001157600080fd5b506040516200189838038062001898833981016040819052620000349162000131565b600280546001600160a01b0319166001600160a01b0384161790556200005c60008262000064565b505062000169565b62000070828262000074565b5050565b6000828152602081815260408083206001600160a01b038516845290915290205460ff1662000070576000828152602081815260408083206001600160a01b03851684529091529020805460ff19166001179055620000d03390565b6001600160a01b0316816001600160a01b0316837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45050565b80516001600160a01b03811681146200012c57600080fd5b919050565b600080604083850312156200014557600080fd5b620001508362000114565b9150620001606020840162000114565b90509250929050565b61171f80620001796000396000f3fe608060405234801561001057600080fd5b50600436106100ea5760003560e01c806391d148541161008c578063bc61256e11610066578063bc61256e14610302578063d547741f14610315578063e968d9fa14610328578063f36213671461033b57600080fd5b806391d14854146102a3578063a217fddf146102e7578063bc3e1b7a146102ef57600080fd5b806336568abe116100c857806336568abe1461015d57806377174f85146101705780637741459e146101b557806382dda22d1461021e57600080fd5b806301ffc9a7146100ef578063248a9ca3146101175780632f2ff15d14610148575b600080fd5b6101026100fd3660046113fe565b610362565b60405190151581526020015b60405180910390f35b61013a6101253660046113c0565b60009081526020819052604090206001015490565b60405190815260200161010e565b61015b6101563660046113d9565b6103fb565b005b61015b61016b3660046113d9565b610426565b6002546101909073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200161010e565b61013a6101c336600461131a565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff94851681526001808352838220949095168152928152918190208151808301909252805480835293015491015290565b61028861022c36600461131a565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff9485168152600180835283822094909516815292815291819020815180830190925280548252909201549082015290565b6040805182518152602092830151928101929092520161010e565b6101026102b13660046113d9565b60009182526020828152604080842073ffffffffffffffffffffffffffffffffffffffff93909316845291905290205460ff1690565b61013a600081565b61013a6102fd366004611353565b6104de565b61013a610310366004611353565b610871565b61015b6103233660046113d9565b610adc565b61013a610336366004611394565b610b02565b61013a7faf9a8bb3cbd6b84fbccefa71ff73e26e798553c6914585a84886212a46a9027981565b60007fffffffff0000000000000000000000000000000000000000000000000000000082167f7965db0b0000000000000000000000000000000000000000000000000000000014806103f557507f01ffc9a7000000000000000000000000000000000000000000000000000000007fffffffff000000000000000000000000000000000000000000000000000000008316145b92915050565b6000828152602081905260409020600101546104178133610e3c565b6104218383610f0c565b505050565b73ffffffffffffffffffffffffffffffffffffffff811633146104d0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602f60248201527f416363657373436f6e74726f6c3a2063616e206f6e6c792072656e6f756e636560448201527f20726f6c657320666f722073656c66000000000000000000000000000000000060648201526084015b60405180910390fd5b6104da8282610ffc565b5050565b3360009081527f3e7a7484ad32e5d459b6ed6a870672becd5b865934878407075b570e26e63f9b602052604081205460ff1661059c576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602160248201527f43616c6c6572206d7573742068617665204c4f434b45525f524f4c4520726f6c60448201527f650000000000000000000000000000000000000000000000000000000000000060648201526084016104c7565b73ffffffffffffffffffffffffffffffffffffffff80851660009081526001602090815260408083209387168352929052205482111561065e576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602f60248201527f4c4d3a3a72656d6f7665566f74696e67506f7765723a206e6f7420656e6f756760448201527f6820746f6b656e73207374616b6564000000000000000000000000000000000060648201526084016104c7565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff8781168252600180845284832091881683529083529083902083518085019094528054808552910154918301829052906106c3908561157e565b6106cd9190611543565b73ffffffffffffffffffffffffffffffffffffffff80871660009081526001602090815260408083209389168352929052205490925061070e9084906115bb565b73ffffffffffffffffffffffffffffffffffffffff8681166000908152600160208181526040808420948a16845293905291902091825501546107529083906115bb565b73ffffffffffffffffffffffffffffffffffffffff86811660008181526001602081815260408084208b8716855290915291829020019390935560025492517f9cc7a367000000000000000000000000000000000000000000000000000000008152600481019190915260248101859052911690639cc7a36790604401600060405180830381600087803b1580156107e957600080fd5b505af11580156107fd573d6000803e3d6000fd5b50505050828473ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff167f84ac76b4af9b0d66201e1a5c4154cbe6580a5a5431447ffdf2210e7fdf15359a8560405161086191815260200190565b60405180910390a4509392505050565b3360009081527f3e7a7484ad32e5d459b6ed6a870672becd5b865934878407075b570e26e63f9b602052604081205460ff1661092f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602160248201527f43616c6c6572206d7573742068617665204c4f434b45525f524f4c4520726f6c60448201527f650000000000000000000000000000000000000000000000000000000000000060648201526084016104c7565b6109398383610b02565b73ffffffffffffffffffffffffffffffffffffffff80861660009081526001602090815260408083209388168352929052205490915061097a90839061152b565b73ffffffffffffffffffffffffffffffffffffffff8581166000908152600160208181526040808420948916845293905291902091825501546109be90829061152b565b73ffffffffffffffffffffffffffffffffffffffff85811660008181526001602081815260408084208a8716855290915291829020019390935560025492517f0bae5b7c000000000000000000000000000000000000000000000000000000008152600481019190915260248101849052911690630bae5b7c90604401600060405180830381600087803b158015610a5557600080fd5b505af1158015610a69573d6000803e3d6000fd5b50505050818373ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff167f1d80c2b0b59d2f1543a8b483e392137e35f1d5ebfffcb3ad3a85c07a7563631384604051610acd91815260200190565b60405180910390a49392505050565b600082815260208190526040902060010154610af88133610e3c565b6104218383610ffc565b600080600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16639d23c4c76040518163ffffffff1660e01b815260040160206040518083038186803b158015610b6d57600080fd5b505afa158015610b81573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ba591906112fd565b905073ffffffffffffffffffffffffffffffffffffffff8116610c4a576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f4c4d3a3a63616c63756c617465566f74696e67506f7765723a2072656769737460448201527f7279206e6f74207365740000000000000000000000000000000000000000000060648201526084016104c7565b6040517fd419935f00000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff85811660048301526000919083169063d419935f9060240160206040518083038186803b158015610cb557600080fd5b505afa158015610cc9573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ced91906112fd565b905073ffffffffffffffffffffffffffffffffffffffff8116610d92576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602d60248201527f4c4d3a3a63616c63756c617465566f74696e67506f7765723a20746f6b656e2060448201527f6e6f7420737570706f727465640000000000000000000000000000000000000060648201526084016104c7565b6040517fb69fb7f900000000000000000000000000000000000000000000000000000000815260048101859052819073ffffffffffffffffffffffffffffffffffffffff82169063b69fb7f99060240160206040518083038186803b158015610dfa57600080fd5b505afa158015610e0e573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e329190611440565b9695505050505050565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff166104da57610e928173ffffffffffffffffffffffffffffffffffffffff1660146110b3565b610e9d8360206110b3565b604051602001610eae929190611459565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290527f08c379a00000000000000000000000000000000000000000000000000000000082526104c7916004016114da565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff166104da5760008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff85168452909152902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055610f9e3390565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45050565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff16156104da5760008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516808552925280832080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0016905551339285917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45050565b606060006110c283600261157e565b6110cd90600261152b565b67ffffffffffffffff8111156110e5576110e5611695565b6040519080825280601f01601f19166020018201604052801561110f576020820181803683370190505b5090507f30000000000000000000000000000000000000000000000000000000000000008160008151811061114657611146611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053507f7800000000000000000000000000000000000000000000000000000000000000816001815181106111a9576111a9611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a90535060006111e584600261157e565b6111f090600161152b565b90505b600181111561128d577f303132333435363738396162636465660000000000000000000000000000000085600f166010811061123157611231611666565b1a60f81b82828151811061124757611247611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a90535060049490941c9361128681611602565b90506111f3565b5083156112f6576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f537472696e67733a20686578206c656e67746820696e73756666696369656e7460448201526064016104c7565b9392505050565b60006020828403121561130f57600080fd5b81516112f6816116c4565b6000806040838503121561132d57600080fd5b8235611338816116c4565b91506020830135611348816116c4565b809150509250929050565b60008060006060848603121561136857600080fd5b8335611373816116c4565b92506020840135611383816116c4565b929592945050506040919091013590565b600080604083850312156113a757600080fd5b82356113b2816116c4565b946020939093013593505050565b6000602082840312156113d257600080fd5b5035919050565b600080604083850312156113ec57600080fd5b823591506020830135611348816116c4565b60006020828403121561141057600080fd5b81357fffffffff00000000000000000000000000000000000000000000000000000000811681146112f657600080fd5b60006020828403121561145257600080fd5b5051919050565b7f416363657373436f6e74726f6c3a206163636f756e74200000000000000000008152600083516114918160178501602088016115d2565b7f206973206d697373696e6720726f6c652000000000000000000000000000000060179184019182015283516114ce8160288401602088016115d2565b01602801949350505050565b60208152600082518060208401526114f98160408501602087016115d2565b601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0169190910160400192915050565b6000821982111561153e5761153e611637565b500190565b600082611579577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b500490565b6000817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04831182151516156115b6576115b6611637565b500290565b6000828210156115cd576115cd611637565b500390565b60005b838110156115ed5781810151838201526020016115d5565b838111156115fc576000848401525b50505050565b60008161161157611611611637565b507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0190565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b73ffffffffffffffffffffffffffffffffffffffff811681146116e657600080fd5b5056fea2646970667358221220b70e4bf1780542475e6fd56474212083cfc42118e6e1a7d1a8f47e8291e2571c64736f6c63430008060033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100ea5760003560e01c806391d148541161008c578063bc61256e11610066578063bc61256e14610302578063d547741f14610315578063e968d9fa14610328578063f36213671461033b57600080fd5b806391d14854146102a3578063a217fddf146102e7578063bc3e1b7a146102ef57600080fd5b806336568abe116100c857806336568abe1461015d57806377174f85146101705780637741459e146101b557806382dda22d1461021e57600080fd5b806301ffc9a7146100ef578063248a9ca3146101175780632f2ff15d14610148575b600080fd5b6101026100fd3660046113fe565b610362565b60405190151581526020015b60405180910390f35b61013a6101253660046113c0565b60009081526020819052604090206001015490565b60405190815260200161010e565b61015b6101563660046113d9565b6103fb565b005b61015b61016b3660046113d9565b610426565b6002546101909073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200161010e565b61013a6101c336600461131a565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff94851681526001808352838220949095168152928152918190208151808301909252805480835293015491015290565b61028861022c36600461131a565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff9485168152600180835283822094909516815292815291819020815180830190925280548252909201549082015290565b6040805182518152602092830151928101929092520161010e565b6101026102b13660046113d9565b60009182526020828152604080842073ffffffffffffffffffffffffffffffffffffffff93909316845291905290205460ff1690565b61013a600081565b61013a6102fd366004611353565b6104de565b61013a610310366004611353565b610871565b61015b6103233660046113d9565b610adc565b61013a610336366004611394565b610b02565b61013a7faf9a8bb3cbd6b84fbccefa71ff73e26e798553c6914585a84886212a46a9027981565b60007fffffffff0000000000000000000000000000000000000000000000000000000082167f7965db0b0000000000000000000000000000000000000000000000000000000014806103f557507f01ffc9a7000000000000000000000000000000000000000000000000000000007fffffffff000000000000000000000000000000000000000000000000000000008316145b92915050565b6000828152602081905260409020600101546104178133610e3c565b6104218383610f0c565b505050565b73ffffffffffffffffffffffffffffffffffffffff811633146104d0576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602f60248201527f416363657373436f6e74726f6c3a2063616e206f6e6c792072656e6f756e636560448201527f20726f6c657320666f722073656c66000000000000000000000000000000000060648201526084015b60405180910390fd5b6104da8282610ffc565b5050565b3360009081527f3e7a7484ad32e5d459b6ed6a870672becd5b865934878407075b570e26e63f9b602052604081205460ff1661059c576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602160248201527f43616c6c6572206d7573742068617665204c4f434b45525f524f4c4520726f6c60448201527f650000000000000000000000000000000000000000000000000000000000000060648201526084016104c7565b73ffffffffffffffffffffffffffffffffffffffff80851660009081526001602090815260408083209387168352929052205482111561065e576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602f60248201527f4c4d3a3a72656d6f7665566f74696e67506f7765723a206e6f7420656e6f756760448201527f6820746f6b656e73207374616b6564000000000000000000000000000000000060648201526084016104c7565b6040805180820182526000808252602091820181905273ffffffffffffffffffffffffffffffffffffffff8781168252600180845284832091881683529083529083902083518085019094528054808552910154918301829052906106c3908561157e565b6106cd9190611543565b73ffffffffffffffffffffffffffffffffffffffff80871660009081526001602090815260408083209389168352929052205490925061070e9084906115bb565b73ffffffffffffffffffffffffffffffffffffffff8681166000908152600160208181526040808420948a16845293905291902091825501546107529083906115bb565b73ffffffffffffffffffffffffffffffffffffffff86811660008181526001602081815260408084208b8716855290915291829020019390935560025492517f9cc7a367000000000000000000000000000000000000000000000000000000008152600481019190915260248101859052911690639cc7a36790604401600060405180830381600087803b1580156107e957600080fd5b505af11580156107fd573d6000803e3d6000fd5b50505050828473ffffffffffffffffffffffffffffffffffffffff168673ffffffffffffffffffffffffffffffffffffffff167f84ac76b4af9b0d66201e1a5c4154cbe6580a5a5431447ffdf2210e7fdf15359a8560405161086191815260200190565b60405180910390a4509392505050565b3360009081527f3e7a7484ad32e5d459b6ed6a870672becd5b865934878407075b570e26e63f9b602052604081205460ff1661092f576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602160248201527f43616c6c6572206d7573742068617665204c4f434b45525f524f4c4520726f6c60448201527f650000000000000000000000000000000000000000000000000000000000000060648201526084016104c7565b6109398383610b02565b73ffffffffffffffffffffffffffffffffffffffff80861660009081526001602090815260408083209388168352929052205490915061097a90839061152b565b73ffffffffffffffffffffffffffffffffffffffff8581166000908152600160208181526040808420948916845293905291902091825501546109be90829061152b565b73ffffffffffffffffffffffffffffffffffffffff85811660008181526001602081815260408084208a8716855290915291829020019390935560025492517f0bae5b7c000000000000000000000000000000000000000000000000000000008152600481019190915260248101849052911690630bae5b7c90604401600060405180830381600087803b158015610a5557600080fd5b505af1158015610a69573d6000803e3d6000fd5b50505050818373ffffffffffffffffffffffffffffffffffffffff168573ffffffffffffffffffffffffffffffffffffffff167f1d80c2b0b59d2f1543a8b483e392137e35f1d5ebfffcb3ad3a85c07a7563631384604051610acd91815260200190565b60405180910390a49392505050565b600082815260208190526040902060010154610af88133610e3c565b6104218383610ffc565b600080600260009054906101000a900473ffffffffffffffffffffffffffffffffffffffff1673ffffffffffffffffffffffffffffffffffffffff16639d23c4c76040518163ffffffff1660e01b815260040160206040518083038186803b158015610b6d57600080fd5b505afa158015610b81573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ba591906112fd565b905073ffffffffffffffffffffffffffffffffffffffff8116610c4a576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602a60248201527f4c4d3a3a63616c63756c617465566f74696e67506f7765723a2072656769737460448201527f7279206e6f74207365740000000000000000000000000000000000000000000060648201526084016104c7565b6040517fd419935f00000000000000000000000000000000000000000000000000000000815273ffffffffffffffffffffffffffffffffffffffff85811660048301526000919083169063d419935f9060240160206040518083038186803b158015610cb557600080fd5b505afa158015610cc9573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610ced91906112fd565b905073ffffffffffffffffffffffffffffffffffffffff8116610d92576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152602d60248201527f4c4d3a3a63616c63756c617465566f74696e67506f7765723a20746f6b656e2060448201527f6e6f7420737570706f727465640000000000000000000000000000000000000060648201526084016104c7565b6040517fb69fb7f900000000000000000000000000000000000000000000000000000000815260048101859052819073ffffffffffffffffffffffffffffffffffffffff82169063b69fb7f99060240160206040518083038186803b158015610dfa57600080fd5b505afa158015610e0e573d6000803e3d6000fd5b505050506040513d601f19601f82011682018060405250810190610e329190611440565b9695505050505050565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff166104da57610e928173ffffffffffffffffffffffffffffffffffffffff1660146110b3565b610e9d8360206110b3565b604051602001610eae929190611459565b604080517fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0818403018152908290527f08c379a00000000000000000000000000000000000000000000000000000000082526104c7916004016114da565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff166104da5760008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff85168452909152902080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff00166001179055610f9e3390565b73ffffffffffffffffffffffffffffffffffffffff168173ffffffffffffffffffffffffffffffffffffffff16837f2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d60405160405180910390a45050565b60008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516845290915290205460ff16156104da5760008281526020818152604080832073ffffffffffffffffffffffffffffffffffffffff8516808552925280832080547fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0016905551339285917ff6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b9190a45050565b606060006110c283600261157e565b6110cd90600261152b565b67ffffffffffffffff8111156110e5576110e5611695565b6040519080825280601f01601f19166020018201604052801561110f576020820181803683370190505b5090507f30000000000000000000000000000000000000000000000000000000000000008160008151811061114657611146611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a9053507f7800000000000000000000000000000000000000000000000000000000000000816001815181106111a9576111a9611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a90535060006111e584600261157e565b6111f090600161152b565b90505b600181111561128d577f303132333435363738396162636465660000000000000000000000000000000085600f166010811061123157611231611666565b1a60f81b82828151811061124757611247611666565b60200101907effffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff1916908160001a90535060049490941c9361128681611602565b90506111f3565b5083156112f6576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820181905260248201527f537472696e67733a20686578206c656e67746820696e73756666696369656e7460448201526064016104c7565b9392505050565b60006020828403121561130f57600080fd5b81516112f6816116c4565b6000806040838503121561132d57600080fd5b8235611338816116c4565b91506020830135611348816116c4565b809150509250929050565b60008060006060848603121561136857600080fd5b8335611373816116c4565b92506020840135611383816116c4565b929592945050506040919091013590565b600080604083850312156113a757600080fd5b82356113b2816116c4565b946020939093013593505050565b6000602082840312156113d257600080fd5b5035919050565b600080604083850312156113ec57600080fd5b823591506020830135611348816116c4565b60006020828403121561141057600080fd5b81357fffffffff00000000000000000000000000000000000000000000000000000000811681146112f657600080fd5b60006020828403121561145257600080fd5b5051919050565b7f416363657373436f6e74726f6c3a206163636f756e74200000000000000000008152600083516114918160178501602088016115d2565b7f206973206d697373696e6720726f6c652000000000000000000000000000000060179184019182015283516114ce8160288401602088016115d2565b01602801949350505050565b60208152600082518060208401526114f98160408501602087016115d2565b601f017fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffe0169190910160400192915050565b6000821982111561153e5761153e611637565b500190565b600082611579577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b500490565b6000817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04831182151516156115b6576115b6611637565b500290565b6000828210156115cd576115cd611637565b500390565b60005b838110156115ed5781810151838201526020016115d5565b838111156115fc576000848401525b50505050565b60008161161157611611611637565b507fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff0190565b7f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052603260045260246000fd5b7f4e487b7100000000000000000000000000000000000000000000000000000000600052604160045260246000fd5b73ffffffffffffffffffffffffffffffffffffffff811681146116e657600080fd5b5056fea2646970667358221220b70e4bf1780542475e6fd56474212083cfc42118e6e1a7d1a8f47e8291e2571c64736f6c63430008060033",
+  "devdoc": {
+    "details": "Manages voting power for stakes that are locked within the Eden ecosystem, but not in the Voting Power prism",
+    "kind": "dev",
+    "methods": {
+      "calculateVotingPower(address,uint256)": {
+        "params": {
+          "amount": "amount of token that will be locked",
+          "token": "token that will be locked"
+        },
+        "returns": {
+          "_0": "resulting voting power"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_roleManager": "address that is in charge of assigning roles",
+          "_votingPower": "VotingPower prism contract"
+        }
+      },
+      "getAmountStaked(address,address)": {
+        "params": {
+          "stakedToken": "The staked token",
+          "staker": "The user with staked tokens"
+        },
+        "returns": {
+          "_0": "total amount staked"
+        }
+      },
+      "getRoleAdmin(bytes32)": {
+        "details": "Returns the admin role that controls `role`. See {grantRole} and {revokeRole}. To change a role's admin, use {_setRoleAdmin}."
+      },
+      "getStake(address,address)": {
+        "params": {
+          "stakedToken": "The staked token",
+          "staker": "The user with staked tokens"
+        },
+        "returns": {
+          "_0": "total staked"
+        }
+      },
+      "grantRole(bytes32,address)": {
+        "details": "Grants `role` to `account`. If `account` had not been already granted `role`, emits a {RoleGranted} event. Requirements: - the caller must have ``role``'s admin role."
+      },
+      "grantVotingPower(address,address,uint256)": {
+        "params": {
+          "receiver": "recipient of voting power",
+          "token": "token that is locked",
+          "tokenAmount": "amount of token that is locked"
+        },
+        "returns": {
+          "votingPowerGranted": "amount of voting power granted"
+        }
+      },
+      "hasRole(bytes32,address)": {
+        "details": "Returns `true` if `account` has been granted `role`."
+      },
+      "removeVotingPower(address,address,uint256)": {
+        "params": {
+          "receiver": "holder of voting power",
+          "token": "token that is being unlocked",
+          "tokenAmount": "amount of token that is being unlocked"
+        },
+        "returns": {
+          "votingPowerRemoved": "amount of voting power removed"
+        }
+      },
+      "renounceRole(bytes32,address)": {
+        "details": "Revokes `role` from the calling account. Roles are often managed via {grantRole} and {revokeRole}: this function's purpose is to provide a mechanism for accounts to lose their privileges if they are compromised (such as when a trusted device is misplaced). If the calling account had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must be `account`."
+      },
+      "revokeRole(bytes32,address)": {
+        "details": "Revokes `role` from `account`. If `account` had been granted `role`, emits a {RoleRevoked} event. Requirements: - the caller must have ``role``'s admin role."
+      },
+      "supportsInterface(bytes4)": {
+        "details": "See {IERC165-supportsInterface}."
+      }
+    },
+    "title": "LockManager",
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "StakeLocked(address,address,uint256,uint256)": {
+        "notice": "An event that's emitted when a user's staked balance increases"
+      },
+      "StakeUnlocked(address,address,uint256,uint256)": {
+        "notice": "An event that's emitted when a user's staked balance decreases"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "LOCKER_ROLE()": {
+        "notice": "Admin role to create voting power from locked stakes"
+      },
+      "calculateVotingPower(address,uint256)": {
+        "notice": "Calculate the voting power that will result from locking `amount` of `token`"
+      },
+      "constructor": {
+        "notice": "Create new LockManager contract"
+      },
+      "getAmountStaked(address,address)": {
+        "notice": "Get total amount of tokens staked in contract by `staker`"
+      },
+      "getStake(address,address)": {
+        "notice": "Get total staked amount and voting power from `stakedToken` staked in contract by `staker`"
+      },
+      "grantVotingPower(address,address,uint256)": {
+        "notice": "Grant voting power from locked `tokenAmount` of `token`"
+      },
+      "removeVotingPower(address,address,uint256)": {
+        "notice": "Remove voting power by unlocking `tokenAmount` of `token`"
+      },
+      "votingPower()": {
+        "notice": "Voting power contract"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 8037,
+        "contract": "contracts/LockManager.sol:LockManager",
+        "label": "_roles",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_mapping(t_bytes32,t_struct(RoleData)8032_storage)"
+      },
+      {
+        "astId": 1274,
+        "contract": "contracts/LockManager.sol:LockManager",
+        "label": "lockedStakes",
+        "offset": 0,
+        "slot": "1",
+        "type": "t_mapping(t_address,t_mapping(t_address,t_struct(LockedStake)7342_storage))"
+      },
+      {
+        "astId": 1278,
+        "contract": "contracts/LockManager.sol:LockManager",
+        "label": "votingPower",
+        "offset": 0,
+        "slot": "2",
+        "type": "t_contract(IVotingPower)7964"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_bool": {
+        "encoding": "inplace",
+        "label": "bool",
+        "numberOfBytes": "1"
+      },
+      "t_bytes32": {
+        "encoding": "inplace",
+        "label": "bytes32",
+        "numberOfBytes": "32"
+      },
+      "t_contract(IVotingPower)7964": {
+        "encoding": "inplace",
+        "label": "contract IVotingPower",
+        "numberOfBytes": "20"
+      },
+      "t_mapping(t_address,t_bool)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => bool)",
+        "numberOfBytes": "32",
+        "value": "t_bool"
+      },
+      "t_mapping(t_address,t_mapping(t_address,t_struct(LockedStake)7342_storage))": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => mapping(address => struct ILockManager.LockedStake))",
+        "numberOfBytes": "32",
+        "value": "t_mapping(t_address,t_struct(LockedStake)7342_storage)"
+      },
+      "t_mapping(t_address,t_struct(LockedStake)7342_storage)": {
+        "encoding": "mapping",
+        "key": "t_address",
+        "label": "mapping(address => struct ILockManager.LockedStake)",
+        "numberOfBytes": "32",
+        "value": "t_struct(LockedStake)7342_storage"
+      },
+      "t_mapping(t_bytes32,t_struct(RoleData)8032_storage)": {
+        "encoding": "mapping",
+        "key": "t_bytes32",
+        "label": "mapping(bytes32 => struct AccessControl.RoleData)",
+        "numberOfBytes": "32",
+        "value": "t_struct(RoleData)8032_storage"
+      },
+      "t_struct(LockedStake)7342_storage": {
+        "encoding": "inplace",
+        "label": "struct ILockManager.LockedStake",
+        "members": [
+          {
+            "astId": 7339,
+            "contract": "contracts/LockManager.sol:LockManager",
+            "label": "amount",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_uint256"
+          },
+          {
+            "astId": 7341,
+            "contract": "contracts/LockManager.sol:LockManager",
+            "label": "votingPower",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_uint256"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_struct(RoleData)8032_storage": {
+        "encoding": "inplace",
+        "label": "struct AccessControl.RoleData",
+        "members": [
+          {
+            "astId": 8029,
+            "contract": "contracts/LockManager.sol:LockManager",
+            "label": "members",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_mapping(t_address,t_bool)"
+          },
+          {
+            "astId": 8031,
+            "contract": "contracts/LockManager.sol:LockManager",
+            "label": "adminRole",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_bytes32"
+          }
+        ],
+        "numberOfBytes": "64"
+      },
+      "t_uint256": {
+        "encoding": "inplace",
+        "label": "uint256",
+        "numberOfBytes": "32"
+      }
+    }
+  }
+}

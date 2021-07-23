@@ -13,13 +13,8 @@ const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY
 const DEPLOYER_ADDRESS = process.env.DEPLOYER_ADDRESS
 const DEPLOYER_PRIVATE_KEY = process.env.DEPLOYER_PRIVATE_KEY
-const VP_DEPLOYER_ADDRESS = process.env.VP_DEPLOYER_ADDRESS
-const VP_DEPLOYER_PRIVATE_KEY = process.env.VP_DEPLOYER_PRIVATE_KEY
-const LIQUIDITY_PROVIDER_ADDRESS = process.env.LIQUIDITY_PROVIDER_ADDRESS
-const LIQUIDITY_PROVIDER_PRIVATE_KEY = process.env.LIQUIDITY_PROVIDER_PRIVATE_KEY
-const STAKER_ADDRESS = process.env.STAKER_ADDRESS
-const STAKER_PRIVATE_KEY = process.env.STAKER_PRIVATE_KEY
 const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
+const ADMIN_PRIVATE_KEY = process.env.ADMIN_PRIVATE_KEY
 const TENDERLY_USERNAME = process.env.TENDERLY_USERNAME
 const TENDERLY_PROJECT_NAME = process.env.TENDERLY_PROJECT_NAME
 const REPORT_GAS = process.env.REPORT_GAS
@@ -66,6 +61,14 @@ let rinkebyConfig = {
   tags: ["staging"],
 }
 
+let ropstenConfig = {
+  url: "https://ropsten.infura.io/v3/" + INFURA_KEY,
+  chainId: 3,
+  live: true,
+  saveDeployments: true,
+  tags: ["staging"],
+}
+
 let mainnetConfig = {
   url: "https://mainnet.infura.io/v3/" + INFURA_KEY,
   chainId: 1,
@@ -76,24 +79,14 @@ let mainnetConfig = {
 
 if (DEPLOYER_PRIVATE_KEY && DEPLOYER_PRIVATE_KEY.length > 0) {
   // localhostConfig.accounts = [DEPLOYER_PRIVATE_KEY]
+  ropstenConfig.accounts = [DEPLOYER_PRIVATE_KEY]
   rinkebyConfig.accounts = [DEPLOYER_PRIVATE_KEY]
   mainnetConfig.accounts = [DEPLOYER_PRIVATE_KEY]
-  if (LIQUIDITY_PROVIDER_PRIVATE_KEY && LIQUIDITY_PROVIDER_PRIVATE_KEY.length > 0) {
-    // localhostConfig.accounts.push(LIQUIDITY_PROVIDER_PRIVATE_KEY)
-    rinkebyConfig.accounts.push(LIQUIDITY_PROVIDER_PRIVATE_KEY)
-    mainnetConfig.accounts.push(LIQUIDITY_PROVIDER_PRIVATE_KEY)
-  }
-
-  if (VP_DEPLOYER_PRIVATE_KEY && VP_DEPLOYER_PRIVATE_KEY.length > 0) {
-    // localhostConfig.accounts.push(VP_DEPLOYER_PRIVATE_KEY)
-    rinkebyConfig.accounts.push(VP_DEPLOYER_PRIVATE_KEY)
-    mainnetConfig.accounts.push(VP_DEPLOYER_PRIVATE_KEY)
-  }
-
-  if (STAKER_PRIVATE_KEY && STAKER_PRIVATE_KEY.length > 0) {
-    // localhostConfig.accounts.push(STAKER_PRIVATE_KEY)
-    rinkebyConfig.accounts.push(STAKER_PRIVATE_KEY)
-    mainnetConfig.accounts.push(STAKER_PRIVATE_KEY)
+  if (ADMIN_PRIVATE_KEY && ADMIN_PRIVATE_KEY.length > 0) {
+    // localhostConfig.accounts.push(ADMIN_PRIVATE_KEY)
+    ropstenConfig.accounts.push(ADMIN_PRIVATE_KEY)
+    rinkebyConfig.accounts.push(ADMIN_PRIVATE_KEY)
+    mainnetConfig.accounts.push(ADMIN_PRIVATE_KEY)
   }
 }
 
@@ -129,6 +122,7 @@ module.exports = {
     hardhat: hardhatConfig,
     localhost: localhostConfig,
     rinkeby: rinkebyConfig,
+    ropsten: ropstenConfig,
     mainnet: mainnetConfig
   },
   etherscan: {
@@ -140,23 +134,8 @@ module.exports = {
       1: DEPLOYER_ADDRESS,
       4: DEPLOYER_ADDRESS
     },
-    liquidityProvider: {
-      default: 1,
-      1: LIQUIDITY_PROVIDER_ADDRESS,
-      4: LIQUIDITY_PROVIDER_ADDRESS
-    },
-    vpDeployer: {
-      default: 2,
-      1: VP_DEPLOYER_ADDRESS,
-      4: VP_DEPLOYER_ADDRESS
-    },
-    staker: {
-      default: 3,
-      1: STAKER_ADDRESS,
-      4: STAKER_ADDRESS
-    },
     admin: {
-      default: 4,
+      default: 1,
       1: ADMIN_ADDRESS,
       4: ADMIN_ADDRESS
     }

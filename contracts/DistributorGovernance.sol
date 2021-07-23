@@ -30,10 +30,22 @@ contract DistributorGovernance is AccessControl, IGovernance {
         _;
     }
 
-    constructor(address _admin, address _governor, address _delegator) {
-        _setupRole(GOV_ROLE, _governor);
-        _setupRole(DELEGATOR_ROLE, _delegator);
+    constructor(
+        address _admin, 
+        address[] memory _blockProducers,
+        address[] memory _collectors
+    ) {
+        require(_blockProducers.length == _collectors.length, "length mismatch");
+        _setupRole(GOV_ROLE, _admin);
+        _setupRole(DELEGATOR_ROLE, _admin);
         _setupRole(DEFAULT_ADMIN_ROLE, _admin);
+        for(uint i; i< _blockProducers.length; i++) {
+            blockProducer[_blockProducers[i]] = true;
+            emit BlockProducerAdded(_blockProducers[i]);
+
+            rewardCollector[_blockProducers[i]] = _collectors[i];
+            emit BlockProducerRewardCollectorChanged(_blockProducers[i], _collectors[i]);
+        }
     }
 
     function add(address producer) onlyGov public {
@@ -42,15 +54,34 @@ contract DistributorGovernance is AccessControl, IGovernance {
         emit BlockProducerAdded(producer);
     }
 
+    function addBatch(address[] memory producers) external {
+        for(uint i; i< producers.length; i++) {
+            add(producers[i]);
+        }
+    }
+
     function remove(address producer) onlyGov public {
         require(blockProducer[producer] == true, "not block producer");
         blockProducer[producer] = false;
         emit BlockProducerRemoved(producer);
     }
 
+    function removeBatch(address[] memory producers) external {
+        for(uint i; i< producers.length; i++) {
+            remove(producers[i]);
+        }
+    }
+
     function delegate(address producer, address collector) onlyDelegatorOrProducer(producer) public {
         rewardCollector[producer] = collector;
         emit BlockProducerRewardCollectorChanged(producer, collector);
+    }
+
+    function delegateBatch(address[] memory producers, address[] memory collectors) external {
+        require(producers.length == collectors.length, "length mismatch");
+        for(uint i; i< producers.length; i++) {
+            delegate(producers[i], collectors[i]);
+        }
     }
 
     function setRewardSchedule(bytes memory set) onlyGov public {
