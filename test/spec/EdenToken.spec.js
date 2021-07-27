@@ -1,5 +1,5 @@
 const { expect } = require("chai")
-const { ethers } = require("hardhat");
+const { ethers, getChainId } = require("hardhat");
 const { tokenFixture } = require("../fixtures")
 const { ecsign } = require("ethereumjs-util")
 
@@ -28,6 +28,7 @@ describe('EdenToken', () => {
     let alice
     let bob
     let ZERO_ADDRESS
+    let chainId
 
     beforeEach(async () => {
       const fix = await tokenFixture()
@@ -37,6 +38,7 @@ describe('EdenToken', () => {
       alice = fix.alice
       bob = fix.bob
       ZERO_ADDRESS = fix.ZERO_ADDRESS
+      chainId = await getChainId()
     })
 
     context('transfer', async () => {
@@ -78,7 +80,7 @@ describe('EdenToken', () => {
       it('cannot transfer in excess of the spender allowance', async () => {
         await edenToken.transfer(alice.address, 100)
         const balance = await edenToken.balanceOf(alice.address)
-        await expect(edenToken.transferFrom(alice.address, bob.address, balance)).to.revertedWith("revert Eden::transferFrom: transfer amount exceeds allowance")
+        await expect(edenToken.transferFrom(alice.address, bob.address, balance)).to.be.reverted
       })
     })
   
@@ -87,7 +89,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -123,7 +125,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -151,14 +153,14 @@ describe('EdenToken', () => {
     
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.transferWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::transferWithAuth: auth not yet valid")
+        await expect(edenToken.transferWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::transferWithAuth: auth not yet valid")
       })
 
       it('does not allow a transfer after auth expiration', async () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -185,14 +187,14 @@ describe('EdenToken', () => {
     
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.transferWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::transferWithAuth: auth expired")
+        await expect(edenToken.transferWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::transferWithAuth: auth expired")
       })
 
       it('does not allow a reuse of nonce', async () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -242,7 +244,7 @@ describe('EdenToken', () => {
     
         let sig = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
 
-        await expect(edenToken.transferWithAuthorization(deployer.address, bob.address, value, validAfter, validBefore, nonce, sig.v, ethers.utils.hexlify(sig.r), ethers.utils.hexlify(sig.s))).to.revertedWith("revert Eden::transferWithAuth: auth already used")
+        await expect(edenToken.transferWithAuthorization(deployer.address, bob.address, value, validAfter, validBefore, nonce, sig.v, ethers.utils.hexlify(sig.r), ethers.utils.hexlify(sig.s))).to.revertedWith("Eden::transferWithAuth: auth already used")
       })
     })
 
@@ -251,7 +253,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -287,7 +289,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -314,14 +316,14 @@ describe('EdenToken', () => {
     
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.connect(bob).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::receiveWithAuth: caller must be the payee")
+        await expect(edenToken.connect(bob).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::receiveWithAuth: caller must be the payee")
       })
 
       it('does not allow a receive before auth valid', async () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -349,14 +351,14 @@ describe('EdenToken', () => {
     
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.connect(alice).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::receiveWithAuth: auth not yet valid")
+        await expect(edenToken.connect(alice).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::receiveWithAuth: auth not yet valid")
       })
 
       it('does not allow a receive after auth expiration', async () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -383,14 +385,14 @@ describe('EdenToken', () => {
     
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.connect(alice).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::receiveWithAuth: auth expired")
+        await expect(edenToken.connect(alice).receiveWithAuthorization(deployer.address, alice.address, value, validAfter, validBefore, nonce, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::receiveWithAuth: auth expired")
       })
 
       it('does not allow a reuse of nonce', async () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
     
@@ -440,7 +442,7 @@ describe('EdenToken', () => {
     
         let sig = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
 
-        await expect(edenToken.connect(bob).receiveWithAuthorization(deployer.address, bob.address, value, validAfter, validBefore, nonce, sig.v, ethers.utils.hexlify(sig.r), ethers.utils.hexlify(sig.s))).to.revertedWith("revert Eden::receiveWithAuth: auth already used")
+        await expect(edenToken.connect(bob).receiveWithAuthorization(deployer.address, bob.address, value, validAfter, validBefore, nonce, sig.v, ethers.utils.hexlify(sig.r), ethers.utils.hexlify(sig.s))).to.revertedWith("Eden::receiveWithAuth: auth already used")
       })
     })
     
@@ -449,7 +451,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
 
@@ -486,7 +488,7 @@ describe('EdenToken', () => {
         const domainSeparator = ethers.utils.keccak256(
           ethers.utils.defaultAbiCoder.encode(
             ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+            [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
           )
         )
 
@@ -512,40 +514,30 @@ describe('EdenToken', () => {
 
         const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
         
-        await expect(edenToken.permit(deployer.address, alice.address, value, deadline, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("revert Eden::permit: signature expired")
+        await expect(edenToken.permit(deployer.address, alice.address, value, deadline, v, ethers.utils.hexlify(r), ethers.utils.hexlify(s))).to.revertedWith("Eden::permit: signature expired")
       })
     })
 
     context("mint", async () => {
       it('can perform a valid mint', async () => {
         const totalSupplyBefore = await edenToken.totalSupply()
-        const mintCap = await edenToken.mintCap()
-        const maxAmount = totalSupplyBefore.mul(mintCap).div(1000000)
-        const supplyChangeAllowed = await edenToken.supplyChangeAllowedAfter()
-        await ethers.provider.send("evm_setNextBlockTimestamp", [parseInt(supplyChangeAllowed.toString())])
+        const maxSupply = await edenToken.maxSupply()
+        const maxAmount = maxSupply.sub(totalSupplyBefore)
         const balanceBefore = await edenToken.balanceOf(alice.address)
         await edenToken.mint(alice.address, maxAmount)
         expect(await edenToken.balanceOf(alice.address)).to.equal(balanceBefore.add(maxAmount))
         expect(await edenToken.totalSupply()).to.equal(totalSupplyBefore.add(maxAmount))
       })
 
-      it('only supply manager can mint', async () => {
-        await expect(edenToken.connect(alice).mint(bob.address, 1)).to.revertedWith("revert Eden::mint: only the supplyManager can mint")
-      })
-
       it('cannot mint to the zero address', async () => {
-        await expect(edenToken.mint(ZERO_ADDRESS, 1)).to.revertedWith("revert Eden::mint: cannot transfer to the zero address")
+        await expect(edenToken.mint(ZERO_ADDRESS, 1)).to.revertedWith("Eden::mint: cannot transfer to the zero address")
       })
 
-      it('cannot mint in excess of the mint cap', async () => {
+      it('cannot mint in excess of maxSupply', async () => {
         const totalSupply = await edenToken.totalSupply()
-        const mintCap = await edenToken.mintCap()
-        const maxAmount = totalSupply.mul(mintCap).div(1000000)
-        await expect(edenToken.mint(alice.address, maxAmount.add(1))).to.revertedWith("revert Eden::mint: exceeded mint cap")
-      })
-
-      it('cannot mint before supply change allowed', async () => {
-        await expect(edenToken.mint(alice.address, 1)).to.revertedWith("revert Eden::mint: minting not allowed yet")
+        const maxSupply = await edenToken.maxSupply()
+        const maxAmount = maxSupply.sub(totalSupply)
+        await expect(edenToken.mint(alice.address, maxAmount.add(1))).to.revertedWith("Eden::mint: exceeds max supply")
       })
     })
   
@@ -553,55 +545,10 @@ describe('EdenToken', () => {
       it('can perform a valid burn', async () => {
         const amount = 100
         const totalSupplyBefore = await edenToken.totalSupply()
-        await edenToken.transfer(alice.address, amount)
-        const balanceBefore = await edenToken.balanceOf(alice.address)
-        await edenToken.connect(alice).approve(deployer.address, amount)
-        const allowanceBefore = await edenToken.allowance(alice.address, deployer.address)
-        const supplyChangeAllowed = await edenToken.supplyChangeAllowedAfter()
-        await ethers.provider.send("evm_setNextBlockTimestamp", [parseInt(supplyChangeAllowed.toString())])
-        await edenToken.burn(alice.address, amount)
-        expect(await edenToken.balanceOf(alice.address)).to.equal(balanceBefore.sub(amount))
-        expect(await edenToken.allowance(alice.address, deployer.address)).to.equal(allowanceBefore.sub(amount))
+        const balanceBefore = await edenToken.balanceOf(deployer.address)
+        await edenToken.burn(amount)
+        expect(await edenToken.balanceOf(deployer.address)).to.equal(balanceBefore.sub(amount))
         expect(await edenToken.totalSupply()).to.equal(totalSupplyBefore.sub(amount))
-      })
-
-      it('only supply manager can burn', async () => {
-        await expect(edenToken.connect(alice).burn(deployer.address, 1)).to.revertedWith("revert Eden::burn: only the supplyManager can burn")
-      })
-
-      it('cannot burn from the zero address', async () => {
-        await expect(edenToken.burn(ZERO_ADDRESS, 1)).to.revertedWith("revert Eden::burn: cannot transfer from the zero address")
-      })
-
-      it('cannot burn before supply change allowed', async () => {
-        await expect(edenToken.burn(deployer.address, 1)).to.revertedWith("revert Eden::burn: burning not allowed yet")
-      })
-
-      it('cannot burn in excess of the spender balance', async () => {
-        const supplyChangeAllowed = await edenToken.supplyChangeAllowedAfter()
-        await ethers.provider.send("evm_setNextBlockTimestamp", [parseInt(supplyChangeAllowed.toString())])
-        const balance = await edenToken.balanceOf(alice.address)
-        await edenToken.connect(alice).approve(deployer.address, balance)
-        await expect(edenToken.burn(alice.address, balance.add(1))).to.revertedWith("revert Eden::burn: burn amount exceeds allowance")
-      })
-
-      it('cannot burn in excess of the spender allowance', async () => {
-        const supplyChangeAllowed = await edenToken.supplyChangeAllowedAfter()
-        await ethers.provider.send("evm_setNextBlockTimestamp", [parseInt(supplyChangeAllowed.toString())])
-        await edenToken.transfer(alice.address, 100)
-        const balance = await edenToken.balanceOf(alice.address)
-        await expect(edenToken.burn(alice.address, balance)).to.revertedWith("revert Eden::burn: burn amount exceeds allowance")
-      })
-    })
-
-    context("setSupplyManager", async () => {
-      it('can set a new valid supply manager', async () => {
-        await edenToken.setSupplyManager(bob.address)
-        expect(await edenToken.supplyManager()).to.equal(bob.address)
-      })
-
-      it('only supply manager can set a new supply manager', async () => {
-        await expect(edenToken.connect(alice).setSupplyManager(bob.address)).to.revertedWith("revert Eden::setSupplyManager: only SM can change SM")
       })
     })
 
@@ -612,35 +559,7 @@ describe('EdenToken', () => {
       })
 
       it('only metadata manager can set a new metadata manager', async () => {
-        await expect(edenToken.connect(alice).setMetadataManager(bob.address)).to.revertedWith("revert Eden::setMetadataManager: only MM can change MM")
-      })
-    })
-
-    context("setMintCap", async () => {
-      it('can set a new valid mint cap', async () => {
-        await edenToken.setMintCap(0)
-        expect(await edenToken.mintCap()).to.equal(0)
-      })
-
-      it('only supply manager can set a new mint cap', async () => {
-        await expect(edenToken.connect(alice).setMintCap(0)).to.revertedWith("revert Eden::setMintCap: only SM can change mint cap")
-      })
-    })
-
-    context("setSupplyChangeWaitingPeriod", async () => {
-      it('can set a new valid supply change waiting period', async () => {
-        const waitingPeriodMinimum = await edenToken.supplyChangeWaitingPeriodMinimum()
-        await edenToken.setSupplyChangeWaitingPeriod(waitingPeriodMinimum)
-        expect(await edenToken.supplyChangeWaitingPeriod()).to.equal(waitingPeriodMinimum)
-      })
-
-      it('only supply manager can set a new supply change waiting period', async () => {
-        const waitingPeriodMinimum = await edenToken.supplyChangeWaitingPeriodMinimum()
-        await expect(edenToken.connect(alice).setSupplyChangeWaitingPeriod(waitingPeriodMinimum)).to.revertedWith("revert Eden::setSupplyChangeWaitingPeriod: only SM can change waiting period")
-      })
-
-      it('waiting period must be > minimum', async () => {
-        await expect(edenToken.setSupplyChangeWaitingPeriod(0)).to.revertedWith("revert Eden::setSupplyChangeWaitingPeriod: waiting period must be > minimum")
+        await expect(edenToken.connect(alice).setMetadataManager(bob.address)).to.revertedWith("Eden::setMetadataManager: only MM can change MM")
       })
     })
 
@@ -652,7 +571,7 @@ describe('EdenToken', () => {
       })
 
       it('only metadata manager can update token metadata', async () => {
-        await expect(edenToken.connect(alice).updateTokenMetadata("New Token", "NEW")).to.revertedWith("revert Eden::updateTokenMeta: only MM can update token metadata")
+        await expect(edenToken.connect(alice).updateTokenMetadata("New Token", "NEW")).to.revertedWith("Eden::updateTokenMeta: only MM can update token metadata")
       })
     })
   })

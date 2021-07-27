@@ -25,11 +25,13 @@ const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 const tokenFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
     const accounts = await ethers.getSigners();
     const deployer = accounts[0]
-    const admin = accounts[4]
+    const admin = accounts[1]
     const alice = accounts[5]
     const bob = accounts[6]
     const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
     const EdenToken = await EdenTokenFactory.deploy(admin.address);
+    await EdenToken.connect(admin).grantRole('0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6', deployer.address)
+    await EdenToken.mint(deployer.address, "100000000000000000000000000")
     return {
         edenToken: EdenToken,
         deployer: deployer,
@@ -43,11 +45,13 @@ const tokenFixture = deployments.createFixture(async ({deployments, getNamedAcco
 const governanceFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
     const accounts = await ethers.getSigners();
     const deployer = accounts[0]
-    const admin = accounts[4]
+    const admin = accounts[1]
     const alice = accounts[5]
     const bob = accounts[6]
     const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
     const EdenToken = await EdenTokenFactory.deploy(admin.address);
+    await EdenToken.connect(admin).grantRole('0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6', deployer.address)
+    await EdenToken.mint(deployer.address, "100000000000000000000000000")
     const VotingPowerFactory = await ethers.getContractFactory("VotingPower");
     const VotingPowerImp = await VotingPowerFactory.deploy();
     const VotingPowerPrismFactory = await ethers.getContractFactory("VotingPowerPrism");
@@ -76,26 +80,22 @@ const governanceFixture = deployments.createFixture(async ({deployments, getName
 const rewardsFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
     const accounts = await ethers.getSigners();
     const deployer = accounts[0]
-    const admin = await ethers.provider.getSigner(ADMIN_ADDRESS)
+    const admin = accounts[1]
     const alice = accounts[5]
     const bob = accounts[6]
-    await ethers.provider.send('hardhat_impersonateAccount', [DAO_TREASURY_ADDRESS]);
-    const treasury = await ethers.provider.getSigner(DAO_TREASURY_ADDRESS)
-    const EdenToken = new ethers.Contract(EDEN_TOKEN_ADDRESS, EDEN_ABI, deployer)
-    await deployer.sendTransaction({ to: DAO_TREASURY_ADDRESS, value: ethers.utils.parseEther("0.5")})
-    await EdenToken.connect(treasury).transfer(ADMIN_ADDRESS, ethers.BigNumber.from(INITIAL_EDEN_REWARDS_BALANCE))
-    await EdenToken.connect(treasury).transfer(deployer.address, ethers.BigNumber.from(INITIAL_EDEN_REWARDS_BALANCE))
-    await EdenToken.connect(treasury).transfer(alice.address, ethers.BigNumber.from(TOKEN_LIQUIDITY))
-    await EdenToken.connect(treasury).transfer(bob.address, ethers.BigNumber.from(TOKEN_LIQUIDITY))
-    await deployer.sendTransaction({ to: ADMIN_ADDRESS, value: ethers.utils.parseEther("1.0")})
-    await deployer.sendTransaction({ to: alice.address, value: ethers.utils.parseEther("1.0")})
-    await deployer.sendTransaction({ to: bob.address, value: ethers.utils.parseEther("1.0")})
-    await ethers.provider.send('hardhat_stopImpersonatingAccount', [DAO_TREASURY_ADDRESS]);
-    await ethers.provider.send('hardhat_impersonateAccount', [ADMIN_ADDRESS]);
+    const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
+    const EdenToken = await EdenTokenFactory.deploy(admin.address);
+    await EdenToken.connect(admin).grantRole('0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6', deployer.address)
+    await EdenToken.mint(deployer.address, "10000000000000000000000000")
+    await EdenToken.mint(admin.address, "10000000000000000000000000")
+    await EdenToken.mint(alice.address, "10000000000000000000000000")
+    await EdenToken.mint(bob.address, "10000000000000000000000000")
     
-    const VotingPower = new ethers.Contract(VOTING_POWER_ADDRESS, VOTING_POWER_ABI, deployer)
     const VotingPowerFactory = await ethers.getContractFactory("VotingPower");
     const VotingPowerImp = await VotingPowerFactory.deploy();
+    const VotingPowerPrismFactory = await ethers.getContractFactory("VotingPowerPrism");
+    const VotingPowerPrism = await VotingPowerPrismFactory.deploy(deployer.address);
+    const VotingPower = new ethers.Contract(VotingPowerPrism.address, VotingPowerImp.interface, deployer)
     await VotingPower.connect(admin).setPendingProxyImplementation(VotingPowerImp.address)
     await VotingPowerImp.connect(admin).become(VotingPower.address)
 

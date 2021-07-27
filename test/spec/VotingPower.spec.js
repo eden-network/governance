@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const fs = require('fs')
-const { ethers, network } = require("hardhat");
+const { ethers, getChainId } = require("hardhat");
 const { governanceFixture } = require("../fixtures")
 const { ecsign } = require("ethereumjs-util")
 
@@ -16,7 +16,6 @@ const PERMIT_TYPEHASH = ethers.utils.keccak256(
 
 describe("VotingPower", function() {
     let edenToken
-    let vesting
     let votingPower
     let votingPowerPrism
     let votingPowerImplementation
@@ -25,11 +24,11 @@ describe("VotingPower", function() {
     let alice
     let bob
     let ZERO_ADDRESS
+    let chainId
 
     beforeEach(async () => {
         const fix = await governanceFixture()
         edenToken = fix.edenToken
-        vesting = fix.vesting
         votingPower = fix.votingPower
         votingPowerPrism = fix.votingPowerPrism
         votingPowerImplementation = fix.votingPowerImplementation
@@ -38,6 +37,7 @@ describe("VotingPower", function() {
         alice = fix.alice
         bob = fix.bob
         ZERO_ADDRESS = fix.ZERO_ADDRESS
+        chainId = await getChainId()
     })
 
     context("Pre-Init", async () => {
@@ -51,7 +51,7 @@ describe("VotingPower", function() {
         beforeEach(async () => {
             await votingPowerPrism.setPendingProxyImplementation(votingPowerImplementation.address)
             await votingPowerImplementation.become(votingPowerPrism.address)
-            await votingPower.initialize(edenToken.address, vesting.address)
+            await votingPower.initialize(edenToken.address, admin.address)
         })
         context("edenToken", async () => {
             it("returns the current EDEN token address", async function() {
@@ -81,15 +81,15 @@ describe("VotingPower", function() {
             })
 
             it("does not allow a zero stake amount", async function() {
-                await expect(votingPower['stake(uint256)'](0)).to.revertedWith("revert VP::stake: cannot stake 0")
+                await expect(votingPower['stake(uint256)'](0)).to.revertedWith("VP::stake: cannot stake 0")
             })
 
             it("does not allow a user to stake more tokens than they have", async function() {
-                await expect(votingPower.connect(alice)['stake(uint256)'](1000)).to.revertedWith("revert VP::stake: not enough tokens")
+                await expect(votingPower.connect(alice)['stake(uint256)'](1000)).to.revertedWith("VP::stake: not enough tokens")
             })
 
             it("does not allow a user to stake before approval", async function() {
-                await expect(votingPower['stake(uint256)'](1000)).to.revertedWith("revert VP::stake: must approve tokens before staking")
+                await expect(votingPower['stake(uint256)'](1000)).to.revertedWith("VP::stake: must approve tokens before staking")
             })
 
         })
@@ -105,7 +105,7 @@ describe("VotingPower", function() {
                 const domainSeparator = ethers.utils.keccak256(
                     ethers.utils.defaultAbiCoder.encode(
                         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
                     )
                 )
           
@@ -142,7 +142,7 @@ describe("VotingPower", function() {
                 const domainSeparator = ethers.utils.keccak256(
                     ethers.utils.defaultAbiCoder.encode(
                         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
                     )
                 )
           
@@ -167,7 +167,7 @@ describe("VotingPower", function() {
                 )
         
                 const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
-                await expect(votingPower.stakeWithPermit(value, deadline, v, r, s)).to.revertedWith("revert VP::stakeWithPermit: cannot stake 0")
+                await expect(votingPower.stakeWithPermit(value, deadline, v, r, s)).to.revertedWith("VP::stakeWithPermit: cannot stake 0")
             })
 
             it("does not allow a user to stake using a permit signed by someone else", async function() {
@@ -175,7 +175,7 @@ describe("VotingPower", function() {
                 const domainSeparator = ethers.utils.keccak256(
                     ethers.utils.defaultAbiCoder.encode(
                         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
                     )
                 )
           
@@ -208,7 +208,7 @@ describe("VotingPower", function() {
                 const domainSeparator = ethers.utils.keccak256(
                     ethers.utils.defaultAbiCoder.encode(
                         ['bytes32', 'bytes32', 'bytes32', 'uint256', 'address'],
-                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), ethers.provider.network.chainId, edenToken.address]
+                        [DOMAIN_TYPEHASH, ethers.utils.keccak256(ethers.utils.toUtf8Bytes(await edenToken.name())), ethers.utils.keccak256(ethers.utils.toUtf8Bytes("1")), chainId, edenToken.address]
                     )
                 )
           
@@ -233,27 +233,7 @@ describe("VotingPower", function() {
                 )
         
                 const { v, r, s } = ecsign(Buffer.from(digest.slice(2), 'hex'), Buffer.from(DEPLOYER_PRIVATE_KEY, 'hex'))
-                await expect(votingPower.connect(alice).stakeWithPermit(value, deadline, v, r, s)).to.revertedWith("revert VP::stakeWithPermit: not enough tokens")
-            })
-        })
-
-        context("addVotingPowerForVestingTokens", async () => {
-            it("does not allow user to add 0 voting power", async function() {
-                await expect(votingPower.addVotingPowerForVestingTokens(alice.address, 0)).to.revertedWith("revert VP::addVPforVT: cannot add 0 voting power")
-            })
-
-            it("does not allow addresses other than the vesting contract to add voting power", async function() {
-                await expect(votingPower.addVotingPowerForVestingTokens(alice.address, 1000)).to.revertedWith("revert VP::addVPforVT: only vesting contract")
-            })
-        })
-
-        context("removeVotingPowerForClaimedTokens", async () => {
-            it("does not allow user to remove 0 voting power", async function() {
-                await expect(votingPower.removeVotingPowerForClaimedTokens(alice.address, 0)).to.revertedWith("revert VP::removeVPforCT: cannot remove 0 voting power")
-            })
-
-            it("does not allow addresses other than the vesting contract to remove voting power", async function() {
-                await expect(votingPower.removeVotingPowerForClaimedTokens(alice.address, 1000)).to.revertedWith("revert VP::removeVPforCT: only vesting contract")
+                await expect(votingPower.connect(alice).stakeWithPermit(value, deadline, v, r, s)).to.revertedWith("VP::stakeWithPermit: not enough tokens")
             })
         })
 
@@ -278,27 +258,13 @@ describe("VotingPower", function() {
             })
 
             it("does not allow a zero withdrawal amount", async function() {
-                await expect(votingPower['withdraw(uint256)'](0)).to.revertedWith("revert VP::withdraw: cannot withdraw 0")
+                await expect(votingPower['withdraw(uint256)'](0)).to.revertedWith("VP::withdraw: cannot withdraw 0")
             })
 
             it("does not allow a user to withdraw more than their current stake", async function() {
                 await edenToken.approve(votingPower.address, 1000)
                 await votingPower['stake(uint256)'](1000)
-                await expect(votingPower['withdraw(uint256)'](1001)).to.revertedWith("revert VP::_withdraw: not enough tokens staked")
-            })
-
-            it("does not allow a user to withdraw more than they have staked when they have vesting tokens", async function() {
-                await edenToken.approve(votingPower.address, 1000)
-                await votingPower['stake(uint256)'](1000)
-                await vesting.setVotingPowerContract(votingPower.address)
-                await edenToken.approve(vesting.address, ethers.constants.MaxUint256)
-                let decimals = await edenToken.decimals()
-                const START_TIME = parseInt(Date.now() / 1000) + 21600
-                const VESTING_DURATION_IN_DAYS = 4
-                const VESTING_CLIFF_IN_DAYS = 1
-                let grantAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-                await vesting.addTokenGrant(deployer.address, START_TIME, grantAmount, VESTING_DURATION_IN_DAYS, VESTING_CLIFF_IN_DAYS)
-                await expect(votingPower['withdraw(uint256)'](2000)).to.revertedWith("revert VP::_withdraw: not enough tokens staked")
+                await expect(votingPower['withdraw(uint256)'](1001)).to.revertedWith("VP::_withdraw: not enough tokens staked")
             })
         })
     })

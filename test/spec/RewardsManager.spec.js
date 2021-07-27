@@ -44,7 +44,7 @@ describe('RewardsManager', () => {
 
     context('before startBlock', async () => {
         context('rewardsActive', async () => {
-            xit('returns false if rewards period has not started', async () => {
+            it('returns false if rewards period has not started', async () => {
                 expect(await rewardsManager.rewardsActive()).to.eq(false)
                 await rewardsManager.connect(admin).addRewardsBalance(INITIAL_EDEN_REWARDS_BALANCE)
                 expect(await rewardsManager.rewardsActive()).to.eq(false)
@@ -61,7 +61,7 @@ describe('RewardsManager', () => {
                     await ethers.provider.send("evm_mine")
                 }
             })
-            xit('returns true if rewards period is active', async () => {
+            it('returns true if rewards period is active', async () => {
                 expect(await rewardsManager.rewardsActive()).to.eq(false)
                 await rewardsManager.connect(admin).addRewardsBalance(INITIAL_EDEN_REWARDS_BALANCE)
                 const ALLOC_POINTS = "10"
@@ -76,7 +76,7 @@ describe('RewardsManager', () => {
             beforeEach(async () => {
                 await rewardsManager.connect(admin).addRewardsBalance(INITIAL_EDEN_REWARDS_BALANCE)
             })
-            xit('successfully adds a valid sushi pool', async () => {
+            it('successfully adds a valid sushi pool', async () => {
                 const ALLOC_POINTS = "10"
                 const VESTING_PERCENT = "666666"
                 const VESTING_PERIOD = "180"
@@ -98,7 +98,7 @@ describe('RewardsManager', () => {
                 expect(await rewardsManager.endBlock()).to.eq(txBlock.add(contractBal.div(rewardsPerBlock)))
             })
 
-            xit('successfully adds a valid uni pool', async () => {
+            it('successfully adds a valid uni pool', async () => {
                 const ALLOC_POINTS = "10"
                 const VESTING_PERCENT = "666666"
                 const VESTING_PERIOD = "180"
@@ -115,7 +115,7 @@ describe('RewardsManager', () => {
                 expect(newPool.vestingPeriod.toString()).to.eq(VESTING_PERIOD)
             })
 
-            xit('successfully adds a valid sushi pool w/o voting power', async () => {
+            it('successfully adds a valid sushi pool w/o voting power', async () => {
                 const ALLOC_POINTS = "10"
                 const VESTING_PERCENT = "666666"
                 const VESTING_PERIOD = "180"
@@ -147,7 +147,7 @@ describe('RewardsManager', () => {
                 expect(await votingPower.balanceOf(deployer.address)).to.eq(0)
             })
 
-            xit('does not allow non-owner to add sushi pool', async () => {
+            it('does not allow non-owner to add sushi pool', async () => {
                 const ALLOC_POINTS = "10"
                 const VESTING_PERCENT = "666666"
                 const VESTING_PERIOD = "180"
@@ -164,7 +164,7 @@ describe('RewardsManager', () => {
                 await rewardsManager.connect(admin).add(ALLOC_POINTS, sushiPool.address, VESTING_PERCENT, VESTING_PERIOD, 0, true, MASTERCHEF_POOL_ID, true, true)
             })
 
-            xit('allows owner to set alloc points for pool', async () => {
+            it('allows owner to set alloc points for pool', async () => {
                 const ALLOC_POINTS = "20"
                 const numPools = await rewardsManager.poolLength()
                 const pid = numPools.sub(1)
@@ -173,7 +173,7 @@ describe('RewardsManager', () => {
                 expect(pool.allocPoint).to.eq(ALLOC_POINTS)
             })
 
-            xit('does not allow non-owner to set alloc points for pool', async () => {
+            it('does not allow non-owner to set alloc points for pool', async () => {
                 const ALLOC_POINTS = "20"
                 const numPools = await rewardsManager.poolLength()
                 const pid = numPools.sub(1)
@@ -202,7 +202,7 @@ describe('RewardsManager', () => {
                     await ethers.provider.send("evm_mine")
                 }
             })
-            xit('creates a valid deposit for a sushi pool', async () => {
+            it('creates a valid deposit for a sushi pool', async () => {
                 const numPools = await rewardsManager.poolLength()
                 const poolIndex = numPools.sub(1)
                 const slpBalance = await sushiPool.balanceOf(deployer.address)
@@ -230,7 +230,7 @@ describe('RewardsManager', () => {
                 expect(await sushiToken.balanceOf(deployer.address)).to.eq(0)
             })
 
-            xit('creates multiple valid deposits for sushi pools', async () => {
+            it('creates multiple valid deposits for sushi pools', async () => {
                 const numPools = await rewardsManager.poolLength()
                 const poolIndex = numPools.sub(1)
                 const slpBalance = await sushiPool.balanceOf(deployer.address)
@@ -282,7 +282,7 @@ describe('RewardsManager', () => {
                 expect(sushiBalance).to.eq(pendingSushi)
             })
 
-            xit('allows a user to harvest rewards by passing in zero as amount', async () => {
+            it('allows a user to harvest rewards by passing in zero as amount', async () => {
                 const numPools = await rewardsManager.poolLength()
                 const poolIndex = numPools.sub(1)
                 const slpBalance = await sushiPool.balanceOf(deployer.address)
@@ -355,7 +355,7 @@ describe('RewardsManager', () => {
                 }
             })
 
-            xit('allows a user to withdraw all rewards if only lp', async () => {
+            it('allows a user to withdraw all rewards if only lp', async () => {
                 const rmEdenBalanceBefore = await edenToken.balanceOf(rewardsManager.address)
                 const deployerEdenBalanceBefore = await edenToken.balanceOf(deployer.address)
                 const numPools = await rewardsManager.poolLength()
@@ -399,7 +399,7 @@ describe('RewardsManager', () => {
                 expect(totalEdenDistributed.add(totalEdenRemoved)).to.eq(0)
             })
 
-            xit('allows a user to withdraw all rewards if reward period is over', async () => {
+            it('allows a user to withdraw all rewards if reward period is over', async () => {
                 const rmEdenBalanceBefore = await edenToken.balanceOf(rewardsManager.address)
                 const deployerEdenBalanceBefore = await edenToken.balanceOf(deployer.address)
                 const numPools = await rewardsManager.poolLength()
@@ -443,7 +443,7 @@ describe('RewardsManager', () => {
                 expect(totalEdenDistributed.add(totalEdenRemoved)).to.eq(0)
             })
 
-            xit('allows multiple users to withdraw rewards after reward period is over', async () => {
+            it('allows multiple users to withdraw rewards after reward period is over', async () => {
                 const TOKEN_LIQUIDITY = "100000000000000000000"
                 const ETH_LIQUIDITY = "500000000000000000"
                 await edenToken.connect(alice).approve(sushiRouter.address, TOKEN_LIQUIDITY)
