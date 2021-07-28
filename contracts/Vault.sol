@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./interfaces/IERC20.sol";
+import "./interfaces/IERC20Permit.sol";
 import "./interfaces/ILockManager.sol";
 import "./lib/SafeERC20.sol";
 
@@ -11,7 +11,7 @@ import "./lib/SafeERC20.sol";
  * + optionally providing locked tokens with voting power
  */
 contract Vault {
-    using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20Permit;
 
     /// @notice lockManager contract
     ILockManager public lockManager;
@@ -138,7 +138,7 @@ contract Vault {
         require(amount > 0, "Vault::lockTokensWithPermit: amount not > 0");
 
         // Set approval using permit signature
-        IERC20(token).permit(locker, address(this), amount, deadline, v, r, s);
+        IERC20Permit(token).permit(locker, address(this), amount, deadline, v, r, s);
         _lockTokens(token, locker, receiver, startTime, amount, vestingDurationInDays, cliffDurationInDays, grantVotingPower);
     }
 
@@ -526,7 +526,7 @@ contract Vault {
     ) internal {
 
         // Transfer the tokens under the control of the vault contract
-        IERC20(token).safeTransferFrom(locker, address(this), amount);
+        IERC20Permit(token).safeTransferFrom(locker, address(this), amount);
 
         uint48 lockStartTime = startTime == 0 ? uint48(block.timestamp) : startTime;
         uint256 votingPowerGranted;
@@ -575,7 +575,7 @@ contract Vault {
         lock.amountClaimed = lock.amountClaimed + claimAmount;
 
         // Release tokens
-        IERC20(lock.token).safeTransfer(lock.receiver, claimAmount);
+        IERC20Permit(lock.token).safeTransfer(lock.receiver, claimAmount);
         emit UnlockedTokensClaimed(lock.receiver, lock.token, lockId, claimAmount, votingPowerRemoved);
     }
 

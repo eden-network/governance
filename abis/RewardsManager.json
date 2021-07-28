@@ -546,7 +546,7 @@
     "name": "poolInfo",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "contract IERC20Extended",
         "name": "token",
         "type": "address"
       },
@@ -640,7 +640,7 @@
     "name": "rewardToken",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "contract IERC20Extended",
         "name": "",
         "type": "address"
       }
@@ -799,7 +799,7 @@
     "name": "sushiToken",
     "outputs": [
       {
-        "internalType": "contract IERC20",
+        "internalType": "contract IERC20Extended",
         "name": "",
         "type": "address"
       }

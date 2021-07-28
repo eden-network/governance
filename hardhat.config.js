@@ -148,7 +148,8 @@ module.exports = {
   abiExporter: {
     path: './abis',
     clear: true,
-    flat: true
+    flat: true,
+    except: ["interfaces"]
   },
   tenderly: {
     username: TENDERLY_USERNAME,

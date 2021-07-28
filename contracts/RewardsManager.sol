@@ -4,6 +4,7 @@ pragma solidity ^0.8.0;
 import "./interfaces/IMasterChef.sol";
 import "./interfaces/IVault.sol";
 import "./interfaces/ILockManager.sol";
+import "./interfaces/IERC20Extended.sol";
 import "./lib/SafeERC20.sol";
 import "./lib/ReentrancyGuard.sol";
 
@@ -12,7 +13,7 @@ import "./lib/ReentrancyGuard.sol";
  * @dev Controls rewards distribution for network
  */
 contract RewardsManager is ReentrancyGuard {
-    using SafeERC20 for IERC20;
+    using SafeERC20 for IERC20Extended;
 
     /// @notice Current owner of this contract
     address public owner;
@@ -37,7 +38,7 @@ contract RewardsManager is ReentrancyGuard {
 
     /// @notice Info of each pool.
     struct PoolInfo {
-        IERC20 token;               // Address of token contract.
+        IERC20Extended token;               // Address of token contract.
         uint256 allocPoint;         // How many allocation points assigned to this pool. Reward tokens to distribute per block.
         uint256 lastRewardBlock;    // Last block number where reward tokens were distributed.
         uint256 accRewardsPerShare; // Accumulated reward tokens per share, times 1e12. See below.
@@ -50,10 +51,10 @@ contract RewardsManager is ReentrancyGuard {
     }
 
     /// @notice Reward token
-    IERC20 public rewardToken;
+    IERC20Extended public rewardToken;
 
     /// @notice SUSHI token
-    IERC20 public sushiToken;
+    IERC20Extended public sushiToken;
 
     /// @notice Sushi Master Chef
     IMasterChef public masterChef;
@@ -145,10 +146,10 @@ contract RewardsManager is ReentrancyGuard {
         vault = IVault(_vault);
         emit ChangedAddress("VAULT", address(0), _vault);
 
-        rewardToken = IERC20(_rewardToken);
+        rewardToken = IERC20Extended(_rewardToken);
         emit ChangedAddress("REWARD_TOKEN", address(0), _rewardToken);
 
-        sushiToken = IERC20(_sushiToken);
+        sushiToken = IERC20Extended(_sushiToken);
         emit ChangedAddress("SUSHI_TOKEN", address(0), _sushiToken);
 
         masterChef = IMasterChef(_masterChef);
@@ -201,7 +202,7 @@ contract RewardsManager is ReentrancyGuard {
         uint256 rewardStartBlock = block.number > startBlock ? block.number : startBlock;
         totalAllocPoint = totalAllocPoint + allocPoint;
         poolInfo.push(PoolInfo({
-            token: IERC20(token),
+            token: IERC20Extended(token),
             allocPoint: allocPoint,
             lastRewardBlock: rewardStartBlock,
             accRewardsPerShare: 0,
@@ -214,9 +215,9 @@ contract RewardsManager is ReentrancyGuard {
         }));
         if (sushiPid != uint256(0)) {
             sushiPools[token] = sushiPid;
-            IERC20(token).safeIncreaseAllowance(address(masterChef), type(uint256).max);
+            IERC20Extended(token).safeIncreaseAllowance(address(masterChef), type(uint256).max);
         }
-        IERC20(token).safeIncreaseAllowance(address(vault), type(uint256).max);
+        IERC20Extended(token).safeIncreaseAllowance(address(vault), type(uint256).max);
         emit PoolAdded(poolInfo.length - 1, token, allocPoint, totalAllocPoint, rewardStartBlock, sushiPid, vpForDeposit, vpForVesting);
     }
 
@@ -438,7 +439,7 @@ contract RewardsManager is ReentrancyGuard {
     ) external onlyOwner {
         require(tokensToApprove.length == approvalAmounts.length, "RM::tokenAllow: not same length");
         for(uint i = 0; i < tokensToApprove.length; i++) {
-            IERC20 token = IERC20(tokensToApprove[i]);
+            IERC20Extended token = IERC20Extended(tokensToApprove[i]);
             if (token.allowance(address(this), spender) != type(uint256).max) {
                 token.safeApprove(spender, approvalAmounts[i]);
             }
@@ -459,7 +460,7 @@ contract RewardsManager is ReentrancyGuard {
     ) external onlyOwner {
         require(tokens.length == amounts.length, "RM::rescueTokens: not same length");
         for (uint i = 0; i < tokens.length; i++) {
-            IERC20 token = IERC20(tokens[i]);
+            IERC20Extended token = IERC20Extended(tokens[i]);
             uint256 withdrawalAmount;
             uint256 tokenBalance = token.balanceOf(address(this));
             uint256 tokenAllowance = token.allowance(address(this), receiver);
@@ -495,7 +496,7 @@ contract RewardsManager is ReentrancyGuard {
      */
     function setSushiToken(address newToken) external onlyOwner {
         emit ChangedAddress("SUSHI_TOKEN", address(sushiToken), newToken);
-        sushiToken = IERC20(newToken);
+        sushiToken = IERC20Extended(newToken);
     }
 
     /**
