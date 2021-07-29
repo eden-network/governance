@@ -1,6 +1,6 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
-  const { deploy, log, deterministic } = deployments;
-  const { deployer, admin } = await getNamedAccounts();
+  const { deploy, log } = deployments;
+  const { deployer } = await getNamedAccounts();
 
   log(`1) Eden Token`)
   // Deploy EdenToken contract
@@ -8,8 +8,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     from: deployer,
     contract: "EdenToken",
     gas: 4000000,
-    args: [admin],
-    skipIfAlreadyDeployed: true
+    args: [deployer],
+    skipIfAlreadyDeployed: false
   });
 
   if (deployResult.newlyDeployed) {

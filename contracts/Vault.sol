@@ -14,7 +14,7 @@ contract Vault {
     using SafeERC20 for IERC20Permit;
 
     /// @notice lockManager contract
-    ILockManager public lockManager;
+    ILockManager public immutable lockManager;
 
     /// @notice Lock definition
     struct Lock {

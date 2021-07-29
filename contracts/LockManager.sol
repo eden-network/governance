@@ -20,7 +20,7 @@ contract LockManager is AccessControl, ILockManager {
     mapping (address => mapping (address => LockedStake)) internal lockedStakes;
 
     /// @notice Voting power contract
-    IVotingPower public votingPower;
+    IVotingPower public immutable votingPower;
 
     /// @notice modifier to restrict functions to only contracts that have been added as lockers
     modifier onlyLockers() {
