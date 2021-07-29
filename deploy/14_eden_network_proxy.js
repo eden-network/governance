@@ -4,10 +4,10 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const TAX_NUMERATOR = process.env.TAX_NUMERATOR
   const TAX_DENOMINATOR = process.env.TAX_DENOMINATOR
   const token = await deployments.get("EdenToken");
-  const slotMarket = await deployments.get("SlotMarket")
-  const slotMarketManager = await deployments.get("SlotMarketManager")
-  const slotMarketInterface = new ethers.utils.Interface(slotMarket.abi);
-  const initData = slotMarketInterface.encodeFunctionData("initialize", [
+  const edenNetwork = await deployments.get("EdenNetwork")
+  const edenNetworkManager = await deployments.get("EdenNetworkManager")
+  const edenNetworkInterface = new ethers.utils.Interface(edenNetwork.abi);
+  const initData = edenNetworkInterface.encodeFunctionData("initialize", [
       token.address,
       admin,
       TAX_NUMERATOR,
@@ -15,14 +15,15 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
     ]
   );
 
-  log(`14) SlotMarketProxy`)
-  // Deploy SlotMarketProxy contract
-  const deployResult = await deploy("SlotMarketProxy", {
+  log(`14) EdenNetworkProxy`)
+  // Deploy EdenNetworkProxy contract
+  const deployResult = await deploy("EdenNetworkProxy", {
     from: deployer,
-    contract: "SlotMarketProxy",
+    contract: "EdenNetworkProxy",
     gas: 4000000,
-    args: [slotMarket.address, slotMarketManager.address, initData],
-    skipIfAlreadyDeployed: true
+    args: [edenNetwork.address, edenNetworkManager.address, initData],
+    skipIfAlreadyDeployed: true,
+    deterministicDeployment: token.address
   });
 
   if (deployResult.newlyDeployed) {
@@ -32,5 +33,5 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   }
 };
 
-module.exports.tags = ["14", "SlotMarketProxy"]
+module.exports.tags = ["14", "EdenNetworkProxy"]
 module.exports.dependencies = ["13"]

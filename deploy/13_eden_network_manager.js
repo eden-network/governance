@@ -2,11 +2,11 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
   
-  log(`13) SlotMarketManager`)
-  // Deploy SlotMarketManager contract
-  const deployResult = await deploy("SlotMarketManager", {
+  log(`13) EdenNetworkManager`)
+  // Deploy EdenNetworkManager contract
+  const deployResult = await deploy("EdenNetworkManager", {
     from: deployer,
-    contract: "SlotMarketManager",
+    contract: "EdenNetworkManager",
     gas: 4000000,
     skipIfAlreadyDeployed: true
   });
@@ -18,5 +18,5 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   }
 };
 
-module.exports.tags = ["13", "SlotMarketManager"]
+module.exports.tags = ["13", "EdenNetworkManager"]
 module.exports.dependencies = ["12"]

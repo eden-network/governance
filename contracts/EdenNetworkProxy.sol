@@ -5,10 +5,10 @@ pragma solidity ^0.8.0;
 import "./lib/ERC1967Proxy.sol";
 
 /**
- * @title SlotMarketProxy
+ * @title EdenNetworkProxy
  * @dev This contract implements a proxy that is upgradeable by an admin, compatible with the OpenZeppelin Upgradeable Transparent Proxy standard.
  */
-contract SlotMarketProxy is ERC1967Proxy {
+contract EdenNetworkProxy is ERC1967Proxy {
     /**
      * @dev Initializes an upgradeable proxy managed by `_admin`, backed by the implementation at `_logic`, and
      * optionally initialized with `_data` as explained in {UpgradeableProxy-constructor}.
@@ -128,7 +128,7 @@ contract SlotMarketProxy is ERC1967Proxy {
      * @dev Makes sure the admin cannot access the fallback function. See {Proxy-_beforeFallback}.
      */
     function _beforeFallback() internal override {
-        require(msg.sender != _admin(), "SlotMarketProxy: admin cannot fallback to proxy target");
+        require(msg.sender != _admin(), "EdenNetworkProxy: admin cannot fallback to proxy target");
         super._beforeFallback();
     }
 }

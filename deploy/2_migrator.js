@@ -12,7 +12,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         contract: "Migrator",
         gas: 4000000,
         args: [ARCH_ADDRESS, edenToken.address],
-        skipIfAlreadyDeployed: false
+        skipIfAlreadyDeployed: true
     });
 
     if (deployResult.newlyDeployed) {

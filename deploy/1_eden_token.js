@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     contract: "EdenToken",
     gas: 4000000,
     args: [deployer],
-    skipIfAlreadyDeployed: false
+    skipIfAlreadyDeployed: true
   });
 
   if (deployResult.newlyDeployed) {

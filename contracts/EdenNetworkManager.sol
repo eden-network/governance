@@ -8,15 +8,15 @@ pragma solidity ^0.8.0;
 import "./lib/Initializable.sol";
 
 /**
- * @title SlotMarketManager
+ * @title EdenNetworkManager
  */
-contract SlotMarketManager is Initializable {
+contract EdenNetworkManager is Initializable {
 
-    /// @notice SlotMarketManager admin
+    /// @notice EdenNetworkManager admin
     address public admin;
 
-    /// @notice SlotMarketProxy address
-    address public slotMarketProxy;
+    /// @notice EdenNetworkProxy address
+    address public edenNetworkProxy;
 
     /// @notice Admin modifier
     modifier onlyAdmin() {
@@ -27,11 +27,11 @@ contract SlotMarketManager is Initializable {
     /// @notice New admin event
     event AdminChanged(address indexed oldAdmin, address indexed newAdmin);
 
-    /// @notice New slot market proxy event
-    event SlotMarketProxyChanged(address indexed oldSlotMarketProxy, address indexed newSlotMarketProxy);
+    /// @notice New Eden Network proxy event
+    event EdenNetworkProxyChanged(address indexed oldEdenNetworkProxy, address indexed newEdenNetworkProxy);
 
     /**
-     * @notice Construct new SlotMarketManager contract, setting msg.sender as admin
+     * @notice Construct new EdenNetworkManager contract, setting msg.sender as admin
      */
     constructor() {
         admin = msg.sender;
@@ -40,18 +40,18 @@ contract SlotMarketManager is Initializable {
 
     /**
      * @notice Initialize contract
-     * @param _slotMarketProxy SlotMarket proxy contract address
+     * @param _edenNetworkProxy EdenNetwork proxy contract address
      * @param _admin Admin address
      */
     function initialize(
-        address _slotMarketProxy,
+        address _edenNetworkProxy,
         address _admin
     ) external initializer onlyAdmin {
         emit AdminChanged(admin, _admin);
         admin = _admin;
 
-        slotMarketProxy = _slotMarketProxy;
-        emit SlotMarketProxyChanged(address(0), _slotMarketProxy);
+        edenNetworkProxy = _edenNetworkProxy;
+        emit EdenNetworkProxyChanged(address(0), _edenNetworkProxy);
     }
 
     /**
@@ -67,65 +67,65 @@ contract SlotMarketManager is Initializable {
     }
 
     /**
-     * @notice Set new slot market proxy contract
+     * @notice Set new Eden Network proxy contract
      * @dev Can only be executed by admin
-     * @param newSlotMarketProxy new slot market proxy address
+     * @param newEdenNetworkProxy new Eden Network proxy address
      */
-    function setSlotMarketProxy(
-        address newSlotMarketProxy
+    function setEdenNetworkProxy(
+        address newEdenNetworkProxy
     ) external onlyAdmin {
-        emit SlotMarketProxyChanged(slotMarketProxy, newSlotMarketProxy);
-        slotMarketProxy = newSlotMarketProxy;
+        emit EdenNetworkProxyChanged(edenNetworkProxy, newEdenNetworkProxy);
+        edenNetworkProxy = newEdenNetworkProxy;
     }
 
     /**
-     * @notice Public getter for SlotMarket Proxy implementation contract address
+     * @notice Public getter for EdenNetwork Proxy implementation contract address
      */
     function getProxyImplementation() public view returns (address) {
         // We need to manually run the static call since the getter cannot be flagged as view
         // bytes4(keccak256("implementation()")) == 0x5c60da1b
-        (bool success, bytes memory returndata) = slotMarketProxy.staticcall(hex"5c60da1b");
+        (bool success, bytes memory returndata) = edenNetworkProxy.staticcall(hex"5c60da1b");
         require(success);
         return abi.decode(returndata, (address));
     }
 
     /**
-     * @notice Public getter for SlotMarket Proxy admin address
+     * @notice Public getter for EdenNetwork Proxy admin address
      */
     function getProxyAdmin() public view returns (address) {
         // We need to manually run the static call since the getter cannot be flagged as view
         // bytes4(keccak256("admin()")) == 0xf851a440
-        (bool success, bytes memory returndata) = slotMarketProxy.staticcall(hex"f851a440");
+        (bool success, bytes memory returndata) = edenNetworkProxy.staticcall(hex"f851a440");
         require(success);
         return abi.decode(returndata, (address));
     }
 
     /**
-     * @notice Set new admin for SlotMarket proxy contract
+     * @notice Set new admin for EdenNetwork proxy contract
      * @param newAdmin new admin address
      */
     function setProxyAdmin(
         address newAdmin
     ) external onlyAdmin {
         // bytes4(keccak256("changeAdmin(address)")) = 0x8f283970
-        (bool success, ) = slotMarketProxy.call(abi.encodeWithSelector(hex"8f283970", newAdmin));
+        (bool success, ) = edenNetworkProxy.call(abi.encodeWithSelector(hex"8f283970", newAdmin));
         require(success, "setProxyAdmin failed");
     }
 
     /**
-     * @notice Set new implementation for SlotMarket proxy contract
+     * @notice Set new implementation for EdenNetwork proxy contract
      * @param newImplementation new implementation address
      */
     function upgrade(
         address newImplementation
     ) external onlyAdmin {
         // bytes4(keccak256("upgradeTo(address)")) = 0x3659cfe6
-        (bool success, ) = slotMarketProxy.call(abi.encodeWithSelector(hex"3659cfe6", newImplementation));
+        (bool success, ) = edenNetworkProxy.call(abi.encodeWithSelector(hex"3659cfe6", newImplementation));
         require(success, "upgrade failed");
     }
 
     /**
-     * @notice Set new implementation for SlotMarket proxy contract + call function after
+     * @notice Set new implementation for EdenNetwork proxy contract + call function after
      * @param newImplementation new implementation address
      * @param data Bytes-encoded function to call
      */
@@ -134,7 +134,7 @@ contract SlotMarketManager is Initializable {
         bytes memory data
     ) external payable onlyAdmin {
         // bytes4(keccak256("upgradeToAndCall(address,bytes)")) = 0x4f1ef286
-        (bool success, ) = slotMarketProxy.call{value: msg.value}(abi.encodeWithSelector(hex"4f1ef286", newImplementation, data));
+        (bool success, ) = edenNetworkProxy.call{value: msg.value}(abi.encodeWithSelector(hex"4f1ef286", newImplementation, data));
         require(success, "upgradeAndCall failed");
     }
 }
