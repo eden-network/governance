@@ -6,8 +6,9 @@ import "./interfaces/IMerkleDistributor.sol";
 import "./interfaces/IGovernance.sol";
 import "./lib/AccessControl.sol";
 import "./lib/MerkleProof.sol";
+import "./lib/ERC721Enumerable.sol";
 
-contract MerkleDistributor is IMerkleDistributor, AccessControl {
+contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerable {
     /// @notice Emitted when governance address changes
     event GovernanceChanged(address from, address to);
 
@@ -19,12 +20,6 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl {
 
     /// @notice Role to distribute rewards to accounts
     bytes32 public constant DISTRIBUTOR_ROLE = keccak256("DISTRIBUTOR_ROLE");
-
-    /// @notice The token collection name
-    string public constant override name = "Project X Distribution";
-
-    /// @notice The token collection symbol
-    string public constant override symbol = "PXD";
 
     /// @notice Token distribured by this contract
     IERC20Mintable public immutable override token;
@@ -75,7 +70,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl {
      * @dev Initialize contact, `DEFAULT_ADMIN_ROLE` will be set to the
      * account that deploys the contract.
      */
-    constructor(IERC20Mintable token_, address governance_, address admin) {
+    constructor(IERC20Mintable token_, address governance_, address admin) ERC721("Eden Network Distribution", "EDEND") {
         token = token_;
         previousMerkleRoot[merkleRoot] = true;
 
@@ -178,7 +173,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl {
         distributionCount = distributionNumber;
         _tokenURI[distributionNumber] = uri;
 
-        emit Transfer(address(0), address(this), distributionNumber);
+        _mint(msg.sender, distributionNumber);
         emit PermanentURI(uri, distributionNumber);
         emit MerkleRootUpdated(_merkleRoot, distributionNumber, uri);
 
@@ -207,83 +202,31 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl {
      *
      * This function call must use less than 30 000 gas.
      */
-    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, IERC165) returns (bool) {
+    function supportsInterface(bytes4 interfaceId) public view virtual override(AccessControl, IERC165, ERC721Enumerable) returns (bool) {
         return interfaceId == type(IERC721).interfaceId
             || interfaceId == type(IERC721Metadata).interfaceId
+            || interfaceId == type(IERC721Enumerable).interfaceId
             || super.supportsInterface(interfaceId);
     }
 
     /**
-     * @notice Returns the number of tokens in `owner`'s account.
+     * @dev See {IERC721Metadata-tokenURI}.
      */
-    function balanceOf(address owner) public view override returns (uint256) {
-        require(owner != address(0), "MerkleDistributor: balance query for the zero address");
-        return owner == address(this) ? distributionCount : 0;
-    }
+    function tokenURI(uint256 tokenId) public view virtual override(ERC721, IERC721Metadata) returns (string memory) {
+        require(_exists(tokenId), "ERC721URIStorage: URI query for nonexistent token");
 
-    /**
-     * @dev Returns whether `tokenId` exists.
-     *
-     */
-    function _exists(uint256 tokenId) internal view virtual returns (bool) {
-        return tokenId > 0 && tokenId <= distributionCount;
-    }
+        string memory uri = _tokenURI[tokenId];
+        string memory base = _baseURI();
 
-    /**
-     * @notice Returns the owner of the `tokenId` token.
-     *
-     * Requirements:
-     *
-     * - `tokenId` must exist.
-     */
-    function ownerOf(uint256 tokenId) public view virtual override returns (address) {
-        require(_exists(tokenId), "MerkleDistributor: nonexistent token");
-        return address(this);
-    }
+        // If there is no base URI, return the token URI.
+        if (bytes(base).length == 0) {
+            return uri;
+        }
+        // If both are set, concatenate the baseURI and tokenURI (via abi.encodePacked).
+        if (bytes(uri).length > 0) {
+            return string(abi.encodePacked(base, uri));
+        }
 
-    /**
-     * @notice Returns the Uniform Resource Identifier (URI) for `tokenId` token.
-     */
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
-        require(_exists(tokenId), "MerkleDistributor: nonexistent token");
-        return _tokenURI[tokenId];
+        return super.tokenURI(tokenId);
     }
-
-    /**
-     * @notice Returns the total amount of tokens stored by the contract.
-     */
-    function totalSupply() override external view returns (uint256) {
-        return distributionCount;
-    }
-
-    /**
-     * @notice Returns a token ID owned by `owner` at a given `index` of its token list.
-     * Use along with {balanceOf} to enumerate all of ``owner``'s tokens.
-     */
-    function tokenOfOwnerByIndex(address owner, uint256 index) override external view returns (uint256 tokenId) {
-        require(owner == address(this) && _exists(index + 1), "MerkleDistributor: nonexistent token");
-        return index + 1;
-    }
-
-    /**
-     * @notice Returns a token ID at a given `index` of all the tokens stored by the contract.
-     * Use along with {totalSupply} to enumerate all tokens.
-     */
-    function tokenByIndex(uint256 index) override external view returns (uint256) {
-        require(_exists(index + 1), "MerkleDistributor: nonexistent token");
-        return index + 1;
-    }
-
-    /// @dev Throw indicating an unsupported ERC-721 action
-    function unsupportedERC721() pure private {
-        revert("MerkleDistributor: Unsupported ERC-721 action");
-    }
-
-    function approve(address, uint256) public virtual override { unsupportedERC721(); }
-    function getApproved(uint256) public view virtual override returns (address) { unsupportedERC721(); }
-    function setApprovalForAll(address, bool) public virtual override { unsupportedERC721(); }
-    function isApprovedForAll(address, address) public view virtual override returns (bool) { unsupportedERC721(); }
-    function transferFrom(address, address, uint256) public virtual override { unsupportedERC721(); }
-    function safeTransferFrom(address, address, uint256) public virtual override { unsupportedERC721(); }
-    function safeTransferFrom(address, address, uint256, bytes memory) public virtual override { unsupportedERC721(); }
 }
