@@ -7,6 +7,9 @@ require('hardhat-log-remover');
 require("@tenderly/hardhat-tenderly");
 require("hardhat-gas-reporter");
 
+const dotenv = require("dotenv");
+dotenv.config();
+
 const INFURA_KEY = process.env.INFURA_KEY
 const FORK_URL = process.env.FORK_URL
 const FORK_BLOCK_NUMBER = process.env.FORK_BLOCK_NUMBER
