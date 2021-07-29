@@ -48,7 +48,7 @@
     "ethers": "^5.0.19",
     "hardhat": "^2.0.1",
     "hardhat-abi-exporter": "^2.0.5",
-    "hardhat-deploy": "^0.7.0-beta.13",
+    "hardhat-deploy": "^0.8.11",
     "hardhat-deploy-ethers": "^0.3.0-beta.5",
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-log-remover": "^2.0.0",
