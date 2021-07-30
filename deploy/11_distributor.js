@@ -4,13 +4,14 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer, admin } = await getNamedAccounts();
     const token = await get("EdenToken");
     const governance = await get("DistributorGovernance")
+    const DISTRIBUTOR_UPDATE_THRESHOLD = process.env.DISTRIBUTOR_UPDATE_THRESHOLD
 
 
     log("11) Deploy MerkleDistributor");
     const deployResult = await deploy("MerkleDistributor", {
         from: deployer,
         contract: "MerkleDistributor",
-        args: [token.address, governance.address, admin],
+        args: [token.address, governance.address, admin, DISTRIBUTOR_UPDATE_THRESHOLD],
         skipIfAlreadyDeployed: true,
         log: true
     });

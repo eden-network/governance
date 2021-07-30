@@ -12,6 +12,9 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
     /// @notice Emitted when governance address changes
     event GovernanceChanged(address from, address to);
 
+    /// @notice Emitted when update threshold changes    
+    event UpdateThresholdChanged(uint256 updateThreshold);
+
     /// @notice Role allowing the merkle root to be updated
     bytes32 public constant UPDATER_ROLE = keccak256("UPDATER_ROLE");
 
@@ -30,6 +33,9 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
     /// @notice Total number of distributions, also token id of the current distribution
     uint256 public override distributionCount;
 
+    /// @notice Number of votes from updaters needed to apply a new root
+    uint256 public updateThreshold;
+
     /// @notice Governance address
     address public governance;
 
@@ -47,6 +53,12 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
 
     /// @dev Path to distribution metadata (including proofs)
     mapping(uint256 => string) private _tokenURI;
+
+    /// @dev Votes for a new merkle root
+    mapping(bytes32 => uint256) private _updateVotes;
+
+    /// @dev Vote for new merkle root for each distribution
+    mapping(address => mapping(uint256 => bytes32)) private _updaterVotes;
 
     /// @dev Modifier to restrict functions to only updaters
     modifier onlyUpdaters() {
@@ -70,11 +82,12 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
      * @dev Initialize contact, `DEFAULT_ADMIN_ROLE` will be set to the
      * account that deploys the contract.
      */
-    constructor(IERC20Mintable token_, address governance_, address admin) ERC721("Eden Network Distribution", "EDEND") {
+    constructor(IERC20Mintable token_, address governance_, address admin, uint256 updateThreshold_) ERC721("Eden Network Distribution", "EDEND") {
         token = token_;
         previousMerkleRoot[merkleRoot] = true;
 
         _setGovernance(governance_);
+        _setUpdateThreshold(updateThreshold_);
         _setupRole(DEFAULT_ADMIN_ROLE, admin);
     }
 
@@ -96,6 +109,26 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
      */
     function setGovernance(address to) onlyAdmins public {
         _setGovernance(to);
+    }
+
+    /**
+     * @dev Apply a threshold change
+     */
+    function _setUpdateThreshold(uint256 to) private {
+        require(to != 0, "MerkleDistributor: Update threshold must be non-zero");
+        emit UpdateThresholdChanged(to);
+        updateThreshold = to;
+    }
+
+    /**
+     * @notice Change the update threshold
+     *
+     * Requirements:
+     *
+     * - the caller must have the `DEFAULT_ADMIN_ROLE`.
+     */
+    function setUpdateThreshold(uint256 to) onlyAdmins public {
+        _setUpdateThreshold(to);
     }
     
     /**
@@ -163,21 +196,30 @@ contract MerkleDistributor is IMerkleDistributor, AccessControl, ERC721Enumerabl
      *
      * - caller must have `UPDATER_ROLE` 
      */
-    function updateMerkleRoot(bytes32 _merkleRoot, string calldata uri) external override onlyUpdaters returns (uint256) {
+    function updateMerkleRoot(bytes32 _merkleRoot, string calldata uri, uint256 _distributionNumber) external override onlyUpdaters returns (uint256) {
         require(!previousMerkleRoot[_merkleRoot], "MerkleDistributor: Cannot update to a previous merkle root");
         uint256 distributionNumber = distributionCount + 1;
+        require(distributionNumber == _distributionNumber, "MerkleDistributor: Can only update next distribution");
+        require(_updaterVotes[msg.sender][distributionNumber] == bytes32(0), "MerkleDistributor: Updater already submitted new root");
 
-        // make state changes
-        merkleRoot = _merkleRoot;
-        previousMerkleRoot[_merkleRoot] = true;
-        distributionCount = distributionNumber;
-        _tokenURI[distributionNumber] = uri;
+        _updaterVotes[msg.sender][distributionNumber] = _merkleRoot;
+        uint256 votes = _updateVotes[_merkleRoot] + 1;
+        _updateVotes[_merkleRoot] = votes;
 
-        _mint(msg.sender, distributionNumber);
-        emit PermanentURI(uri, distributionNumber);
-        emit MerkleRootUpdated(_merkleRoot, distributionNumber, uri);
+        if (votes == updateThreshold) {
+            merkleRoot = _merkleRoot;
+            previousMerkleRoot[_merkleRoot] = true;
+            distributionCount = distributionNumber;
+            _tokenURI[distributionNumber] = uri;
 
-        return distributionNumber;
+            _mint(msg.sender, distributionNumber);
+            emit PermanentURI(uri, distributionNumber);
+            emit MerkleRootUpdated(_merkleRoot, distributionNumber, uri);
+
+            return distributionNumber;
+        }
+        else
+            return distributionCount;
     }
 
     /**

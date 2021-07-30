@@ -15,6 +15,11 @@
         "internalType": "address",
         "name": "admin",
         "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "updateThreshold_",
+        "type": "uint256"
       }
     ],
     "stateMutability": "nonpayable",
@@ -306,6 +311,19 @@
       }
     ],
     "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "updateThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdateThresholdChanged",
     "type": "event"
   },
   {
@@ -764,6 +782,19 @@
   {
     "inputs": [
       {
+        "internalType": "uint256",
+        "name": "to",
+        "type": "uint256"
+      }
+    ],
+    "name": "setUpdateThreshold",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "account",
         "type": "address"
@@ -933,6 +964,11 @@
         "internalType": "string",
         "name": "uri",
         "type": "string"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_distributionNumber",
+        "type": "uint256"
       }
     ],
     "name": "updateMerkleRoot",
@@ -944,6 +980,19 @@
       }
     ],
     "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "updateThreshold",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
     "type": "function"
   }
 ]

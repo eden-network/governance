@@ -40,57 +40,148 @@ describe("MerkleDistributor", () => {
         it("updater can call", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await expect(fix.merkleDistributor.updateMerkleRoot(
-                ethers.utils.id(ethers.utils.id(ethers.constants.HashZero)), `${ethers.constants.HashZero}.json`)).not.reverted;
+                ethers.utils.id(ethers.utils.id(ethers.constants.HashZero)), `${ethers.constants.HashZero}.json`, 1)).not.reverted;
         });
 
         it("non-updater cannot call", async () => {
-            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(ethers.constants.HashZero, `${ethers.constants.HashZero}.json`))
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(
+                ethers.constants.HashZero, `${ethers.constants.HashZero}.json`, 1))
                 .revertedWith("MerkleDistributor: Caller must have UPDATER_ROLE");
         });
 
         it("new roots take effect and NFTs are minted while old NFT is still valid", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
 
             const epoch = (await fix.merkleDistributor.distributionCount()).toNumber();
 
             const root = ethers.utils.id("I've never been to Mars, but I imagine it's quite nice.");
-            await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root, `${root}.json`, 1);
             expect(await fix.merkleDistributor.merkleRoot()).equal(root);
             expect(await fix.merkleDistributor.tokenURI(epoch + 1)).equal(`${root}.json`);
-            expect(await fix.merkleDistributor.ownerOf(epoch + 1)).equal(fix.admin.address);
+            expect(await fix.merkleDistributor.ownerOf(epoch + 1)).equal(fix.accounts[1].address);
 
             const root2 = ethers.utils.id("You know how to take the reservation, you just don't know how to hold the reservation.");
-            await fix.merkleDistributor.updateMerkleRoot(root2, `${root2}.json`);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root2, `${root2}.json`, 2);
+            await fix.merkleDistributor.updateMerkleRoot(root2, `${root2}.json`, 2);
             expect(await fix.merkleDistributor.merkleRoot()).equal(root2);
             expect(await fix.merkleDistributor.tokenURI(epoch + 2)).equal(`${root2}.json`);
             expect(await fix.merkleDistributor.ownerOf(epoch + 2)).equal(fix.admin.address);
 
             expect(await fix.merkleDistributor.tokenURI(epoch + 1)).equal(`${root}.json`);
-            expect(await fix.merkleDistributor.ownerOf(epoch + 1)).equal(fix.admin.address);
+            expect(await fix.merkleDistributor.ownerOf(epoch + 1)).equal(fix.accounts[1].address);
         });
 
         it("cannot apply a previous root", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
 
             const root = ethers.utils.id("The sea was angry that day, my friends.");
-            await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root, `${root}.json`, 1);
             expect(await fix.merkleDistributor.previousMerkleRoot(root)).true;
 
             const root2 = ethers.utils.id("Like an old man trying to send back soup in a deli.");
-            await fix.merkleDistributor.updateMerkleRoot(root2, `${root2}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(root2, `${root2}.json`, 2);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root2, `${root2}.json`, 2);
             expect(await fix.merkleDistributor.previousMerkleRoot(root)).true;
             expect(await fix.merkleDistributor.previousMerkleRoot(root2)).true;
 
             const root3 = ethers.utils.id("I got about fifty feet out")
             expect(await fix.merkleDistributor.previousMerkleRoot(root3)).false;
-            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`))
+            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 3));
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root, `${root}.json`, 3))
                 .revertedWith("MerkleDistributor: Cannot update to a previous merkle root");
+        });
+
+        it("can only update for next distribution", async () => {
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+
+            const root = ethers.utils.id("Suddenly, the great beast appeared before me!");
+            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 2))
+                .revertedWith("MerkleDistributor: Can only update next distribution");
+        });
+
+        it("same updater cannot update twice for same distribution", async () => {
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+
+            const root = ethers.utils.id("I tell you, he was ten stories high if he was a foot.");
+            await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1);
+            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1))
+                .revertedWith("MerkleDistributor: Updater already submitted new root");
+            expect(await fix.merkleDistributor.merkleRoot()).equal(ethers.constants.HashZero);
+        })
+
+        it("disagreement", async () => {
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[2].address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[3].address);
+
+            const root = ethers.utils.id("As if sensing my presence, he let out a great bellow.");
+            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(ethers.constants.HashZero);
+
+            const root2 = ethers.utils.id("I said, \"Easy, big fella!\"");
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root2, `${root2}.json`, 1))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(ethers.constants.HashZero);
+
+            await expect(fix.merkleDistributor.connect(fix.accounts[2]).updateMerkleRoot(root, `${root}.json`, 1))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+
+            await expect(fix.merkleDistributor.connect(fix.accounts[3]).updateMerkleRoot(root2, `${root2}.json`, 1))
+                .revertedWith("MerkleDistributor: Can only update next distribution");
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+
+            const root3 = ethers.utils.id("I realized that something was obstructing its breathing.");
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root3, `${root3}.json`, 2))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+
+            await expect(fix.merkleDistributor.connect(fix.accounts[3]).updateMerkleRoot(root, `${root}.json`, 2))
+                .revertedWith("MerkleDistributor: Cannot update to a previous merkle root");
+
+            await expect(fix.merkleDistributor.connect(fix.accounts[3]).updateMerkleRoot(root3, `${root3}.json`, 2))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root3);
+        });
+
+        it("changed threshold takes effect", async () => {
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[2].address);
+
+            const root = ethers.utils.id("I could see directly into the eye of the great fish.");
+            await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(ethers.constants.HashZero);
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root, `${root}.json`, 1))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+
+            await fix.merkleDistributor.setUpdateThreshold(3);
+
+            const root2 = ethers.utils.id("Mammal.");
+            await expect(fix.merkleDistributor.updateMerkleRoot(root2, `${root2}.json`, 2))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(root2, `${root2}.json`, 2))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root);
+            await expect(fix.merkleDistributor.connect(fix.accounts[2]).updateMerkleRoot(root2, `${root2}.json`, 2))
+                .not.reverted;
+            expect(await fix.merkleDistributor.merkleRoot()).equal(root2);
         });
     });
 
     context("claim", () => {
         it("rewards claimable", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
             
             // first, check that rewards are claimable from the initial empty state
             const balances = makeBalances(fix.accounts.slice(2));
@@ -101,7 +192,8 @@ describe("MerkleDistributor", () => {
             }, BigNumber.from(0));
 
             // update the root
-            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
 
             // check that a failed mint reverts
             let proof = tree.getProof(0, balances[0].account, balances[0].amount);
@@ -152,8 +244,9 @@ describe("MerkleDistributor", () => {
             }});
             const newTree = new BalanceTree(newBalances);
 
-            // apply the new root 
-            await fix.merkleDistributor.updateMerkleRoot(newTree.getHexRoot(), `${newTree.getHexRoot()}.json`);
+            // apply the new root
+            await fix.merkleDistributor.updateMerkleRoot(newTree.getHexRoot(), `${newTree.getHexRoot()}.json`, 2);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(newTree.getHexRoot(), `${newTree.getHexRoot()}.json`, 2);
 
             // assign a reward collector for the first three balances
             for (const i of [0, 1, 2]) {
@@ -216,6 +309,24 @@ describe("MerkleDistributor", () => {
         })
     })
 
+    context("setUpdateThreshold", () => {
+        it("admin can call and change takes effect", async () => {
+            expect(await fix.merkleDistributor.updateThreshold()).equal(fix.UPDATE_THRESHOLD);
+            await fix.merkleDistributor.setUpdateThreshold(fix.UPDATE_THRESHOLD + 1);
+            expect(await fix.merkleDistributor.updateThreshold()).equal(fix.UPDATE_THRESHOLD + 1);
+        });
+
+        it("non-admin cannot call", async () => {
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).setUpdateThreshold(fix.UPDATE_THRESHOLD + 1))
+                .revertedWith("MerkleDistributor: Caller must have DEFAULT_ADMIN_ROLE");
+        })
+
+        it("cannot set a zero threshold", async () => {
+            await expect(fix.merkleDistributor.setUpdateThreshold(0))
+                .revertedWith("MerkleDistributor: Update threshold must be non-zero");
+        })
+    })
+
     context("erc721", () => {
         it("initial state", async () => {
             expect(await fix.merkleDistributor.totalSupply()).to.equal(0);
@@ -231,32 +342,37 @@ describe("MerkleDistributor", () => {
 
         it("properties", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
 
             const balances = makeBalances([fix.admin]);
             const tree = new BalanceTree(balances);
-            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
 
             expect(await fix.merkleDistributor.totalSupply()).to.equal(1);
-            expect(await fix.merkleDistributor.ownerOf(1)).to.equal(fix.admin.address);
+            expect(await fix.merkleDistributor.ownerOf(1)).to.equal(fix.accounts[1].address);
             expect(await fix.merkleDistributor.tokenByIndex(0)).to.equal(1);
-            expect(await fix.merkleDistributor.tokenOfOwnerByIndex(fix.admin.address, 0)).to.equal(1);
+            expect(await fix.merkleDistributor.tokenOfOwnerByIndex(fix.accounts[1].address, 0)).to.equal(1);
             expect(await fix.merkleDistributor.tokenURI(1)).to.equal(`${tree.getHexRoot()}.json`);
 
-            await fix.merkleDistributor.updateMerkleRoot(ethers.utils.id(tree.getHexRoot()), `${tree.getHexRoot()}.json`);
+            await fix.merkleDistributor.updateMerkleRoot(ethers.utils.id(tree.getHexRoot()), `${tree.getHexRoot()}.json`, 2);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(ethers.utils.id(tree.getHexRoot()), `${tree.getHexRoot()}.json`, 2);
 
             expect(await fix.merkleDistributor.totalSupply()).to.equal(2);
-            expect(await fix.merkleDistributor.ownerOf(2)).to.equal(fix.admin.address);
+            expect(await fix.merkleDistributor.ownerOf(2)).to.equal(fix.accounts[1].address);
             expect(await fix.merkleDistributor.tokenByIndex(1)).to.equal(2);
-            expect(await fix.merkleDistributor.tokenOfOwnerByIndex(fix.admin.address, 1)).to.equal(2);
+            expect(await fix.merkleDistributor.tokenOfOwnerByIndex(fix.accounts[1].address, 1)).to.equal(2);
             expect(await fix.merkleDistributor.tokenURI(2)).to.equal(`${tree.getHexRoot()}.json`);
         });
 
         it("transfer", async () => {
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
 
             const balances = makeBalances([fix.admin]);
             const tree = new BalanceTree(balances);
-            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`);
+            await fix.merkleDistributor.connect(fix.accounts[1]).updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
+            await fix.merkleDistributor.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1);
 
             expect(await fix.merkleDistributor.ownerOf(1)).to.equal(fix.admin.address);
             await expect(fix.merkleDistributor.approve(fix.accounts[1].address, 1)).not.reverted;
