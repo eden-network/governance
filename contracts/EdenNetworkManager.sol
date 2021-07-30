@@ -1,10 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-/*
-  Copyright 2021 Archer DAO: Chris Piatt (chris@archerdao.io).
-*/
-
 import "./lib/Initializable.sol";
 
 /**

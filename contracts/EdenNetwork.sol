@@ -386,5 +386,4 @@ contract EdenNetwork is Initializable {
         stakedBalance[msg.sender] += amount;
         emit Stake(msg.sender, amount);
     }
-
 }
