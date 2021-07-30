@@ -13,7 +13,7 @@ interface IMerkleDistributor is IERC721Metadata, IERC721Enumerable  {
     function previousMerkleRoot(bytes32 merkleRoot) external view returns (bool);
     function accountState(address account) external view returns (uint256 totalClaimed, uint256 totalSlashed);
     function claim(uint256 index, address account, uint256 totalEarned, bytes32[] calldata merkleProof) external;
-    function updateMerkleRoot(bytes32 newMerkleRoot, string calldata uri) external returns (uint256);
+    function updateMerkleRoot(bytes32 newMerkleRoot, string calldata uri, uint256 newDistributionNumber) external returns (uint256);
     function slash(address account, uint256 amount) external;
     event Claimed(uint256 index, uint256 totalEarned, address indexed account, uint256 claimed);
     event Slashed(address indexed account, uint256 slashed);
