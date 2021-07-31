@@ -5,13 +5,13 @@ import "./interfaces/IVotingPower.sol";
 import "./interfaces/ITokenRegistry.sol";
 import "./interfaces/IVotingPowerFormula.sol";
 import "./interfaces/ILockManager.sol";
-import "./lib/AccessControl.sol";
+import "./lib/AccessControlEnumerable.sol";
 
 /**
  * @title LockManager
  * @dev Manages voting power for stakes that are locked within the Eden ecosystem, but not in the Voting Power prism
  */
-contract LockManager is AccessControl, ILockManager {
+contract LockManager is AccessControlEnumerable, ILockManager {
 
     /// @notice Admin role to create voting power from locked stakes
     bytes32 public constant LOCKER_ROLE = keccak256("LOCKER_ROLE");

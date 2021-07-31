@@ -17,6 +17,13 @@ import "./lib/SafeERC20.sol";
 contract VotingPower is PrismProxyImplementation, ReentrancyGuardUpgradeable {
     using SafeERC20 for IERC20;
 
+    /// @notice restrict functions to just owner address
+    modifier onlyOwner {
+        AppStorage storage app = VotingPowerStorage.appStorage();
+        require(msg.sender == app.owner, "only owner");
+        _;
+    }
+
     /// @notice An event that's emitted when a user's staked balance increases
     event Staked(address indexed user, address indexed token, uint256 indexed amount, uint256 votingPower);
 
@@ -28,13 +35,6 @@ contract VotingPower is PrismProxyImplementation, ReentrancyGuardUpgradeable {
 
     /// @notice Event emitted when the owner of the voting power contract is updated
     event ChangedOwner(address indexed oldOwner, address indexed newOwner);
-
-    /// @notice restrict functions to just owner address
-    modifier onlyOwner {
-        AppStorage storage app = VotingPowerStorage.appStorage();
-        require(msg.sender == app.owner, "only owner");
-        _;
-    }
 
     /**
      * @notice Initialize VotingPower contract

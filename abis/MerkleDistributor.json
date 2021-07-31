@@ -3,23 +3,28 @@
     "inputs": [
       {
         "internalType": "contract IERC20Mintable",
-        "name": "token_",
+        "name": "_token",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "governance_",
+        "name": "_governance",
         "type": "address"
       },
       {
         "internalType": "address",
-        "name": "admin",
+        "name": "_admin",
         "type": "address"
       },
       {
-        "internalType": "uint256",
-        "name": "updateThreshold_",
-        "type": "uint256"
+        "internalType": "address[]",
+        "name": "_updaters",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "_slashers",
+        "type": "address[]"
       }
     ],
     "stateMutability": "nonpayable",
@@ -181,13 +186,13 @@
       {
         "indexed": false,
         "internalType": "string",
-        "name": "_value",
+        "name": "value",
         "type": "string"
       },
       {
         "indexed": true,
         "internalType": "uint256",
-        "name": "_id",
+        "name": "id",
         "type": "uint256"
       }
     ],
@@ -513,6 +518,49 @@
         "internalType": "bytes32",
         "name": "",
         "type": "bytes32"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      }
+    ],
+    "name": "getRoleMember",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "role",
+        "type": "bytes32"
+      }
+    ],
+    "name": "getRoleMemberCount",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
       }
     ],
     "stateMutability": "view",
@@ -957,7 +1005,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "_merkleRoot",
+        "name": "newMerkleRoot",
         "type": "bytes32"
       },
       {
@@ -967,7 +1015,7 @@
       },
       {
         "internalType": "uint256",
-        "name": "_distributionNumber",
+        "name": "newDistributionNumber",
         "type": "uint256"
       }
     ],

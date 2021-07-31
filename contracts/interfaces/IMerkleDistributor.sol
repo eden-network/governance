@@ -19,5 +19,5 @@ interface IMerkleDistributor is IERC721Metadata, IERC721Enumerable  {
     event Slashed(address indexed account, uint256 slashed);
     event MerkleRootUpdated(bytes32 merkleRoot, uint256 distributionNumber, string metadataURI);
     event AccountUpdated(address indexed account, uint256 totalClaimed, uint256 totalSlashed);
-    event PermanentURI(string _value, uint256 indexed _id);
+    event PermanentURI(string value, uint256 indexed id);
 }

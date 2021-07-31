@@ -4,14 +4,23 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deployer, admin } = await getNamedAccounts();
     const token = await get("EdenToken");
     const governance = await get("DistributorGovernance")
-    const DISTRIBUTOR_UPDATE_THRESHOLD = process.env.DISTRIBUTOR_UPDATE_THRESHOLD
+    const { readUpdatersFromFile } = require('../scripts/readUpdatersFromFile')
+    const updaters = []
+    const slashers = []
+    const updatersMapping = readUpdatersFromFile()
 
+    for((updater, isSlasher) of Object.entries(updatersMapping)) {
+        updaters.push(updater)
+        if(isSlasher) {
+            slashers.push(updater)
+        }
+    }
 
     log("11) Deploy MerkleDistributor");
     const deployResult = await deploy("MerkleDistributor", {
         from: deployer,
         contract: "MerkleDistributor",
-        args: [token.address, governance.address, admin, DISTRIBUTOR_UPDATE_THRESHOLD],
+        args: [token.address, governance.address, admin, updaters, slashers],
         skipIfAlreadyDeployed: true,
         log: true
     });
@@ -23,5 +32,5 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     }
 };
 
-module.exports.tags = ["11", "Distributor"]
+module.exports.tags = ["11", "MerkleDistributor"]
 module.exports.dependencies = ["10"]

@@ -2,14 +2,14 @@
 pragma solidity ^0.8.0;
 
 import "./interfaces/IGovernance.sol";
-import "./lib/AccessControl.sol";
+import "./lib/AccessControlEnumerable.sol";
 import "./lib/BytesLib.sol";
 
 /**
  * @title DistributorGovernance
  * @dev Add or remove block producers from the network and set rewards collectors
  */
-contract DistributorGovernance is AccessControl, IGovernance {
+contract DistributorGovernance is AccessControlEnumerable, IGovernance {
     using BytesLib for bytes;
 
     /// @notice Admin governance role

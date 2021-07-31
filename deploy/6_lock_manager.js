@@ -1,7 +1,7 @@
 module.exports = async function ({ getNamedAccounts, deployments }) {
     const { deploy, log } = deployments;
     const namedAccounts = await getNamedAccounts();
-    const { deployer, admin } = namedAccounts;
+    const { deployer } = namedAccounts;
     const votingPower = await deployments.get("VotingPowerPrism")
 
     log(`6) Lock Manager`)
@@ -10,7 +10,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         from: deployer,
         contract: "LockManager",
         gas: 4000000,
-        args: [votingPower.address, admin],
+        args: [votingPower.address, deployer],
         skipIfAlreadyDeployed: true
     });
 

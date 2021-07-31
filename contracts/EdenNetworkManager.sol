@@ -5,6 +5,7 @@ import "./lib/Initializable.sol";
 
 /**
  * @title EdenNetworkManager
+ * @dev Handles updates for the EdenNetwork proxy + implementation
  */
 contract EdenNetworkManager is Initializable {
 

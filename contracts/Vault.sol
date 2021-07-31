@@ -35,7 +35,7 @@ contract Vault {
         Lock lock;
     }
 
-    ///@notice Token balance definition
+    /// @notice Token balance definition
     struct TokenBalance {
         uint256 totalAmount;
         uint256 claimableAmount;
@@ -52,7 +52,7 @@ contract Vault {
     /// @notice Mapping of address to lock id
     mapping (address => uint256[]) public lockIds;
 
-    ///@notice Number of locks
+    /// @notice Number of locks
     uint256 public numLocks;
 
     /// @notice Event emitted when a new lock is created
@@ -66,6 +66,7 @@ contract Vault {
 
     /**
      * @notice Create a new Vault contract
+     * @param _lockManager LockManager contract address
      */
     constructor(address _lockManager) {
         lockManager = ILockManager(_lockManager);

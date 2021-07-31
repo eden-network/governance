@@ -29,22 +29,35 @@
       {
         "indexed": true,
         "internalType": "address",
-        "name": "oldSlotMarketProxy",
+        "name": "oldEdenNetworkProxy",
         "type": "address"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "newSlotMarketProxy",
+        "name": "newEdenNetworkProxy",
         "type": "address"
       }
     ],
-    "name": "SlotMarketProxyChanged",
+    "name": "EdenNetworkProxyChanged",
     "type": "event"
   },
   {
     "inputs": [],
     "name": "admin",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "edenNetworkProxy",
     "outputs": [
       {
         "internalType": "address",
@@ -85,7 +98,7 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "_slotMarketProxy",
+        "name": "_edenNetworkProxy",
         "type": "address"
       },
       {
@@ -116,11 +129,11 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "newAdmin",
+        "name": "newEdenNetworkProxy",
         "type": "address"
       }
     ],
-    "name": "setProxyAdmin",
+    "name": "setEdenNetworkProxy",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -129,26 +142,13 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "newSlotMarketProxy",
+        "name": "newAdmin",
         "type": "address"
       }
     ],
-    "name": "setSlotMarketProxy",
+    "name": "setProxyAdmin",
     "outputs": [],
     "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [],
-    "name": "slotMarketProxy",
-    "outputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      }
-    ],
-    "stateMutability": "view",
     "type": "function"
   },
   {
