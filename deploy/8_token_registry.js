@@ -37,13 +37,14 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
     }
 
     const edenFormula = await deployments.get("EdenFormula")
+    const sushiFormula = await deployments.get("SushiLPFormula")
 
     // Deploy Token Registry contract
     deployResult = await deploy("TokenRegistry", {
         from: deployer,
         contract: "TokenRegistry",
         gas: 4000000,
-        args: [admin, [token.address], [edenFormula.address]],
+        args: [admin, [token.address, SUSHI_POOL_ADDRESS], [edenFormula.address, sushiFormula.address]],
         skipIfAlreadyDeployed: true
     });
 

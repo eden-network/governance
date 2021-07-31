@@ -415,6 +415,24 @@
   {
     "inputs": [
       {
+        "internalType": "address[]",
+        "name": "newUpdaters",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "addUpdaters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
         "internalType": "address",
         "name": "to",
         "type": "address"
@@ -712,6 +730,24 @@
       }
     ],
     "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "existingUpdaters",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newThreshold",
+        "type": "uint256"
+      }
+    ],
+    "name": "removeUpdaters",
+    "outputs": [],
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {

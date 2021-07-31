@@ -9,7 +9,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const updatersMapping = readUpdatersFromFile()
     const DISTRIBUTOR_UPDATE_THRESHOLD = process.env.DISTRIBUTOR_UPDATE_THRESHOLD
 
-    for((updater, isSlasher) of Object.entries(updatersMapping)) {
+    for(const [updater, isSlasher] of Object.entries(updatersMapping)) {
         updaters.push(updater)
         if(isSlasher) {
             slashers.push(updater)

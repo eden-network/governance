@@ -43,8 +43,10 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   log(`- Deployer token renounced admin role`)
 };
 
-module.exports.skip = async function({ deployments }) {
+module.exports.skip = async function({ deployments, getNamedAccounts }) {
     const { read, log } = deployments
+    const { deployer } = await getNamedAccounts();
+    const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000"
     const deployerIsAdmin = await read('EdenToken', 'hasRole', DEFAULT_ADMIN_ROLE, deployer);
     if(deployerIsAdmin) {
       return false

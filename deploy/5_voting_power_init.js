@@ -16,8 +16,20 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     log(`- Accepted pending voting power implementation of contract at ${votingPowerImplementation.address}`);
 
     // Initialize voting power contract
-    await votingPower.initialize(token.address, admin);
-    log(`- Initialized voting power at ${votingPowerImplementation.address} via prism at ${votingPowerPrism.address}`);
+    const result = await votingPower.initialize(token.address, admin)
+    if (result.hash) {
+        const receipt = await ethers.provider.waitForTransaction(result.hash)
+        if(receipt.status) {
+            log(`- Initialized voting power at ${votingPowerImplementation.address} via prism at ${votingPowerPrism.address}`);
+        } else {
+            log(`- Error initializing voting power. Tx:`)
+            log(receipt)
+        }
+    } else {
+        log(`- Error initializing voting power. Tx:`)
+        log(result)
+    }
+
 
     // Set pending admin for voting power
     await execute('VotingPowerPrism', {from: deployer }, 'setPendingProxyAdmin', admin);
