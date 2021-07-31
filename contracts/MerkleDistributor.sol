@@ -99,16 +99,15 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
         address[] memory _updaters, 
         address[] memory _slashers
     ) ERC721("Eden Network Distribution", "EDEND") {
-        require(_updateThreshold <= _updaters.length, "MerkleDistributor: threshold > updaters");
         token = _token;
         previousMerkleRoot[merkleRoot] = true;
 
         _setGovernance(_governance);
-        _setUpdateThreshold(_updateThreshold);
 
         for(uint i; i< _updaters.length; i++) {
             _setupRole(UPDATER_ROLE, _updaters[i]);
         }
+        _setUpdateThreshold(_updateThreshold);
 
         for(uint i; i< _slashers.length; i++) {
             _setupRole(SLASHER_ROLE, _slashers[i]);

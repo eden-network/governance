@@ -21,7 +21,6 @@ const EDEN_REWARDS_START_BLOCK = process.env.EDEN_REWARDS_START_BLOCK
 const EDEN_REWARDS_PER_BLOCK = process.env.EDEN_REWARDS_PER_BLOCK
 const TOKEN_LIQUIDITY = "100000000000000000000"
 const ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
-const UPDATE_THRESHOLD = 2
 
 const tokenFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
     const accounts = await ethers.getSigners();
@@ -152,14 +151,14 @@ const distributorFixture = deployments.createFixture(async ({deployments, getNam
     const DistributorGovernanceFactory = await ethers.getContractFactory("DistributorGovernance");
     const DistributorGovernance = await DistributorGovernanceFactory.deploy(admin.address, [], []);
     const MerkleDistributorFactory = await ethers.getContractFactory("MerkleDistributor");
-    const MerkleDistributor = await MerkleDistributorFactory.deploy(EdenToken.address, DistributorGovernance.address, admin.address, UPDATE_THRESHOLD);
+    const MerkleDistributor = await MerkleDistributorFactory.deploy(
+        EdenToken.address, DistributorGovernance.address, admin.address, 1, [admin.address], []);
     return {
         edenToken: EdenToken,
         distributorGovernance: DistributorGovernance,
         merkleDistributor: MerkleDistributor,
         admin,
-        accounts,
-        UPDATE_THRESHOLD
+        accounts
     };
 });
 
