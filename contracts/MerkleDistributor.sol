@@ -282,7 +282,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
      */
     function _setUpdateThreshold(uint256 to) private {
         require(to != 0, "MerkleDistributor: Update threshold must be non-zero");
-        require(to >= getRoleMemberCount(UPDATER_ROLE), "MerkleDistributor: threshold > updaters");
+        require(to <= getRoleMemberCount(UPDATER_ROLE), "MerkleDistributor: threshold > updaters");
         emit UpdateThresholdChanged(to);
         updateThreshold = to;
     }
