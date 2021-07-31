@@ -27,7 +27,7 @@ describe("MerkleDistributor", () => {
     context("constructor", () => {
         it("initial state", async () => {
             expect(await fix.merkleDistributor.hasRole(DEFAULT_ADMIN_ROLE, fix.admin.address)).true;
-            expect(await fix.merkleDistributor.hasRole(UPDATER_ROLE, fix.admin.address)).false;
+            expect(await fix.merkleDistributor.hasRole(UPDATER_ROLE, fix.admin.address)).true;
             expect(await fix.merkleDistributor.hasRole(SLASHER_ROLE, fix.admin.address)).false;
             expect(await fix.merkleDistributor.hasRole(DISTRIBUTOR_ROLE, fix.admin.address)).false;
 
@@ -38,7 +38,6 @@ describe("MerkleDistributor", () => {
 
     context("updateMerkleRoot", () => {
         it("updater can call", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await expect(fix.merkleDistributor.updateMerkleRoot(
                 ethers.utils.id(ethers.utils.id(ethers.constants.HashZero)), `${ethers.constants.HashZero}.json`, 1)).not.reverted;
         });
@@ -50,8 +49,8 @@ describe("MerkleDistributor", () => {
         });
 
         it("new roots take effect and NFTs are minted while old NFT is still valid", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const epoch = (await fix.merkleDistributor.distributionCount()).toNumber();
 
@@ -74,8 +73,8 @@ describe("MerkleDistributor", () => {
         });
 
         it("cannot apply a previous root", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const root = ethers.utils.id("The sea was angry that day, my friends.");
             await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1);
@@ -96,15 +95,14 @@ describe("MerkleDistributor", () => {
         });
 
         it("can only update for next distribution", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
-
             const root = ethers.utils.id("Suddenly, the great beast appeared before me!");
             await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 2))
                 .revertedWith("MerkleDistributor: Can only update next distribution");
         });
 
         it("same updater cannot update twice for same distribution", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const root = ethers.utils.id("I tell you, he was ten stories high if he was a foot.");
             await fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1);
@@ -114,10 +112,10 @@ describe("MerkleDistributor", () => {
         })
 
         it("disagreement", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[2].address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[3].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const root = ethers.utils.id("As if sensing my presence, he let out a great bellow.");
             await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1))
@@ -151,9 +149,9 @@ describe("MerkleDistributor", () => {
         });
 
         it("changed threshold takes effect", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[2].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const root = ethers.utils.id("I could see directly into the eye of the great fish.");
             await expect(fix.merkleDistributor.updateMerkleRoot(root, `${root}.json`, 1))
@@ -180,8 +178,8 @@ describe("MerkleDistributor", () => {
 
     context("claim", () => {
         it("rewards claimable", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
             
             // first, check that rewards are claimable from the initial empty state
             const balances = makeBalances(fix.accounts.slice(2));
@@ -311,19 +309,25 @@ describe("MerkleDistributor", () => {
 
     context("setUpdateThreshold", () => {
         it("admin can call and change takes effect", async () => {
-            expect(await fix.merkleDistributor.updateThreshold()).equal(fix.UPDATE_THRESHOLD);
-            await fix.merkleDistributor.setUpdateThreshold(fix.UPDATE_THRESHOLD + 1);
-            expect(await fix.merkleDistributor.updateThreshold()).equal(fix.UPDATE_THRESHOLD + 1);
+            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            expect(await fix.merkleDistributor.updateThreshold()).equal(1);
+            await fix.merkleDistributor.setUpdateThreshold(2);
+            expect(await fix.merkleDistributor.updateThreshold()).equal(2);
         });
 
         it("non-admin cannot call", async () => {
-            await expect(fix.merkleDistributor.connect(fix.accounts[1]).setUpdateThreshold(fix.UPDATE_THRESHOLD + 1))
+            await expect(fix.merkleDistributor.connect(fix.accounts[1]).setUpdateThreshold(2))
                 .revertedWith("MerkleDistributor: Caller must have DEFAULT_ADMIN_ROLE");
-        })
+        });
 
         it("cannot set a zero threshold", async () => {
             await expect(fix.merkleDistributor.setUpdateThreshold(0))
                 .revertedWith("MerkleDistributor: Update threshold must be non-zero");
+        });
+
+        it("cannot set a threshold greater than accounts with UPDATER_ROLE", async () => {
+            await expect(fix.merkleDistributor.setUpdateThreshold(2))
+                .revertedWith("MerkleDistributor: threshold > updaters");
         })
     })
 
@@ -341,8 +345,8 @@ describe("MerkleDistributor", () => {
         });
 
         it("properties", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const balances = makeBalances([fix.admin]);
             const tree = new BalanceTree(balances);
@@ -366,8 +370,8 @@ describe("MerkleDistributor", () => {
         });
 
         it("transfer", async () => {
-            await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.admin.address);
             await fix.merkleDistributor.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributor.setUpdateThreshold(2);
 
             const balances = makeBalances([fix.admin]);
             const tree = new BalanceTree(balances);

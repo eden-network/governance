@@ -101,6 +101,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
         for(uint i; i< _updaters.length; i++) {
             _setupRole(UPDATER_ROLE, _updaters[i]);
         }
+        _setUpdateThreshold(_updateThreshold);
 
         _setUpdateThreshold(_updateThreshold);
 
