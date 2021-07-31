@@ -227,7 +227,7 @@ abstract contract AccessControl is Context, IAccessControl, ERC165 {
         }
     }
 
-    function _revokeRole(bytes32 role, address account) private {
+    function _revokeRole(bytes32 role, address account) internal {
         if (hasRole(role, account)) {
             _roles[role].members[account] = false;
             emit RoleRevoked(role, account, _msgSender());

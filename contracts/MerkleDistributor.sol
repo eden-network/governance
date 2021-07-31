@@ -128,7 +128,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
      */
     function addUpdaters(address[] memory newUpdaters, uint256 newThreshold) onlyAdmins external override {
         for(uint i; i< newUpdaters.length; i++) {
-            grantRole(UPDATER_ROLE, newUpdaters[i]);
+            _setupRole(UPDATER_ROLE, newUpdaters[i]);
         }
         _setUpdateThreshold(newThreshold);
     }
@@ -141,7 +141,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
      */
     function removeUpdaters(address[] memory existingUpdaters, uint256 newThreshold) onlyAdmins external override {
         for(uint i; i< existingUpdaters.length; i++) {
-            revokeRole(UPDATER_ROLE, existingUpdaters[i]);
+            _revokeRole(UPDATER_ROLE, existingUpdaters[i]);
         }
         _setUpdateThreshold(newThreshold);
     }
