@@ -76,12 +76,6 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
         _;
     }
 
-    /// @notice Emitted when governance address changes
-    event GovernanceChanged(address from, address to);
-
-    /// @notice Emitted when update threshold changes    
-    event UpdateThresholdChanged(uint256 updateThreshold);
-
     /**
      * @notice Create new MerkleDistributor
      * @param _token Token address
@@ -99,16 +93,16 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
         address[] memory _updaters, 
         address[] memory _slashers
     ) ERC721("Eden Network Distribution", "EDEND") {
-        require(_updateThreshold <= _updaters.length, "MerkleDistributor: threshold > updaters");
         token = _token;
         previousMerkleRoot[merkleRoot] = true;
 
         _setGovernance(_governance);
-        _setUpdateThreshold(_updateThreshold);
 
         for(uint i; i< _updaters.length; i++) {
             _setupRole(UPDATER_ROLE, _updaters[i]);
         }
+
+        _setUpdateThreshold(_updateThreshold);
 
         for(uint i; i< _slashers.length; i++) {
             _setupRole(SLASHER_ROLE, _slashers[i]);
@@ -122,8 +116,34 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
      * @dev The caller must have the `DEFAULT_ADMIN_ROLE`
      * @param to New governance address
      */
-    function setGovernance(address to) onlyAdmins external {
+    function setGovernance(address to) onlyAdmins external override {
         _setGovernance(to);
+    }
+
+    /**
+     * @notice Add updaters and modify threshold
+     * @dev The caller must have the `DEFAULT_ADMIN_ROLE`
+     * @param newUpdaters New updater addresses
+     * @param newThreshold New threshold
+     */
+    function addUpdaters(address[] memory newUpdaters, uint256 newThreshold) onlyAdmins external override {
+        for(uint i; i< newUpdaters.length; i++) {
+            grantRole(UPDATER_ROLE, newUpdaters[i]);
+        }
+        _setUpdateThreshold(newThreshold);
+    }
+
+    /**
+     * @notice Remove updaters and modify threshold
+     * @dev The caller must have the `DEFAULT_ADMIN_ROLE`
+     * @param existingUpdaters Existing updater addresses
+     * @param newThreshold New threshold
+     */
+    function removeUpdaters(address[] memory existingUpdaters, uint256 newThreshold) onlyAdmins external override {
+        for(uint i; i< existingUpdaters.length; i++) {
+            revokeRole(UPDATER_ROLE, existingUpdaters[i]);
+        }
+        _setUpdateThreshold(newThreshold);
     }
 
     /**
@@ -131,7 +151,7 @@ contract MerkleDistributor is IMerkleDistributor, AccessControlEnumerable, ERC72
      * @dev The caller must have the `DEFAULT_ADMIN_ROLE`
      * @param to New threshold
      */
-    function setUpdateThreshold(uint256 to) onlyAdmins external {
+    function setUpdateThreshold(uint256 to) onlyAdmins external override {
         _setUpdateThreshold(to);
     }
 

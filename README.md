@@ -13,6 +13,9 @@ The initial set of smart contracts form the base for controlling product decisio
 The initial set of smart contracts deployed for Eden Network:
 - EDEN Token Contract
 - Migrator
+- Eden Network
+- Eden Network Proxy
+- Eden Network Manager
 - Voting Power Prism (Proxy)
 - Voting Power Implementation Contract
 - Vault
@@ -30,6 +33,18 @@ The EDEN token is ERC-20 compliant, with add-ons to allow for offchain signing f
 ## Migrator
 
 One way migration contract for upgrading ARCH tokens to EDEN tokens.
+
+## Eden Network
+
+This is the primary contract for interfacing with the Eden Network. Users can bid on slots via a continuous auction (Harberger tax) giving them priority access to block space on the Ethereum network + stake EDEN to access protected transactions on the Eden Network.
+
+## Eden Network Proxy
+
+Standard Transparent proxy for interfacing with the Eden Network
+
+## Eden Network Manager
+
+Manager contract for the Eden Network Proxy
 
 ## Vault
 
