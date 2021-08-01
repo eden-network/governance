@@ -286,6 +286,11 @@
         "type": "address"
       },
       {
+        "internalType": "contract ILockManager",
+        "name": "_lockManager",
+        "type": "address"
+      },
+      {
         "internalType": "address",
         "name": "_admin",
         "type": "address"

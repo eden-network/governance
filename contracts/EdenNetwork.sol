@@ -118,17 +118,20 @@ contract EdenNetwork is Initializable {
     /**
      * @notice Initialize EdenNetwork contract
      * @param _token Token address
+     * @param _lockManager Lock Manager address
      * @param _admin Admin address
      * @param _taxNumerator Numerator for tax rate
      * @param _taxDenominator Denominator for tax rate
      */
     function initialize(
         IERC20Extended _token,
+        ILockManager _lockManager,
         address _admin,
         uint16 _taxNumerator,
         uint16 _taxDenominator
     ) public initializer {
         token = _token;
+        lockManager = _lockManager;
         admin = _admin;
         emit AdminUpdated(_admin, address(0));
 
