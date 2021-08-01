@@ -7,6 +7,8 @@ require('hardhat-log-remover');
 require("@tenderly/hardhat-tenderly");
 require("hardhat-gas-reporter");
 
+const { rewardScheduleEncoder, makeRewardSchedule }  = require('./scripts/utils/rewardScheduleEncoder');
+
 const dotenv = require("dotenv");
 dotenv.config();
 
@@ -103,6 +105,21 @@ task("accounts", "Prints the list of accounts", async () => {
     console.log(account.address);
   }
 });
+
+task("start-rewards", "start reward schedule")
+    .addParam("startTime", "uint256", undefined, undefined, true)
+    .addParam("scaleFactor", "number", undefined, undefined, true)
+    .setAction(async (args, hre) => {
+        const account = (await hre.getNamedAccounts())['admin'];
+        const contract = await hre.ethers.getContract("DistributorGovernance", account);
+        const schedule = rewardScheduleEncoder(
+            makeRewardSchedule(
+                Number(args.startTime === undefined ? Math.floor(Date.now() / 1000) : startTime),
+                Number(args.scaleFactor === undefined ? 1 : args.scaleFactor)
+        ));
+        const tx = await contract.setRewardSchedule(schedule);
+        console.log(tx.hash);
+    });
 
 // Hardhat Config
 // Documentation: https://hardhat.org/config/
