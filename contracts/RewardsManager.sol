@@ -655,9 +655,11 @@ contract RewardsManager is ReentrancyGuard {
         uint16 vestingCliff,
         bool vestingVotingPower
     ) internal {
-        uint256 vestingRewards = rewardAmount * vestingPercent / 1000000;
         rewardToken.mint(address(this), rewardAmount);
-        vault.lockTokens(address(rewardToken), address(this), account, 0, vestingRewards, vestingPeriod, vestingCliff, vestingVotingPower);
+        uint256 vestingRewards = rewardAmount * vestingPercent / 1000000;
+        if(vestingRewards > 0) {
+            vault.lockTokens(address(rewardToken), address(this), account, 0, vestingRewards, vestingPeriod, vestingCliff, vestingVotingPower);
+        }
         rewardToken.safeTransfer(msg.sender, rewardAmount - vestingRewards);
     }
 
