@@ -1,11 +1,12 @@
 module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const { execute, log } = deployments;
-  const { deployer, admin } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
+  const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
   const edenNetworkProxy = await deployments.get("EdenNetworkProxy")
 
   log(`15) EdenNetworkManager Init`)
   // Initialize EdenNetworkManager contract
-  await execute('EdenNetworkManager', {from: deployer }, 'initialize', edenNetworkProxy.address, admin);
+  await execute('EdenNetworkManager', {from: deployer }, 'initialize', edenNetworkProxy.address, ADMIN_ADDRESS);
   log(`- Eden Network Manager initialized`)
 };
 

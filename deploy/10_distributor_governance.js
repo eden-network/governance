@@ -1,11 +1,12 @@
 module.exports = async function ({ getNamedAccounts, deployments }) {
     const { deploy, log } = deployments;
     const namedAccounts = await getNamedAccounts();
-    const { deployer, admin } = namedAccounts;
+    const { deployer } = namedAccounts;
     const { readProducersFromFile } = require('../scripts/readProducersFromFile')
     const producersMapping = readProducersFromFile()
     const producers = Object.keys(producersMapping)
     const collectors = Object.values(producersMapping)
+    const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
 
     log(`10) Distributor Governance`)
     // Deploy DistributorGovernance contract
@@ -13,7 +14,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         from: deployer,
         contract: "DistributorGovernance",
         gas: 6000000,
-        args: [admin, producers, collectors],
+        args: [ADMIN_ADDRESS, producers, collectors],
         skipIfAlreadyDeployed: true
     });
 

@@ -1,5 +1,5 @@
 {
-  "address": "0x37c082c2782723D0A0C93938eD0d649e263af51b",
+  "address": "0x1c86829Db6cBB3a5FA614034C73A4371cD0C8f77",
   "abi": [
     {
       "inputs": [
@@ -127,52 +127,52 @@
       "type": "function"
     }
   ],
-  "transactionHash": "0xc5d8ba323b0d418345da38d1d22986032bb04d0e633d1c0110610120e23137e3",
+  "transactionHash": "0xa8a0647331f89919879d61db9a25a9471b1c5c61c419084c75582dbd852747cd",
   "receipt": {
     "to": null,
     "from": "0xFDf8BE775bb5e2Ba1983dC7b26A655321502E104",
-    "contractAddress": "0x37c082c2782723D0A0C93938eD0d649e263af51b",
-    "transactionIndex": 16,
+    "contractAddress": "0x1c86829Db6cBB3a5FA614034C73A4371cD0C8f77",
+    "transactionIndex": 134,
     "gasUsed": "359944",
-    "logsBloom": "0x00000000000000000000000000000000000002000000000000000200002000000000000000000000000000000004000040000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000000800000000000000000000000000000000000000000000000000000000000000000000000000000000001000001000000001000000000000000000000000080000000000000000000000000000000000000000000400000000200000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
-    "blockHash": "0xcdc4a7f024ff8c52205b5dad1f8c07995153d32166e05a7515b6abf561370d20",
-    "transactionHash": "0xc5d8ba323b0d418345da38d1d22986032bb04d0e633d1c0110610120e23137e3",
+    "logsBloom": "0x00000000000000000000000000000000000002000000000000000000002000000000000000000000000000000000000000000000000000000000000000000000000000010100000000000000000000000000000000000000000000000000000000004000022000000000000000000800000000000000000000000000000000000000000000000000000000000000000000200000000000001000001000000000000000000000040000000000000000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000200000000000000000000000000",
+    "blockHash": "0x09bcb8c2cecf3cd6251d011e6d8ee0cd46907b45044cf2e3f2c33fc344450e39",
+    "transactionHash": "0xa8a0647331f89919879d61db9a25a9471b1c5c61c419084c75582dbd852747cd",
     "logs": [
       {
-        "transactionIndex": 16,
-        "blockNumber": 9046377,
-        "transactionHash": "0xc5d8ba323b0d418345da38d1d22986032bb04d0e633d1c0110610120e23137e3",
-        "address": "0x37c082c2782723D0A0C93938eD0d649e263af51b",
+        "transactionIndex": 134,
+        "blockNumber": 12948268,
+        "transactionHash": "0xa8a0647331f89919879d61db9a25a9471b1c5c61c419084c75582dbd852747cd",
+        "address": "0x1c86829Db6cBB3a5FA614034C73A4371cD0C8f77",
         "topics": [
           "0x2748503f8f31d8071821d1d5144384ba6a465036cda17fa1629a8a2509ccee0e",
           "0x0000000000000000000000000000000000000000000000000000000000000000",
-          "0x0000000000000000000000005b0ac3279dbf84bb8da59be1ecab118198f022e5"
+          "0x0000000000000000000000008f48fe27f68a86786fbbd5d38ea53c2748b234b6"
         ],
         "data": "0x",
-        "logIndex": 33,
-        "blockHash": "0xcdc4a7f024ff8c52205b5dad1f8c07995153d32166e05a7515b6abf561370d20"
+        "logIndex": 301,
+        "blockHash": "0x09bcb8c2cecf3cd6251d011e6d8ee0cd46907b45044cf2e3f2c33fc344450e39"
       },
       {
-        "transactionIndex": 16,
-        "blockNumber": 9046377,
-        "transactionHash": "0xc5d8ba323b0d418345da38d1d22986032bb04d0e633d1c0110610120e23137e3",
-        "address": "0x37c082c2782723D0A0C93938eD0d649e263af51b",
+        "transactionIndex": 134,
+        "blockNumber": 12948268,
+        "transactionHash": "0xa8a0647331f89919879d61db9a25a9471b1c5c61c419084c75582dbd852747cd",
+        "address": "0x1c86829Db6cBB3a5FA614034C73A4371cD0C8f77",
         "topics": [
           "0xeaaffbc2ab3e2fdc994897a9d9c2bff2123a3b8cdad9848b944e949ef1198bd4"
         ],
-        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c3500",
-        "logIndex": 34,
-        "blockHash": "0xcdc4a7f024ff8c52205b5dad1f8c07995153d32166e05a7515b6abf561370d20"
+        "data": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000190",
+        "logIndex": 302,
+        "blockHash": "0x09bcb8c2cecf3cd6251d011e6d8ee0cd46907b45044cf2e3f2c33fc344450e39"
       }
     ],
-    "blockNumber": 9046377,
-    "cumulativeGasUsed": "1661292",
+    "blockNumber": 12948268,
+    "cumulativeGasUsed": "14865947",
     "status": 1,
     "byzantium": true
   },
   "args": [
-    "0x5b0aC3279dBf84Bb8DA59Be1EcaB118198f022E5",
-    "800000"
+    "0x8F48fe27f68a86786fbBD5D38Ea53C2748B234B6",
+    "400"
   ],
   "solcInputHash": "6865174a712c3742a5eca03d64e69168",
   "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_cvrRate\",\"type\":\"uint32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"ChangedOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"oldRate\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newRate\",\"type\":\"uint32\"}],\"name\":\"ConversionRateChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"conversionRate\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"convertTokensToVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"newConversionRate\",\"type\":\"uint32\"}],\"name\":\"setConversionRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Convert Sushi LP tokens to voting power\",\"kind\":\"dev\",\"methods\":{\"changeOwner(address)\":{\"params\":{\"newOwner\":\"New owner address\"}},\"constructor\":{\"params\":{\"_cvrRate\":\"the conversion rate in bips\",\"_owner\":\"contract owner\"}},\"convertTokensToVotingPower(uint256)\":{\"params\":{\"amount\":\"token amount\"},\"returns\":{\"_0\":\"voting power amount\"}},\"setConversionRate(uint32)\":{\"params\":{\"newConversionRate\":\"New conversion rate\"}}},\"title\":\"SushiLPFormula\",\"version\":1},\"userdoc\":{\"events\":{\"ChangedOwner(address,address)\":{\"notice\":\"Event emitted when the owner of the contract is updated\"},\"ConversionRateChanged(uint32,uint32)\":{\"notice\":\"Event emitted when the conversion rate of the contract is changed\"}},\"kind\":\"user\",\"methods\":{\"changeOwner(address)\":{\"notice\":\"Change owner of contract\"},\"constructor\":{\"notice\":\"Construct a new voting power formula contract\"},\"conversionRate()\":{\"notice\":\"Conversion rate of token to voting power (measured in bips: 10,000 bips = 1%)\"},\"convertTokensToVotingPower(uint256)\":{\"notice\":\"Convert token amount to voting power\"},\"owner()\":{\"notice\":\"Current owner of this contract\"},\"setConversionRate(uint32)\":{\"notice\":\"Set conversion rate of contract\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/formulas/SushiLPFormula.sol\":\"SushiLPFormula\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[]},\"sources\":{\"contracts/formulas/SushiLPFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"../lib/VotingPowerFormula.sol\\\";\\n\\n/**\\n * @title SushiLPFormula\\n * @dev Convert Sushi LP tokens to voting power\\n */\\ncontract SushiLPFormula is VotingPowerFormula {\\n\\n    /// @notice Current owner of this contract\\n    address public owner;\\n\\n    /// @notice Conversion rate of token to voting power (measured in bips: 10,000 bips = 1%)\\n    uint32 public conversionRate;\\n\\n    /// @notice Event emitted when the owner of the contract is updated\\n    event ChangedOwner(address indexed oldOwner, address indexed newOwner);\\n\\n    /// @notice Event emitted when the conversion rate of the contract is changed\\n    event ConversionRateChanged(uint32 oldRate, uint32 newRate);\\n\\n    /// @notice only owner can call function\\n    modifier onlyOwner {\\n        require(msg.sender == owner, \\\"not owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @notice Construct a new voting power formula contract\\n     * @param _owner contract owner\\n     * @param _cvrRate the conversion rate in bips\\n     */\\n    constructor(address _owner, uint32 _cvrRate) {\\n        owner = _owner;\\n        emit ChangedOwner(address(0), owner);\\n\\n        conversionRate = _cvrRate;\\n        emit ConversionRateChanged(uint32(0), conversionRate);\\n    }\\n\\n    /**\\n     * @notice Convert token amount to voting power\\n     * @param amount token amount\\n     * @return voting power amount\\n     */\\n    function convertTokensToVotingPower(uint256 amount) external view override returns (uint256) {\\n        return amount * conversionRate / 1000000;\\n    }\\n\\n    /**\\n     * @notice Set conversion rate of contract\\n     * @param newConversionRate New conversion rate\\n     */\\n    function setConversionRate(uint32 newConversionRate) external onlyOwner {\\n        emit ConversionRateChanged(conversionRate, newConversionRate);\\n        conversionRate = newConversionRate;\\n    }\\n\\n    /**\\n     * @notice Change owner of contract\\n     * @param newOwner New owner address\\n     */\\n    function changeOwner(address newOwner) external onlyOwner {\\n        emit ChangedOwner(owner, newOwner);\\n        owner = newOwner;\\n    }\\n}\",\"keccak256\":\"0x12545348405901186d2bfa30b4c2122892ff17e4d0fa11e8b21a5a8439640d70\",\"license\":\"MIT\"},\"contracts/lib/VotingPowerFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nabstract contract VotingPowerFormula {\\n   function convertTokensToVotingPower(uint256 amount) external view virtual returns (uint256);\\n}\",\"keccak256\":\"0x067d899007ec85668b5c0ee9401b42dcd3d341961b662e5782922a075d1c2293\",\"license\":\"MIT\"}},\"version\":1}",

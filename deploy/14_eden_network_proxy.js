@@ -1,8 +1,9 @@
 module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
-  const { deployer, admin } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
   const TAX_NUMERATOR = process.env.TAX_NUMERATOR
   const TAX_DENOMINATOR = process.env.TAX_DENOMINATOR
+  const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
   const token = await deployments.get("EdenToken")
   const lockManager = await deployments.get("LockManager")
   const edenNetwork = await deployments.get("EdenNetwork")
@@ -11,7 +12,7 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const initData = edenNetworkInterface.encodeFunctionData("initialize", [
       token.address,
       lockManager.address,
-      admin,
+      ADMIN_ADDRESS,
       TAX_NUMERATOR,
       TAX_DENOMINATOR
     ]

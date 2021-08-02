@@ -1,12 +1,13 @@
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log, get } = deployments;
-    const { deployer, admin } = await getNamedAccounts();
+    const { deployer } = await getNamedAccounts();
     const token = await get("EdenToken");
     const governance = await get("DistributorGovernance")
     const { readUpdatersFromFile } = require('../scripts/readUpdatersFromFile')
     const updaters = []
     const slashers = []
     const updatersMapping = readUpdatersFromFile()
+    const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
     const DISTRIBUTOR_UPDATE_THRESHOLD = process.env.DISTRIBUTOR_UPDATE_THRESHOLD
 
     for(const [updater, isSlasher] of Object.entries(updatersMapping)) {
@@ -20,7 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     const deployResult = await deploy("MerkleDistributor", {
         from: deployer,
         contract: "MerkleDistributor",
-        args: [token.address, governance.address, admin, DISTRIBUTOR_UPDATE_THRESHOLD, updaters, slashers],
+        args: [token.address, governance.address, ADMIN_ADDRESS, DISTRIBUTOR_UPDATE_THRESHOLD, updaters, slashers],
         skipIfAlreadyDeployed: true,
         log: true
     });

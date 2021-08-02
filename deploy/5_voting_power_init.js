@@ -1,6 +1,7 @@
 module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     const { execute, log } = deployments;
-    const { deployer, admin } = await getNamedAccounts()
+    const { deployer } = await getNamedAccounts()
+    const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
     const deployerSigner = await ethers.getSigner(deployer)
     const votingPowerImplementation = await deployments.get("VotingPower");
     const votingPowerPrism = await deployments.get("VotingPowerPrism");
@@ -32,9 +33,9 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
 
 
     // Set pending admin for voting power
-    await execute('VotingPowerPrism', {from: deployer }, 'setPendingProxyAdmin', admin);
-    log(`- Set pending voting power admin for prism at ${votingPowerPrism.address} to ${admin}`);
-    log(`- ${admin} can now call 'acceptAdmin' via the voting power prism proxy to become the admin`);
+    await execute('VotingPowerPrism', {from: deployer }, 'setPendingProxyAdmin', ADMIN_ADDRESS);
+    log(`- Set pending voting power admin for prism at ${votingPowerPrism.address} to ${ADMIN_ADDRESS}`);
+    log(`- ${ADMIN_ADDRESS} can now call 'acceptAdmin' via the voting power prism proxy to become the admin`);
 };
 
 module.exports.skip = async function({ ethers, deployments, getNamedAccounts }) {

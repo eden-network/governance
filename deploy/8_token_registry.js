@@ -1,8 +1,9 @@
 module.exports = async function ({ getNamedAccounts, deployments }) {
     const { deploy, log } = deployments;
     const namedAccounts = await getNamedAccounts();
-    const { deployer, admin } = namedAccounts;
+    const { deployer } = namedAccounts;
     const token = await deployments.get("EdenToken");
+    const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
     const SUSHI_LP_VP_CVR = process.env.SUSHI_LP_VP_CVR
     const SUSHI_POOL_ADDRESS = process.env.SUSHI_POOL_ADDRESS
 
@@ -26,7 +27,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         from: deployer,
         contract: "SushiLPFormula",
         gas: 4000000,
-        args: [admin, SUSHI_LP_VP_CVR],
+        args: [ADMIN_ADDRESS, SUSHI_LP_VP_CVR],
         skipIfAlreadyDeployed: true
     });
 
@@ -44,7 +45,7 @@ module.exports = async function ({ getNamedAccounts, deployments }) {
         from: deployer,
         contract: "TokenRegistry",
         gas: 4000000,
-        args: [admin, [token.address, SUSHI_POOL_ADDRESS], [edenFormula.address, sushiFormula.address]],
+        args: [ADMIN_ADDRESS, [token.address, SUSHI_POOL_ADDRESS], [edenFormula.address, sushiFormula.address]],
         skipIfAlreadyDeployed: true
     });
 

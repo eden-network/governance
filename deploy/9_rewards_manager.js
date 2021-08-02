@@ -1,7 +1,8 @@
 module.exports = async function ({ ethers, getNamedAccounts, deployments }) {
     const { deploy, log } = deployments;
     const namedAccounts = await getNamedAccounts();
-    const { deployer, admin } = namedAccounts;
+    const { deployer } = namedAccounts;
+    const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
     const SUSHI_ADDRESS = process.env.SUSHI_ADDRESS
     const MASTERCHEF_ADDRESS = process.env.MASTERCHEF_ADDRESS
     const EDEN_REWARDS_PER_BLOCK = process.env.EDEN_REWARDS_PER_BLOCK
@@ -16,7 +17,7 @@ module.exports = async function ({ ethers, getNamedAccounts, deployments }) {
         from: deployer,
         contract: "RewardsManager",
         gas: 4000000,
-        args: [admin, lockManager.address, vault.address, edenToken.address, SUSHI_ADDRESS, MASTERCHEF_ADDRESS, EDEN_REWARDS_START_BLOCK, EDEN_REWARDS_PER_BLOCK],
+        args: [ADMIN_ADDRESS, lockManager.address, vault.address, edenToken.address, SUSHI_ADDRESS, MASTERCHEF_ADDRESS, EDEN_REWARDS_START_BLOCK, EDEN_REWARDS_PER_BLOCK],
         skipIfAlreadyDeployed: true
     });
 

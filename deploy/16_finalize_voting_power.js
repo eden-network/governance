@@ -1,12 +1,13 @@
 module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const { log } = deployments;
-  const { deployer, admin } = await getNamedAccounts();
+  const { deployer } = await getNamedAccounts();
   const deployerSigner = await ethers.getSigner(deployer)
   const registry = await deployments.get('TokenRegistry')
   const lockManager = await deployments.get('LockManager')
   const votingPowerImplementation = await deployments.get("VotingPower");
   const votingPowerPrism = await deployments.get("VotingPowerPrism");
   const votingPower = new ethers.Contract(votingPowerPrism.address, votingPowerImplementation.abi, deployerSigner)
+  const ADMIN_ADDRESS = process.env.ADMIN_ADDRESS
 
   log(`16) Finalize VP`)
   // Grant roles
@@ -38,11 +39,11 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
       log(result)
   }
 
-  result = await votingPower.changeOwner(admin)
+  result = await votingPower.changeOwner(ADMIN_ADDRESS)
   if (result.hash) {
       receipt = await ethers.provider.waitForTransaction(result.hash)
       if(receipt.status) {
-          log(`- Set VP owner to ${admin} via prism at ${votingPowerPrism.address}`);
+          log(`- Set VP owner to ${ADMIN_ADDRESS} via prism at ${votingPowerPrism.address}`);
       } else {
           log(`- Error setting owner. Tx:`)
           log(receipt)
