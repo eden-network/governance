@@ -38,7 +38,7 @@ contract RewardsManager is ReentrancyGuard {
 
     /// @notice Info of each pool.
     struct PoolInfo {
-        IERC20Extended token;               // Address of token contract.
+        IERC20Extended token;       // Address of token contract.
         uint256 allocPoint;         // How many allocation points assigned to this pool. Reward tokens to distribute per block.
         uint256 lastRewardBlock;    // Last block number where reward tokens were distributed.
         uint256 accRewardsPerShare; // Accumulated reward tokens per share, times 1e12. See below.
@@ -656,8 +656,9 @@ contract RewardsManager is ReentrancyGuard {
         bool vestingVotingPower
     ) internal {
         uint256 vestingRewards = rewardAmount * vestingPercent / 1000000;
+        rewardToken.mint(address(this), rewardAmount);
         vault.lockTokens(address(rewardToken), address(this), account, 0, vestingRewards, vestingPeriod, vestingCliff, vestingVotingPower);
-        rewardToken.mint(msg.sender, rewardAmount - vestingRewards);
+        rewardToken.safeTransfer(msg.sender, rewardAmount - vestingRewards);
     }
 
     /**

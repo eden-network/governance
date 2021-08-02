@@ -91,7 +91,6 @@ if (DEPLOYER_PRIVATE_KEY && DEPLOYER_PRIVATE_KEY.length > 0) {
     // localhostConfig.accounts.push(ADMIN_PRIVATE_KEY)
     ropstenConfig.accounts.push(ADMIN_PRIVATE_KEY)
     rinkebyConfig.accounts.push(ADMIN_PRIVATE_KEY)
-    mainnetConfig.accounts.push(ADMIN_PRIVATE_KEY)
   }
 }
 

@@ -1,0 +1,277 @@
+{
+  "address": "0x93395Ae5f2F5F6C752390E3Cd1aa1c8FF4fb1393",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "internalType": "uint32",
+          "name": "_cvrRate",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "oldOwner",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "ChangedOwner",
+      "type": "event"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "oldRate",
+          "type": "uint32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint32",
+          "name": "newRate",
+          "type": "uint32"
+        }
+      ],
+      "name": "ConversionRateChanged",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "newOwner",
+          "type": "address"
+        }
+      ],
+      "name": "changeOwner",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "conversionRate",
+      "outputs": [
+        {
+          "internalType": "uint32",
+          "name": "",
+          "type": "uint32"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "amount",
+          "type": "uint256"
+        }
+      ],
+      "name": "convertTokensToVotingPower",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "owner",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint32",
+          "name": "newConversionRate",
+          "type": "uint32"
+        }
+      ],
+      "name": "setConversionRate",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "transactionHash": "0xc46c029dec930feeba102da28d65b94a5201ab7ff9097a40848335b7d60b2ddc",
+  "receipt": {
+    "to": null,
+    "from": "0xFDf8BE775bb5e2Ba1983dC7b26A655321502E104",
+    "contractAddress": "0x93395Ae5f2F5F6C752390E3Cd1aa1c8FF4fb1393",
+    "transactionIndex": 7,
+    "gasUsed": "359944",
+    "logsBloom": "0x00000000000000000000000000000000000002000000000000000200002000000000000200000000000000000000000040200000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000020000000000000000800800000000000000000000000000000000000000000000000000000000000000000000000000000000001000001000000000000000000000000000000000080000000000000000000000000000000000000000000400000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000000",
+    "blockHash": "0x851654cbc781301d76df5ea4ae5d5eefd8f92128b49c3869ba2253580d06f394",
+    "transactionHash": "0xc46c029dec930feeba102da28d65b94a5201ab7ff9097a40848335b7d60b2ddc",
+    "logs": [
+      {
+        "transactionIndex": 7,
+        "blockNumber": 9041820,
+        "transactionHash": "0xc46c029dec930feeba102da28d65b94a5201ab7ff9097a40848335b7d60b2ddc",
+        "address": "0x93395Ae5f2F5F6C752390E3Cd1aa1c8FF4fb1393",
+        "topics": [
+          "0x2748503f8f31d8071821d1d5144384ba6a465036cda17fa1629a8a2509ccee0e",
+          "0x0000000000000000000000000000000000000000000000000000000000000000",
+          "0x0000000000000000000000005b0ac3279dbf84bb8da59be1ecab118198f022e5"
+        ],
+        "data": "0x",
+        "logIndex": 15,
+        "blockHash": "0x851654cbc781301d76df5ea4ae5d5eefd8f92128b49c3869ba2253580d06f394"
+      },
+      {
+        "transactionIndex": 7,
+        "blockNumber": 9041820,
+        "transactionHash": "0xc46c029dec930feeba102da28d65b94a5201ab7ff9097a40848335b7d60b2ddc",
+        "address": "0x93395Ae5f2F5F6C752390E3Cd1aa1c8FF4fb1393",
+        "topics": [
+          "0xeaaffbc2ab3e2fdc994897a9d9c2bff2123a3b8cdad9848b944e949ef1198bd4"
+        ],
+        "data": "0x000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000c3500",
+        "logIndex": 16,
+        "blockHash": "0x851654cbc781301d76df5ea4ae5d5eefd8f92128b49c3869ba2253580d06f394"
+      }
+    ],
+    "blockNumber": 9041820,
+    "cumulativeGasUsed": "1739613",
+    "status": 1,
+    "byzantium": true
+  },
+  "args": [
+    "0x5b0aC3279dBf84Bb8DA59Be1EcaB118198f022E5",
+    "800000"
+  ],
+  "solcInputHash": "6865174a712c3742a5eca03d64e69168",
+  "metadata": "{\"compiler\":{\"version\":\"0.8.6+commit.11564f7e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"address\",\"name\":\"_owner\",\"type\":\"address\"},{\"internalType\":\"uint32\",\"name\":\"_cvrRate\",\"type\":\"uint32\"}],\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"oldOwner\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"ChangedOwner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"oldRate\",\"type\":\"uint32\"},{\"indexed\":false,\"internalType\":\"uint32\",\"name\":\"newRate\",\"type\":\"uint32\"}],\"name\":\"ConversionRateChanged\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"changeOwner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"conversionRate\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"convertTokensToVotingPower\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"internalType\":\"address\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint32\",\"name\":\"newConversionRate\",\"type\":\"uint32\"}],\"name\":\"setConversionRate\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"}],\"devdoc\":{\"details\":\"Convert Sushi LP tokens to voting power\",\"kind\":\"dev\",\"methods\":{\"changeOwner(address)\":{\"params\":{\"newOwner\":\"New owner address\"}},\"constructor\":{\"params\":{\"_cvrRate\":\"the conversion rate in bips\",\"_owner\":\"contract owner\"}},\"convertTokensToVotingPower(uint256)\":{\"params\":{\"amount\":\"token amount\"},\"returns\":{\"_0\":\"voting power amount\"}},\"setConversionRate(uint32)\":{\"params\":{\"newConversionRate\":\"New conversion rate\"}}},\"title\":\"SushiLPFormula\",\"version\":1},\"userdoc\":{\"events\":{\"ChangedOwner(address,address)\":{\"notice\":\"Event emitted when the owner of the contract is updated\"},\"ConversionRateChanged(uint32,uint32)\":{\"notice\":\"Event emitted when the conversion rate of the contract is changed\"}},\"kind\":\"user\",\"methods\":{\"changeOwner(address)\":{\"notice\":\"Change owner of contract\"},\"constructor\":{\"notice\":\"Construct a new voting power formula contract\"},\"conversionRate()\":{\"notice\":\"Conversion rate of token to voting power (measured in bips: 10,000 bips = 1%)\"},\"convertTokensToVotingPower(uint256)\":{\"notice\":\"Convert token amount to voting power\"},\"owner()\":{\"notice\":\"Current owner of this contract\"},\"setConversionRate(uint32)\":{\"notice\":\"Set conversion rate of contract\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/formulas/SushiLPFormula.sol\":\"SushiLPFormula\"},\"evmVersion\":\"berlin\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":999999},\"remappings\":[]},\"sources\":{\"contracts/formulas/SushiLPFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nimport \\\"../lib/VotingPowerFormula.sol\\\";\\n\\n/**\\n * @title SushiLPFormula\\n * @dev Convert Sushi LP tokens to voting power\\n */\\ncontract SushiLPFormula is VotingPowerFormula {\\n\\n    /// @notice Current owner of this contract\\n    address public owner;\\n\\n    /// @notice Conversion rate of token to voting power (measured in bips: 10,000 bips = 1%)\\n    uint32 public conversionRate;\\n\\n    /// @notice Event emitted when the owner of the contract is updated\\n    event ChangedOwner(address indexed oldOwner, address indexed newOwner);\\n\\n    /// @notice Event emitted when the conversion rate of the contract is changed\\n    event ConversionRateChanged(uint32 oldRate, uint32 newRate);\\n\\n    /// @notice only owner can call function\\n    modifier onlyOwner {\\n        require(msg.sender == owner, \\\"not owner\\\");\\n        _;\\n    }\\n\\n    /**\\n     * @notice Construct a new voting power formula contract\\n     * @param _owner contract owner\\n     * @param _cvrRate the conversion rate in bips\\n     */\\n    constructor(address _owner, uint32 _cvrRate) {\\n        owner = _owner;\\n        emit ChangedOwner(address(0), owner);\\n\\n        conversionRate = _cvrRate;\\n        emit ConversionRateChanged(uint32(0), conversionRate);\\n    }\\n\\n    /**\\n     * @notice Convert token amount to voting power\\n     * @param amount token amount\\n     * @return voting power amount\\n     */\\n    function convertTokensToVotingPower(uint256 amount) external view override returns (uint256) {\\n        return amount * conversionRate / 1000000;\\n    }\\n\\n    /**\\n     * @notice Set conversion rate of contract\\n     * @param newConversionRate New conversion rate\\n     */\\n    function setConversionRate(uint32 newConversionRate) external onlyOwner {\\n        emit ConversionRateChanged(conversionRate, newConversionRate);\\n        conversionRate = newConversionRate;\\n    }\\n\\n    /**\\n     * @notice Change owner of contract\\n     * @param newOwner New owner address\\n     */\\n    function changeOwner(address newOwner) external onlyOwner {\\n        emit ChangedOwner(owner, newOwner);\\n        owner = newOwner;\\n    }\\n}\",\"keccak256\":\"0x12545348405901186d2bfa30b4c2122892ff17e4d0fa11e8b21a5a8439640d70\",\"license\":\"MIT\"},\"contracts/lib/VotingPowerFormula.sol\":{\"content\":\"// SPDX-License-Identifier: MIT\\npragma solidity ^0.8.0;\\n\\nabstract contract VotingPowerFormula {\\n   function convertTokensToVotingPower(uint256 amount) external view virtual returns (uint256);\\n}\",\"keccak256\":\"0x067d899007ec85668b5c0ee9401b42dcd3d341961b662e5782922a075d1c2293\",\"license\":\"MIT\"}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5060405161064a38038061064a83398101604081905261002f916100df565b600080546001600160a01b0319166001600160a01b03841690811782556040519091907f2748503f8f31d8071821d1d5144384ba6a465036cda17fa1629a8a2509ccee0e908290a36000805463ffffffff60a01b1916600160a01b63ffffffff8481168202929092178084556040805194855291900490911660208301527feaaffbc2ab3e2fdc994897a9d9c2bff2123a3b8cdad9848b944e949ef1198bd4910160405180910390a1505061012e565b600080604083850312156100f257600080fd5b82516001600160a01b038116811461010957600080fd5b602084015190925063ffffffff8116811461012357600080fd5b809150509250929050565b61050d8061013d6000396000f3fe608060405234801561001057600080fd5b50600436106100675760003560e01c8063a6f9dae111610050578063a6f9dae1146100f3578063b69fb7f914610108578063e43ccb1a1461012957600080fd5b80637ffdf53e1461006c5780638da5cb5b146100ae575b600080fd5b6000546100949074010000000000000000000000000000000000000000900463ffffffff1681565b60405163ffffffff90911681526020015b60405180910390f35b6000546100ce9073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020016100a5565b6101066101013660046103bc565b61013c565b005b61011b6101163660046103f9565b61024f565b6040519081526020016100a5565b610106610137366004610412565b610290565b60005473ffffffffffffffffffffffffffffffffffffffff1633146101c2576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600960248201527f6e6f74206f776e6572000000000000000000000000000000000000000000000060448201526064015b60405180910390fd5b6000805460405173ffffffffffffffffffffffffffffffffffffffff808516939216917f2748503f8f31d8071821d1d5144384ba6a465036cda17fa1629a8a2509ccee0e91a3600080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff92909216919091179055565b60008054620f4240906102809074010000000000000000000000000000000000000000900463ffffffff1684610473565b61028a9190610438565b92915050565b60005473ffffffffffffffffffffffffffffffffffffffff163314610311576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600960248201527f6e6f74206f776e6572000000000000000000000000000000000000000000000060448201526064016101b9565b6000546040805163ffffffff740100000000000000000000000000000000000000009093048316815291831660208301527feaaffbc2ab3e2fdc994897a9d9c2bff2123a3b8cdad9848b944e949ef1198bd4910160405180910390a16000805463ffffffff90921674010000000000000000000000000000000000000000027fffffffffffffffff00000000ffffffffffffffffffffffffffffffffffffffff909216919091179055565b6000602082840312156103ce57600080fd5b813573ffffffffffffffffffffffffffffffffffffffff811681146103f257600080fd5b9392505050565b60006020828403121561040b57600080fd5b5035919050565b60006020828403121561042457600080fd5b813563ffffffff811681146103f257600080fd5b60008261046e577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b500490565b6000817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04831182151516156104d2577f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b50029056fea2646970667358221220a494415c797b461dc6f6b8998e165a390774a4ffdf092dab59c7d0e90e83ef7864736f6c63430008060033",
+  "deployedBytecode": "0x608060405234801561001057600080fd5b50600436106100675760003560e01c8063a6f9dae111610050578063a6f9dae1146100f3578063b69fb7f914610108578063e43ccb1a1461012957600080fd5b80637ffdf53e1461006c5780638da5cb5b146100ae575b600080fd5b6000546100949074010000000000000000000000000000000000000000900463ffffffff1681565b60405163ffffffff90911681526020015b60405180910390f35b6000546100ce9073ffffffffffffffffffffffffffffffffffffffff1681565b60405173ffffffffffffffffffffffffffffffffffffffff90911681526020016100a5565b6101066101013660046103bc565b61013c565b005b61011b6101163660046103f9565b61024f565b6040519081526020016100a5565b610106610137366004610412565b610290565b60005473ffffffffffffffffffffffffffffffffffffffff1633146101c2576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600960248201527f6e6f74206f776e6572000000000000000000000000000000000000000000000060448201526064015b60405180910390fd5b6000805460405173ffffffffffffffffffffffffffffffffffffffff808516939216917f2748503f8f31d8071821d1d5144384ba6a465036cda17fa1629a8a2509ccee0e91a3600080547fffffffffffffffffffffffff00000000000000000000000000000000000000001673ffffffffffffffffffffffffffffffffffffffff92909216919091179055565b60008054620f4240906102809074010000000000000000000000000000000000000000900463ffffffff1684610473565b61028a9190610438565b92915050565b60005473ffffffffffffffffffffffffffffffffffffffff163314610311576040517f08c379a000000000000000000000000000000000000000000000000000000000815260206004820152600960248201527f6e6f74206f776e6572000000000000000000000000000000000000000000000060448201526064016101b9565b6000546040805163ffffffff740100000000000000000000000000000000000000009093048316815291831660208301527feaaffbc2ab3e2fdc994897a9d9c2bff2123a3b8cdad9848b944e949ef1198bd4910160405180910390a16000805463ffffffff90921674010000000000000000000000000000000000000000027fffffffffffffffff00000000ffffffffffffffffffffffffffffffffffffffff909216919091179055565b6000602082840312156103ce57600080fd5b813573ffffffffffffffffffffffffffffffffffffffff811681146103f257600080fd5b9392505050565b60006020828403121561040b57600080fd5b5035919050565b60006020828403121561042457600080fd5b813563ffffffff811681146103f257600080fd5b60008261046e577f4e487b7100000000000000000000000000000000000000000000000000000000600052601260045260246000fd5b500490565b6000817fffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff04831182151516156104d2577f4e487b7100000000000000000000000000000000000000000000000000000000600052601160045260246000fd5b50029056fea2646970667358221220a494415c797b461dc6f6b8998e165a390774a4ffdf092dab59c7d0e90e83ef7864736f6c63430008060033",
+  "devdoc": {
+    "details": "Convert Sushi LP tokens to voting power",
+    "kind": "dev",
+    "methods": {
+      "changeOwner(address)": {
+        "params": {
+          "newOwner": "New owner address"
+        }
+      },
+      "constructor": {
+        "params": {
+          "_cvrRate": "the conversion rate in bips",
+          "_owner": "contract owner"
+        }
+      },
+      "convertTokensToVotingPower(uint256)": {
+        "params": {
+          "amount": "token amount"
+        },
+        "returns": {
+          "_0": "voting power amount"
+        }
+      },
+      "setConversionRate(uint32)": {
+        "params": {
+          "newConversionRate": "New conversion rate"
+        }
+      }
+    },
+    "title": "SushiLPFormula",
+    "version": 1
+  },
+  "userdoc": {
+    "events": {
+      "ChangedOwner(address,address)": {
+        "notice": "Event emitted when the owner of the contract is updated"
+      },
+      "ConversionRateChanged(uint32,uint32)": {
+        "notice": "Event emitted when the conversion rate of the contract is changed"
+      }
+    },
+    "kind": "user",
+    "methods": {
+      "changeOwner(address)": {
+        "notice": "Change owner of contract"
+      },
+      "constructor": {
+        "notice": "Construct a new voting power formula contract"
+      },
+      "conversionRate()": {
+        "notice": "Conversion rate of token to voting power (measured in bips: 10,000 bips = 1%)"
+      },
+      "convertTokensToVotingPower(uint256)": {
+        "notice": "Convert token amount to voting power"
+      },
+      "owner()": {
+        "notice": "Current owner of this contract"
+      },
+      "setConversionRate(uint32)": {
+        "notice": "Set conversion rate of contract"
+      }
+    },
+    "version": 1
+  },
+  "storageLayout": {
+    "storage": [
+      {
+        "astId": 27,
+        "contract": "contracts/formulas/SushiLPFormula.sol:SushiLPFormula",
+        "label": "owner",
+        "offset": 0,
+        "slot": "0",
+        "type": "t_address"
+      },
+      {
+        "astId": 30,
+        "contract": "contracts/formulas/SushiLPFormula.sol:SushiLPFormula",
+        "label": "conversionRate",
+        "offset": 20,
+        "slot": "0",
+        "type": "t_uint32"
+      }
+    ],
+    "types": {
+      "t_address": {
+        "encoding": "inplace",
+        "label": "address",
+        "numberOfBytes": "20"
+      },
+      "t_uint32": {
+        "encoding": "inplace",
+        "label": "uint32",
+        "numberOfBytes": "4"
+      }
+    }
+  }
+}

@@ -16,7 +16,7 @@ module.exports = async function ({ ethers, deployments, getNamedAccounts }) {
     log(`- Accepted pending voting power implementation of contract at ${votingPowerImplementation.address}`);
 
     // Initialize voting power contract
-    const result = await votingPower.initialize(token.address, admin)
+    const result = await votingPower.initialize(token.address, deployer)
     if (result.hash) {
         const receipt = await ethers.provider.waitForTransaction(result.hash)
         if(receipt.status) {

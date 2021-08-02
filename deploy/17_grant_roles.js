@@ -10,7 +10,7 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   const LOCKER_ROLE = "0xaf9a8bb3cbd6b84fbccefa71ff73e26e798553c6914585a84886212a46a90279"
   const DEFAULT_ADMIN_ROLE = "0x0000000000000000000000000000000000000000000000000000000000000000"
 
-  log(`16) Grant Roles`)
+  log(`17) Grant Roles`)
   // Grant roles
   await execute('LockManager', { from: deployer }, 'grantRole', LOCKER_ROLE, rewardsManager.address);
   log(`- Granted locker role to rewards manager`)
@@ -51,10 +51,10 @@ module.exports.skip = async function({ deployments, getNamedAccounts }) {
     if(deployerIsAdmin) {
       return false
     }
-    log(`16) Grant Roles`)
+    log(`17) Grant Roles`)
     log(`- Skipping step, roles have already been granted`)
     return true
 }
 
-module.exports.tags = ["16", "GrantRoles"]
-module.exports.dependencies = ["15"]
+module.exports.tags = ["17", "GrantRoles"]
+module.exports.dependencies = ["16"]
