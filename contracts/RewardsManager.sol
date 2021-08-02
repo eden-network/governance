@@ -528,7 +528,7 @@ contract RewardsManager is ReentrancyGuard {
     }
 
     /**
-     * @notice Change owner of vesting contract
+     * @notice Change owner of Rewards Manager contract
      * @dev Can only be called by the owner
      * @param newOwner New owner address
      */
@@ -599,9 +599,9 @@ contract RewardsManager is ReentrancyGuard {
      * @param user the user info 
      */
     function _withdraw(
-        uint256 pid, 
+        uint256 pid,
         uint256 amount,
-        PoolInfo storage pool, 
+        PoolInfo storage pool,
         UserInfo storage user
     ) internal {
         require(user.amount >= amount, "RM::_withdraw: amount > user balance");
