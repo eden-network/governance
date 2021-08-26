@@ -162,7 +162,29 @@ const distributorFixture = deployments.createFixture(async ({deployments, getNam
     };
 });
 
+const paymentsFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
+    const accounts = await ethers.getSigners();
+    const deployer = accounts[0]
+    const alice = accounts[5]
+    const bob = accounts[6]
+    const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
+    const EdenToken = await EdenTokenFactory.deploy(deployer.address);
+    await EdenToken.grantRole('0x9f2df0fed2c77648de5860a4cc508cd0818c85b8b8a1ab4ceeef8d981c8956a6', deployer.address)
+    await EdenToken.mint(deployer.address, "100000000000000000000000000")
+    const PaymentsFactory = await ethers.getContractFactory("Payments");
+    const Payments = await PaymentsFactory.deploy();
+    return {
+        edenToken: EdenToken,
+        payments: Payments,
+        deployer,
+        alice,
+        bob,
+        ZERO_ADDRESS: ZERO_ADDRESS
+    };
+});
+
 module.exports.tokenFixture = tokenFixture;
 module.exports.governanceFixture = governanceFixture;
 module.exports.rewardsFixture = rewardsFixture;
 module.exports.distributorFixture = distributorFixture;
+module.exports.paymentsFixture = paymentsFixture;

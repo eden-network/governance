@@ -10,7 +10,7 @@ import "./lib/ReentrancyGuard.sol";
  * @dev Contract for streaming token payments for set periods of time 
  */
 contract Payments is ReentrancyGuard {
-    using SafeERC20 for IERC20Permit;
+    using SafeERC20 for IERC20;
 
     /// @notice Payment definition
     struct Payment {
@@ -18,6 +18,7 @@ contract Payments is ReentrancyGuard {
         address receiver;
         address payer;
         uint48 startTime;
+        uint48 stopTime;
         uint16 cliffDurationInDays;
         uint256 paymentDurationInSecs;
         uint256 amount;
@@ -54,10 +55,10 @@ contract Payments is ReentrancyGuard {
     event PaymentCreated(address indexed token, address indexed payer, address indexed receiver, uint256 paymentId, uint256 amount, uint48 startTime, uint256 durationInSecs, uint16 cliffInDays);
     
     /// @notice Event emitted when tokens are claimed by a receiver from an available balance
-    event TokensClaimed(address indexed receiver, address indexed token, uint256 indexed paymentId, uint256 amountClaimed, uint256 votingPowerRemoved);
+    event TokensClaimed(address indexed receiver, address indexed token, uint256 indexed paymentId, uint256 amountClaimed);
 
     /// @notice Event emitted when payment stopped
-    event PaymentStopped(uint256 indexed paymentId, uint256 indexed oldDuration, uint256 indexed newDuration, uint48 startTime);
+    event PaymentStopped(uint256 indexed paymentId, uint256 indexed originalDuration, uint48 stopTime, uint48 startTime);
 
     /**
      * @notice Create payment, optionally providing voting power
@@ -79,10 +80,10 @@ contract Payments is ReentrancyGuard {
     )
         external
     {
-        require(paymentDurationInSecs > 0, "SP::createPayment: payment duration must be > 0");
-        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "SP::createPayment: payment duration more than 25 years");
-        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "SP::createPayment: payment duration < cliff");
-        require(amount > 0, "SP::createPayment: amount not > 0");
+        require(paymentDurationInSecs > 0, "Payments::createPayment: payment duration must be > 0");
+        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "Payments::createPayment: payment duration more than 25 years");
+        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "Payments::createPayment: payment duration < cliff");
+        require(amount > 0, "Payments::createPayment: amount not > 0");
         _createPayment(token, payer, receiver, startTime, amount, paymentDurationInSecs, cliffDurationInDays);
     }
 
@@ -116,10 +117,10 @@ contract Payments is ReentrancyGuard {
     ) 
         external
     {
-        require(paymentDurationInSecs > 0, "SP::createPaymentWithPermit: payment duration must be > 0");
-        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "SP::createPaymentWithPermit: payment duration more than 25 years");
-        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "SP::createPaymentWithPermit: duration < cliff");
-        require(amount > 0, "SP::createPaymentWithPermit: amount not > 0");
+        require(paymentDurationInSecs > 0, "Payments::createPaymentWithPermit: payment duration must be > 0");
+        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "Payments::createPaymentWithPermit: payment duration more than 25 years");
+        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "Payments::createPaymentWithPermit: duration < cliff");
+        require(amount > 0, "Payments::createPaymentWithPermit: amount not > 0");
 
         // Set approval using permit signature
         IERC20Permit(token).permit(payer, address(this), amount, deadline, v, r, s);
@@ -135,8 +136,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(i) > 0) {
                 activeCount++;
             }
         }
@@ -147,8 +147,7 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(i) > 0) {
                 result[j] = i;
                 j++;
             }
@@ -165,8 +164,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(i) > 0) {
                 activeCount++;
             }
         }
@@ -177,9 +175,8 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
-                result[j] = payment;
+            if(claimableBalance(i) > 0) {
+                result[j] = tokenPayments[i];
                 j++;
             }
         }
@@ -195,8 +192,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(i) > 0) {
                 activeCount++;
             }
         }
@@ -207,8 +203,7 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < numPayments; i++) {
-            Payment memory payment = tokenPayments[i];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(i) > 0) {
                 result[j] = paymentBalance(i);
                 j++;
             }
@@ -227,8 +222,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 activeCount++;
             }
         }
@@ -239,8 +233,7 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 result[j] = receiverPaymentIds[i];
                 j++;
             }
@@ -273,8 +266,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 activeCount++;
             }
         }
@@ -285,8 +277,7 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 result[j] = tokenPayments[receiverPaymentIds[i]];
                 j++;
             }
@@ -305,8 +296,7 @@ contract Payments is ReentrancyGuard {
 
         // Get number of active payments
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 activeCount++;
             }
         }
@@ -317,8 +307,7 @@ contract Payments is ReentrancyGuard {
 
         // Populate result array
         for (uint256 i; i < receiverPaymentIds.length; i++) {
-            Payment memory payment = tokenPayments[receiverPaymentIds[i]];
-            if(payment.paymentDurationInSecs > 0 && payment.amount != payment.amountClaimed) {
+            if(claimableBalance(receiverPaymentIds[i]) > 0) {
                 result[j] = paymentBalance(receiverPaymentIds[i]);
                 j++;
             }
@@ -334,23 +323,23 @@ contract Payments is ReentrancyGuard {
     function totalTokenBalance(address token) external view returns(TokenBalance memory balance){
         for (uint256 i; i < numPayments; i++) {
             Payment memory tokenPayment = tokenPayments[i];
-            if(tokenPayment.token == token && tokenPayment.paymentDurationInSecs > 0 && tokenPayment.amount != tokenPayment.amountClaimed){
+            if(tokenPayment.token == token && tokenPayment.startTime != tokenPayment.stopTime){
                 balance.totalAmount = balance.totalAmount + tokenPayment.amount;
                 if(block.timestamp > tokenPayment.startTime) {
                     balance.claimedAmount = balance.claimedAmount + tokenPayment.amountClaimed;
 
-                    uint256 elapsedTime = block.timestamp - tokenPayment.startTime;
+                    uint256 elapsedTime = tokenPayment.stopTime > 0 && tokenPayment.stopTime < block.timestamp ? tokenPayment.stopTime - tokenPayment.startTime : block.timestamp - tokenPayment.startTime;
                     uint256 elapsedDays = elapsedTime / SECONDS_PER_DAY;
 
                     if (
                         elapsedDays >= tokenPayment.cliffDurationInDays
                     ) {
-                        if (elapsedTime >= tokenPayment.paymentDurationInSecs) {
+                        if (tokenPayment.stopTime == 0 && elapsedTime >= tokenPayment.paymentDurationInSecs) {
                             balance.claimableAmount = balance.claimableAmount + tokenPayment.amount - tokenPayment.amountClaimed;
                         } else {
                             uint256 paymentAmountPerSec = tokenPayment.amount / tokenPayment.paymentDurationInSecs;
-                            uint256 amountVested = paymentAmountPerSec * elapsedTime;
-                            balance.claimableAmount = balance.claimableAmount + amountVested - tokenPayment.amountClaimed;
+                            uint256 amountAvailable = paymentAmountPerSec * elapsedTime;
+                            balance.claimableAmount = balance.claimableAmount + amountAvailable - tokenPayment.amountClaimed;
                         }
                     }
                 }
@@ -368,23 +357,23 @@ contract Payments is ReentrancyGuard {
         uint256[] memory receiverPaymentIds = paymentIds[receiver];
         for (uint256 i; i < receiverPaymentIds.length; i++) {
             Payment memory receiverPayment = tokenPayments[receiverPaymentIds[i]];
-            if(receiverPayment.token == token && receiverPayment.paymentDurationInSecs > 0 && receiverPayment.amount != receiverPayment.amountClaimed){
+            if(receiverPayment.token == token && receiverPayment.startTime != receiverPayment.stopTime){
                 balance.totalAmount = balance.totalAmount + receiverPayment.amount;
                 if(block.timestamp > receiverPayment.startTime) {
                     balance.claimedAmount = balance.claimedAmount + receiverPayment.amountClaimed;
 
-                    uint256 elapsedTime = block.timestamp - receiverPayment.startTime;
+                    uint256 elapsedTime = receiverPayment.stopTime > 0 && receiverPayment.stopTime < block.timestamp ? receiverPayment.stopTime - receiverPayment.startTime : block.timestamp - receiverPayment.startTime;
                     uint256 elapsedDays = elapsedTime / SECONDS_PER_DAY;
 
                     if (
                         elapsedDays >= receiverPayment.cliffDurationInDays
                     ) {
-                        if (elapsedTime >= receiverPayment.paymentDurationInSecs) {
+                        if (receiverPayment.stopTime == 0 && elapsedTime >= receiverPayment.paymentDurationInSecs) {
                             balance.claimableAmount = balance.claimableAmount + receiverPayment.amount - receiverPayment.amountClaimed;
                         } else {
                             uint256 paymentAmountPerSec = receiverPayment.amount / receiverPayment.paymentDurationInSecs;
-                            uint256 amountVested = paymentAmountPerSec * elapsedTime;
-                            balance.claimableAmount = balance.claimableAmount + amountVested - receiverPayment.amountClaimed;
+                            uint256 amountAvailable = paymentAmountPerSec * elapsedTime;
+                            balance.claimableAmount = balance.claimableAmount + amountAvailable - receiverPayment.amountClaimed;
                         }
                     }
                 }
@@ -412,30 +401,26 @@ contract Payments is ReentrancyGuard {
     function claimableBalance(uint256 paymentId) public view returns (uint256) {
         Payment storage payment = tokenPayments[paymentId];
 
-        // For payments created with a future start date, that hasn't been reached, return 0
-        if (block.timestamp < payment.startTime) {
+        // For payments created with a future start date or payments stopped before starting, that hasn't been reached, return 0
+        if (block.timestamp < payment.startTime || payment.startTime == payment.stopTime) {
             return 0;
         }
 
-        // For payments that are stopped before starting, return 0
-        if (payment.paymentDurationInSecs == 0) {
-            return 0;
-        }
-
-        uint256 elapsedTime = block.timestamp - payment.startTime;
+        
+        uint256 elapsedTime = payment.stopTime > 0 && payment.stopTime < block.timestamp ? payment.stopTime - payment.startTime : block.timestamp - payment.startTime;
         uint256 elapsedDays = elapsedTime / SECONDS_PER_DAY;
         
         if (elapsedDays < payment.cliffDurationInDays) {
             return 0;
-        } 
-        
-        if (elapsedTime >= payment.paymentDurationInSecs) {
-            return payment.amount - payment.amountClaimed;
-        } else {
-            uint256 paymentAmountPerSec = payment.amount / payment.paymentDurationInSecs;
-            uint256 amountVested = paymentAmountPerSec * elapsedTime;
-            return amountVested - payment.amountClaimed;
         }
+
+        if (payment.stopTime == 0 && elapsedTime >= payment.paymentDurationInSecs) {
+            return payment.amount - payment.amountClaimed;
+        }
+        
+        uint256 paymentAmountPerSec = payment.amount / payment.paymentDurationInSecs;
+        uint256 amountAvailable = paymentAmountPerSec * elapsedTime;
+        return amountAvailable - payment.amountClaimed;
     }
 
     /**
@@ -447,7 +432,7 @@ contract Payments is ReentrancyGuard {
     function claimAllAvailableTokens(uint256[] memory payments) external nonReentrant {
         for (uint i = 0; i < payments.length; i++) {
             uint256 claimableAmount = claimableBalance(payments[i]);
-            require(claimableAmount > 0, "SP::claimAllAvailableTokens: claimableAmount is 0");
+            require(claimableAmount > 0, "Payments::claimAllAvailableTokens: claimableAmount is 0");
             _claimTokens(payments[i], claimableAmount);
         }
     }
@@ -460,10 +445,10 @@ contract Payments is ReentrancyGuard {
      * @param amounts The amount of each available token to claim
      */
     function claimAvailableTokenAmounts(uint256[] memory payments, uint256[] memory amounts) external nonReentrant {
-        require(payments.length == amounts.length, "SP::claimAvailableTokenAmounts: arrays must be same length");
+        require(payments.length == amounts.length, "Payments::claimAvailableTokenAmounts: arrays must be same length");
         for (uint i = 0; i < payments.length; i++) {
             uint256 claimableAmount = claimableBalance(payments[i]);
-            require(claimableAmount >= amounts[i], "SP::claimAvailableTokenAmounts: claimableAmount < amount");
+            require(claimableAmount >= amounts[i], "Payments::claimAvailableTokenAmounts: claimableAmount < amount");
             _claimTokens(payments[i], amounts[i]);
         }
     }
@@ -471,17 +456,26 @@ contract Payments is ReentrancyGuard {
     /**
      * @notice Allows payer or receiver to stop existing payments for a given paymentId
      * @param paymentId The payment id for a payment
+     * @param stopTime Timestamp to stop payment, if 0 use current block.timestamp
      */
-    function stopPayment(uint256 paymentId) external nonReentrant {
+    function stopPayment(uint256 paymentId, uint48 stopTime) external nonReentrant {
         Payment storage payment = tokenPayments[paymentId];
-        uint256 oldPaymentDuration = payment.paymentDurationInSecs;
-        require(msg.sender == payment.payer || msg.sender == payment.receiver, "SP::stopPayment: msg.sender must be payer or receiver");
-        require(block.timestamp <= payment.startTime + oldPaymentDuration * SECONDS_PER_DAY, "SP::stopPayment: payment already ended");
-        uint256 stopTime = block.timestamp > payment.startTime ? block.timestamp : payment.startTime;
-        uint256 newPaymentDuration = stopTime - payment.startTime;
-        payment.paymentDurationInSecs = newPaymentDuration;
-        IERC20Permit(payment.token).safeTransfer(payment.payer, payment.amount - payment.amountClaimed - claimableBalance(paymentId));
-        emit PaymentStopped(paymentId, oldPaymentDuration, newPaymentDuration, payment.startTime);
+        require(msg.sender == payment.payer || msg.sender == payment.receiver, "Payments::stopPayment: msg.sender must be payer or receiver");
+        require(payment.stopTime == 0, "Payments::stopPayment: payment already stopped");
+        stopTime = stopTime == 0 ? uint48(block.timestamp) : stopTime;
+        require(stopTime < payment.startTime + payment.paymentDurationInSecs, "Payments::stopPayment: stop time > payment duration");
+        if(stopTime > payment.startTime) {
+            payment.stopTime = stopTime;
+            uint256 newPaymentDuration = stopTime - payment.startTime;
+            uint256 paymentAmountPerSec = payment.amount / payment.paymentDurationInSecs;
+            uint256 newPaymentAmount = paymentAmountPerSec * newPaymentDuration;
+            IERC20(payment.token).safeTransfer(payment.payer, payment.amount - newPaymentAmount);
+            emit PaymentStopped(paymentId, payment.paymentDurationInSecs, stopTime, payment.startTime);
+        } else {
+            payment.stopTime = payment.startTime;
+            IERC20(payment.token).safeTransfer(payment.payer, payment.amount);
+            emit PaymentStopped(paymentId, payment.paymentDurationInSecs, payment.startTime, payment.startTime);
+        }
     }
 
     /**
@@ -504,7 +498,7 @@ contract Payments is ReentrancyGuard {
     ) internal {
 
         // Transfer the tokens under the control of the payment contract
-        IERC20Permit(token).safeTransferFrom(payer, address(this), amount);
+        IERC20(token).safeTransferFrom(payer, address(this), amount);
 
         uint48 paymentStartTime = startTime == 0 ? uint48(block.timestamp) : startTime;
 
@@ -514,6 +508,7 @@ contract Payments is ReentrancyGuard {
             receiver: receiver,
             payer: payer,
             startTime: paymentStartTime,
+            stopTime: 0,
             paymentDurationInSecs: paymentDurationInSecs,
             cliffDurationInDays: cliffDurationInDays,
             amount: amount,
@@ -535,13 +530,12 @@ contract Payments is ReentrancyGuard {
      */
     function _claimTokens(uint256 paymentId, uint256 claimAmount) internal {
         Payment storage payment = tokenPayments[paymentId];
-        uint256 votingPowerRemoved;
 
         // Update claimed amount
         payment.amountClaimed = payment.amountClaimed + claimAmount;
 
         // Release tokens
-        IERC20Permit(payment.token).safeTransfer(payment.receiver, claimAmount);
-        emit TokensClaimed(payment.receiver, payment.token, paymentId, claimAmount, votingPowerRemoved);
+        IERC20(payment.token).safeTransfer(payment.receiver, claimAmount);
+        emit TokensClaimed(payment.receiver, payment.token, paymentId, claimAmount);
     }
 }
