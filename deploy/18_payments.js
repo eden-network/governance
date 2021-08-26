@@ -2,13 +2,12 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log } = deployments;
   const { deployer } = await getNamedAccounts();
 
-  log(`1) Payments`)
+  log(`18) Payments`)
   // Deploy Payments contract
   const deployResult = await deploy("Payments", {
     from: deployer,
     contract: "Payments",
     gas: 4000000,
-    args: [deployer],
     skipIfAlreadyDeployed: true
   });
 
