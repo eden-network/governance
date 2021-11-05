@@ -657,6 +657,112 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "payers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "receivers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint48[]",
+        "name": "startTimes",
+        "type": "uint48[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "paymentDurationsInSecs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "cliffDurationsInDays",
+        "type": "uint16[]"
+      }
+    ],
+    "name": "createPayments",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "tokens",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "payers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "address[]",
+        "name": "receivers",
+        "type": "address[]"
+      },
+      {
+        "internalType": "uint48[]",
+        "name": "startTimes",
+        "type": "uint48[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "amounts",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "paymentDurationsInSecs",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint16[]",
+        "name": "cliffDurationsInDays",
+        "type": "uint16[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "deadlines",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint8[]",
+        "name": "vs",
+        "type": "uint8[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "rs",
+        "type": "bytes32[]"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "ss",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "createPaymentsWithPermit",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "numPayments",
     "outputs": [
