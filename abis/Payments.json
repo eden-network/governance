@@ -559,11 +559,6 @@
       },
       {
         "internalType": "address",
-        "name": "payer",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
         "name": "receiver",
         "type": "address"
       },
@@ -598,11 +593,6 @@
       {
         "internalType": "address",
         "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "payer",
         "type": "address"
       },
       {
@@ -665,11 +655,6 @@
       },
       {
         "internalType": "address[]",
-        "name": "payers",
-        "type": "address[]"
-      },
-      {
-        "internalType": "address[]",
         "name": "receivers",
         "type": "address[]"
       },
@@ -704,11 +689,6 @@
       {
         "internalType": "address[]",
         "name": "tokens",
-        "type": "address[]"
-      },
-      {
-        "internalType": "address[]",
-        "name": "payers",
         "type": "address[]"
       },
       {

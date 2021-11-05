@@ -40,7 +40,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let totalPayment = await edenToken.balanceOf(payments.address)
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)
             const alicePayments = await payments.allPayments(alice.address)
             const newPayment = alicePayments[0]
             expect(newPayment[0]).to.eq(edenToken.address)
@@ -64,7 +64,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let totalPayment = await edenToken.balanceOf(payments.address)
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await expect(payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::createPayment: payment duration must be > 0")
+            await expect(payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::_validatePayment: payment duration must be > 0")
             expect(await edenToken.balanceOf(payments.address)).to.eq(totalPayment)
             const emptyPayments = await payments.activePayments(bob.address)
             expect(emptyPayments.length).to.eq(0)
@@ -78,7 +78,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let totalPayment = await edenToken.balanceOf(payments.address)
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await expect(payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::createPayment: payment duration more than 25 years")
+            await expect(payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::_validatePayment: payment duration more than 25 years")
             expect(await edenToken.balanceOf(payments.address)).to.eq(totalPayment)
             const emptyPayments = await payments.activePayments(bob.address)
             expect(emptyPayments.length).to.eq(0)
@@ -92,7 +92,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let totalPayment = await edenToken.balanceOf(payments.address)
             let paymentAmount = ethers.BigNumber.from(0).mul(ethers.BigNumber.from(10).pow(decimals))
-            await expect(payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::createPayment: amount not > 0")
+            await expect(payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.revertedWith("Payments::_validatePayment: amount not > 0")
             expect(await edenToken.balanceOf(payments.address)).to.eq(totalPayment)
             const emptyPayments = await payments.activePayments(bob.address)
             expect(emptyPayments.length).to.eq(0)
@@ -107,7 +107,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let totalPayment = await edenToken.balanceOf(payments.address)
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await expect(payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.reverted
+            await expect(payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)).to.reverted
             expect(await edenToken.balanceOf(payments.address)).to.eq(totalPayment)
             const emptyPayments = await payments.activePayments(bob.address)
             expect(emptyPayments.length).to.eq(0)
@@ -335,7 +335,7 @@ describe("Payments", function() {
           const DURATION_IN_DAYS = 4
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
           const balance = await payments.tokenBalance(ZERO_ADDRESS, bob.address)
           expect(balance.totalAmount).to.eq(0)
           expect(balance.claimableAmount).to.eq(0)
@@ -350,7 +350,7 @@ describe("Payments", function() {
           const DURATION_IN_DAYS = 4
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
           await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + DURATION_IN_SECS])
           await ethers.provider.send("evm_mine")
           const balance = await payments.tokenBalance(edenToken.address, bob.address)
@@ -367,7 +367,7 @@ describe("Payments", function() {
           const DURATION_IN_DAYS = 4
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
           const balance = await payments.tokenBalance(edenToken.address, bob.address)
           expect(balance.totalAmount).to.eq(paymentAmount)
           expect(balance.claimableAmount).to.eq(0)
@@ -382,8 +382,8 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
-            await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             const balance = await payments.tokenBalance(edenToken.address, bob.address)
             expect(balance.totalAmount).to.eq(paymentAmount.mul(2))
             expect(balance.claimableAmount).to.eq(0)
@@ -398,8 +398,8 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)
-            await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS * 2, DURATION_IN_DAYS * 2)
+            await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, DURATION_IN_DAYS)
+            await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS * 2, DURATION_IN_DAYS * 2)
             await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + DURATION_IN_SECS])
             await ethers.provider.send("evm_mine")
             const balance = await payments.tokenBalance(edenToken.address, bob.address)
@@ -418,7 +418,7 @@ describe("Payments", function() {
         const DURATION_IN_DAYS = 4
         const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
         expect(await payments.claimableBalance(0)).to.eq(0)
       })
 
@@ -430,7 +430,7 @@ describe("Payments", function() {
         const DURATION_IN_DAYS = 4
         const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
         await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME])
         await ethers.provider.send("evm_mine")
         expect(await payments.claimableBalance(0)).to.eq(0)
@@ -446,7 +446,7 @@ describe("Payments", function() {
         const CLIFF_DURATION_IN_DAYS = 2
         const CLIFF_DURATION_IN_SECS = CLIFF_DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, CLIFF_DURATION_IN_DAYS)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, CLIFF_DURATION_IN_DAYS)
         await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + CLIFF_DURATION_IN_SECS - 1])
         await ethers.provider.send("evm_mine")
         expect(await payments.claimableBalance(0)).to.eq(0)
@@ -462,7 +462,7 @@ describe("Payments", function() {
         const CLIFF_DURATION_IN_DAYS = 2
         const CLIFF_DURATION_IN_SECS = CLIFF_DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, CLIFF_DURATION_IN_DAYS)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, CLIFF_DURATION_IN_DAYS)
         await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + CLIFF_DURATION_IN_SECS])
         await ethers.provider.send("evm_mine")
         const vestedAmountPerSec = paymentAmount.div(DURATION_IN_SECS)
@@ -478,7 +478,7 @@ describe("Payments", function() {
         const DURATION_IN_DAYS = 4
         const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
         await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + DURATION_IN_SECS])
         await ethers.provider.send("evm_mine")
         expect(await payments.claimableBalance(0)).to.eq(paymentAmount)
@@ -492,7 +492,7 @@ describe("Payments", function() {
         const DURATION_IN_DAYS = 4
         const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
         let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-        await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+        await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
         await ethers.provider.send("evm_setNextBlockTimestamp", [START_TIME + DURATION_IN_SECS])
         let claimAmount = ethers.BigNumber.from(100).mul(ethers.BigNumber.from(10).pow(decimals))
         await payments.connect(bob).claimAvailableTokenAmounts([0], [claimAmount])
@@ -509,7 +509,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             await expect(payments.connect(bob).claimAvailableTokenAmounts([0], [paymentAmount])).to.revertedWith("Payments::claimAvailableTokenAmounts: claimableAmount < amount")
         })
 
@@ -521,7 +521,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let userTokenBalanceBefore = await edenToken.balanceOf(alice.address)
             let contractTokenBalanceBefore = await edenToken.balanceOf(payments.address)
             let newTime = timestamp + 21600 + DURATION_IN_SECS + 60
@@ -541,7 +541,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
             const aliceBalanceBefore = await edenToken.balanceOf(alice.address)
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let userTokenBalanceBefore = await edenToken.balanceOf(alice.address)
             let contractTokenBalanceBefore = await edenToken.balanceOf(payments.address)
             let newTime = timestamp + 21600 + DURATION_IN_SECS + 60
@@ -573,7 +573,7 @@ describe("Payments", function() {
           const DURATION_IN_DAYS = 4
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, bob.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
           await expect(payments.connect(bob).claimAllAvailableTokens([0])).to.revertedWith("Payments::claimAllAvailableTokens: claimableAmount is 0")
         })
   
@@ -585,7 +585,7 @@ describe("Payments", function() {
           const DURATION_IN_DAYS = 4
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
           let userTokenBalanceBefore = await edenToken.balanceOf(alice.address)
           let contractTokenBalanceBefore = await edenToken.balanceOf(payments.address)
           let newTime = timestamp + 21600 + DURATION_IN_SECS + 60
@@ -605,7 +605,7 @@ describe("Payments", function() {
           const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
           const aliceBalanceBefore = await edenToken.balanceOf(alice.address)
           let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-          await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+          await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
 
           let newTime = timestamp + 21600 + DURATION_IN_SECS + 60
           await ethers.provider.send("evm_setNextBlockTimestamp", [newTime])
@@ -629,7 +629,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let alicePayments = await payments.allPayments(alice.address)
             let payment = alicePayments[0]
             expect(payment[0]).to.eq(edenToken.address)
@@ -667,7 +667,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let alicePayments = await payments.allPayments(alice.address)
             let payment = alicePayments[0]
             expect(payment[0]).to.eq(edenToken.address)
@@ -706,7 +706,7 @@ describe("Payments", function() {
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
             const paymentAmountPerSec = paymentAmount.div(DURATION_IN_SECS)
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let activePayments = await payments.activePayments(alice.address)
             expect(activePayments).to.be.empty
             let alicePayments = await payments.allPayments(alice.address)
@@ -747,7 +747,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let alicePayments = await payments.allPayments(alice.address)
             let payment = alicePayments[0]
             expect(payment[0]).to.eq(edenToken.address)
@@ -785,7 +785,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let activePayments = await payments.activePayments(alice.address)
             expect(activePayments).to.be.empty
             let alicePayments = await payments.allPayments(alice.address)
@@ -826,7 +826,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let activePayments = await payments.activePayments(alice.address)
             expect(activePayments).to.be.empty
             let alicePayments = await payments.allPayments(alice.address)
@@ -866,7 +866,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             await expect(payments.connect(bob).stopPayment(0, 0)).to.be.revertedWith("Payments::stopPayment: msg.sender must be payer or receiver")
         })
 
@@ -878,7 +878,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             await payments.stopPayment(0, 0)
             await expect(payments.stopPayment(0, 0)).to.be.revertedWith("Payments::stopPayment: payment already stopped")
         })
@@ -891,7 +891,7 @@ describe("Payments", function() {
             const DURATION_IN_DAYS = 4
             const DURATION_IN_SECS = DURATION_IN_DAYS * 24 * 60 * 60
             let paymentAmount = ethers.BigNumber.from(1000).mul(ethers.BigNumber.from(10).pow(decimals))
-            await payments.createPayment(edenToken.address, deployer.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
+            await payments.createPayment(edenToken.address, alice.address, START_TIME, paymentAmount, DURATION_IN_SECS, 0)
             let alicePayments = await payments.allPayments(alice.address)
             let payment = alicePayments[0]
             expect(payment[0]).to.eq(edenToken.address)

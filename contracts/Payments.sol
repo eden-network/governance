@@ -64,8 +64,7 @@ contract Payments is ReentrancyGuard {
     /**
      * @notice Create payment
      * @param token Address of token for payment
-     * @param payer The account that is paying tokens
-     * @param receiver The account that will be able to retrieve available tokens
+     * @param receiver The account that will receive tokens
      * @param startTime The unix timestamp when the payment period will start
      * @param amount The amount of tokens being paid
      * @param paymentDurationInSecs The payment period in seconds
@@ -73,28 +72,23 @@ contract Payments is ReentrancyGuard {
      */
     function createPayment(
         address token,
-        address payer,
         address receiver,
         uint48 startTime,
         uint256 amount,
         uint256 paymentDurationInSecs,
         uint16 cliffDurationInDays
     )
-        public
+        external nonReentrant
     {
-        require(paymentDurationInSecs > 0, "Payments::createPayment: payment duration must be > 0");
-        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "Payments::createPayment: payment duration more than 25 years");
-        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "Payments::createPayment: payment duration < cliff");
-        require(amount > 0, "Payments::createPayment: amount not > 0");
-        _createPayment(token, payer, receiver, startTime, amount, paymentDurationInSecs, cliffDurationInDays);
+        _validatePayment(paymentDurationInSecs, cliffDurationInDays, amount);
+        _createPayment(token, receiver, startTime, amount, paymentDurationInSecs, cliffDurationInDays);
     }
 
     /**
      * @notice Create payment, using permit for approval
      * @dev It is up to the frontend developer to ensure the token implements permit - otherwise this will fail
      * @param token Address of token for payment
-     * @param payer The account that is paying tokens
-     * @param receiver The account that will be able to retrieve available tokens
+     * @param receiver The account that will receive tokens
      * @param startTime The unix timestamp when the payment period will start
      * @param amount The amount of tokens being paid
      * @param paymentDurationInSecs The payment period in seconds
@@ -106,7 +100,6 @@ contract Payments is ReentrancyGuard {
      */
     function createPaymentWithPermit(
         address token,
-        address payer,
         address receiver,
         uint48 startTime,
         uint256 amount,
@@ -117,23 +110,17 @@ contract Payments is ReentrancyGuard {
         bytes32 r, 
         bytes32 s
     ) 
-        external
+        external nonReentrant
     {
-        require(paymentDurationInSecs > 0, "Payments::createPaymentWithPermit: payment duration must be > 0");
-        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "Payments::createPaymentWithPermit: payment duration more than 25 years");
-        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "Payments::createPaymentWithPermit: duration < cliff");
-        require(amount > 0, "Payments::createPaymentWithPermit: amount not > 0");
-
-        // Set approval using permit signature
-        IERC20Permit(token).permit(payer, address(this), amount, deadline, v, r, s);
-        _createPayment(token, payer, receiver, startTime, amount, paymentDurationInSecs, cliffDurationInDays);
+        _validatePayment(paymentDurationInSecs, cliffDurationInDays, amount);
+        _permit(token, amount, deadline, v, r, s);
+        _createPayment(token, receiver, startTime, amount, paymentDurationInSecs, cliffDurationInDays);
     }
 
     /**
      * @notice Create multiple payment
      * @param tokens Address of tokens for payment
-     * @param payers The accounts that are paying tokens
-     * @param receivers The accounts that will be able to retrieve available tokens
+     * @param receivers The accounts that will receive tokens
      * @param startTimes The unix timestamp when the payment periods will start
      * @param amounts The amounts of tokens being paid
      * @param paymentDurationsInSecs The payment periods in seconds
@@ -141,18 +128,16 @@ contract Payments is ReentrancyGuard {
      */
     function createPayments(
         address[] memory tokens,
-        address[] memory payers,
         address[] memory receivers,
         uint48[] memory startTimes,
         uint256[] memory amounts,
         uint256[] memory paymentDurationsInSecs,
         uint16[] memory cliffDurationsInDays
     )
-        external
+        external nonReentrant
     {
         require(
-            tokens.length == payers.length &&
-            payers.length == receivers.length &&
+            tokens.length == receivers.length &&
             receivers.length == startTimes.length &&
             startTimes.length == amounts.length &&
             amounts.length == paymentDurationsInSecs.length &&
@@ -160,9 +145,9 @@ contract Payments is ReentrancyGuard {
             "Payments::createPayments: arrays must be same length"
         );
         for (uint256 i; i < tokens.length; i++) {
-            createPayment(
+            _validatePayment(paymentDurationsInSecs[i], cliffDurationsInDays[i], amounts[i]);
+            _createPayment(
                 tokens[i],
-                payers[i],
                 receivers[i],
                 startTimes[i],
                 amounts[i],
@@ -175,8 +160,7 @@ contract Payments is ReentrancyGuard {
     /**
      * @notice Create multiple payment
      * @param tokens Address of tokens for payment
-     * @param payers The accounts that are paying tokens
-     * @param receivers The accounts that will be able to retrieve available tokens
+     * @param receivers The accounts that will receive tokens
      * @param startTimes The unix timestamp when the payment periods will start
      * @param amounts The amounts of tokens being paid
      * @param paymentDurationsInSecs The payment periods in seconds
@@ -188,7 +172,6 @@ contract Payments is ReentrancyGuard {
      */
     function createPaymentsWithPermit(
         address[] memory tokens,
-        address[] memory payers,
         address[] memory receivers,
         uint48[] memory startTimes,
         uint256[] memory amounts,
@@ -199,11 +182,10 @@ contract Payments is ReentrancyGuard {
         bytes32[] memory rs, 
         bytes32[] memory ss
     )
-        external
+        external nonReentrant
     {
         require(
-            tokens.length == payers.length &&
-            payers.length == receivers.length &&
+            tokens.length == receivers.length &&
             receivers.length == startTimes.length &&
             startTimes.length == amounts.length &&
             amounts.length == paymentDurationsInSecs.length &&
@@ -215,11 +197,10 @@ contract Payments is ReentrancyGuard {
             "Payments::createPaymentsWithPermit: arrays must be same length"
         );
         for (uint256 i; i < tokens.length; i++) {
-            // Set approvals using permit signature
-            IERC20Permit(tokens[i]).permit(payers[i], address(this), amounts[i], deadlines[i], vs[i], rs[i], ss[i]);
-            createPayment(
+            _validatePayment(paymentDurationsInSecs[i], cliffDurationsInDays[i], amounts[i]);
+            _permit(tokens[i], amounts[i], deadlines[i], vs[i], rs[i], ss[i]);
+            _createPayment(
                 tokens[i],
-                payers[i],
                 receivers[i],
                 startTimes[i],
                 amounts[i],
@@ -496,14 +477,14 @@ contract Payments is ReentrancyGuard {
 
     /**
      * @notice Get claimable balance for a given payment id
-     * @dev Returns 0 if cliff duration has not ended
+     * @dev Returns 0 if cliff duration has not ended, payment cancelled, or payment is in the future
      * @param paymentId The payment ID
      * @return The amount that can be claimed
      */
     function claimableBalance(uint256 paymentId) public view returns (uint256) {
         Payment storage payment = tokenPayments[paymentId];
 
-        // For payments created with a future start date or payments stopped before starting, that hasn't been reached, return 0
+        // For payments created with a future start date or payments stopped before starting, return 0
         if (block.timestamp < payment.startTime || payment.startTime == payment.stopTime) {
             return 0;
         }
@@ -581,9 +562,21 @@ contract Payments is ReentrancyGuard {
     }
 
     /**
+     * @notice Check that payment has valid terms
+     * @param paymentDurationInSecs The payment period in seconds
+     * @param cliffDurationInDays The cliff duration in days
+     * @param amount The amount of tokens being paid
+     */
+    function _validatePayment(uint256 paymentDurationInSecs, uint16 cliffDurationInDays, uint256 amount) internal pure {
+        require(paymentDurationInSecs > 0, "Payments::_validatePayment: payment duration must be > 0");
+        require(paymentDurationInSecs <= 25*365*SECONDS_PER_DAY, "Payments::_validatePayment: payment duration more than 25 years");
+        require(paymentDurationInSecs >= SECONDS_PER_DAY*cliffDurationInDays, "Payments::_validatePayment: payment duration < cliff");
+        require(amount > 0, "Payments::_validatePayment: amount not > 0");
+    }
+
+    /**
      * @notice Internal implementation of createPayment
-     * @param payer The account that is paying tokens
-     * @param receiver The account that will be able to retrieve available tokens
+     * @param receiver The account that will receive tokens
      * @param startTime The unix timestamp when the payment period will start
      * @param amount The amount of tokens being paid
      * @param paymentDurationInSecs The payment period in seconds
@@ -591,7 +584,6 @@ contract Payments is ReentrancyGuard {
      */
     function _createPayment(
         address token,
-        address payer,
         address receiver,
         uint48 startTime,
         uint256 amount,
@@ -600,7 +592,7 @@ contract Payments is ReentrancyGuard {
     ) internal {
 
         // Transfer the tokens under the control of the payment contract
-        IERC20(token).safeTransferFrom(payer, address(this), amount);
+        IERC20(token).safeTransferFrom(msg.sender, address(this), amount);
 
         uint48 paymentStartTime = startTime == 0 ? uint48(block.timestamp) : startTime;
 
@@ -608,7 +600,7 @@ contract Payments is ReentrancyGuard {
         Payment memory payment = Payment({
             token: token,
             receiver: receiver,
-            payer: payer,
+            payer: msg.sender,
             startTime: paymentStartTime,
             stopTime: 0,
             paymentDurationInSecs: paymentDurationInSecs,
@@ -619,7 +611,7 @@ contract Payments is ReentrancyGuard {
 
         tokenPayments[numPayments] = payment;
         paymentIds[receiver].push(numPayments);
-        emit PaymentCreated(token, payer, receiver, numPayments, amount, paymentStartTime, paymentDurationInSecs, cliffDurationInDays);
+        emit PaymentCreated(token, msg.sender, receiver, numPayments, amount, paymentStartTime, paymentDurationInSecs, cliffDurationInDays);
         
         // Increment payment id
         numPayments++;
@@ -640,5 +632,25 @@ contract Payments is ReentrancyGuard {
         // Release tokens
         IERC20(payment.token).safeTransfer(payment.receiver, claimAmount);
         emit TokensClaimed(payment.receiver, payment.token, paymentId, claimAmount);
+    }
+
+    /**
+     * @notice Permit contract to use tokens
+     * @param token Address of the token to permit
+     * @param amount Amount to permit
+     * @param deadline The time at which to expire the signature
+     * @param v The recovery byte of the signature
+     * @param r Half of the ECDSA signature pair
+     * @param s Half of the ECDSA signature pair
+     */
+    function _permit(
+        address token,
+        uint256 amount,
+        uint256 deadline,
+        uint8 v, 
+        bytes32 r, 
+        bytes32 s
+    ) internal {
+        IERC20Permit(token).permit(msg.sender, address(this), amount, deadline, v, r, s);
     }
 }
