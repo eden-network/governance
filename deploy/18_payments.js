@@ -8,7 +8,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     from: deployer,
     contract: "Payments",
     gas: 4000000,
-    skipIfAlreadyDeployed: true
+    skipIfAlreadyDeployed: false
   });
 
   if (deployResult.newlyDeployed) {

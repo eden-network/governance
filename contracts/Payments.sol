@@ -118,8 +118,8 @@ contract Payments is ReentrancyGuard {
     }
 
     /**
-     * @notice Create multiple payment
-     * @param tokens Address of tokens for payment
+     * @notice Create multiple payments
+     * @param tokens Address of tokens for payments
      * @param receivers The accounts that will receive tokens
      * @param startTimes The unix timestamp when the payment periods will start
      * @param amounts The amounts of tokens being paid
@@ -158,8 +158,8 @@ contract Payments is ReentrancyGuard {
     }
 
     /**
-     * @notice Create multiple payment
-     * @param tokens Address of tokens for payment
+     * @notice Create multiple payments, using permit for approvals
+     * @param tokens Address of tokens for payments
      * @param receivers The accounts that will receive tokens
      * @param startTimes The unix timestamp when the payment periods will start
      * @param amounts The amounts of tokens being paid
