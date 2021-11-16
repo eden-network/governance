@@ -183,8 +183,25 @@ const paymentsFixture = deployments.createFixture(async ({deployments, getNamedA
     };
 });
 
+const distributorSEVFixture = deployments.createFixture(async ({deployments, getNamedAccounts, getUnnamedAccounts, ethers}, options) => {
+    const accounts = await ethers.getSigners();
+    const admin = accounts[0];
+    const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
+    const EdenToken = await EdenTokenFactory.deploy(admin.address);
+    const MerkleDistributorSEVFactory = await ethers.getContractFactory("MerkleDistributorSEV");
+    const MerkleDistributorSEV = await MerkleDistributorSEVFactory.deploy(
+        EdenToken.address, admin.address, 1, [admin.address], []);
+    return {
+        edenToken: EdenToken,
+        merkleDistributorSEV: MerkleDistributorSEV,
+        admin,
+        accounts
+    };
+});
+
 module.exports.tokenFixture = tokenFixture;
 module.exports.governanceFixture = governanceFixture;
 module.exports.rewardsFixture = rewardsFixture;
 module.exports.distributorFixture = distributorFixture;
 module.exports.paymentsFixture = paymentsFixture;
+module.exports.distributorSEVFixture = distributorSEVFixture;

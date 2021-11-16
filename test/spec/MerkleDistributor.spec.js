@@ -223,7 +223,7 @@ describe("MerkleDistributor", () => {
                     .claim(index, balance.account, balance.amount, proof))
                     .not.reverted;
                 const afterBalance = await fix.edenToken.balanceOf(balance.account);
-                expect(afterBalance.sub(beforeBalance).eq(balance.amount));
+                expect(afterBalance.sub(beforeBalance)).eq(balance.amount);
 
                 // verify they cannot be claimed again
                 await expect(fix.merkleDistributor.connect(balance.signer)
