@@ -310,7 +310,6 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
 
     function balance() public view returns (uint256) {
         uint256 myBalance = token.balanceOf(address(this));
-        require(myBalance >= debtTotal, "MerkleDistributorSEV: Underfunded");
-        return myBalance - debtTotal;
+        return myBalance >= debtTotal ? myBalance - debtTotal : 0;
     }
 }
