@@ -184,7 +184,7 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
      * @param newMerkleRoot Merkle root
      * @param uri NFT uri
      * @param newDistributionNumber Number of distribution
-     * @param newTokenTotal Sum of all tokens, by convention the zero-key (0x0) in the merkle tree
+     * @param newTokenTotal Sum of all tokens
      */
     function updateMerkleRoot(bytes32 newMerkleRoot, string calldata uri, uint256 newDistributionNumber, uint256 newTokenTotal) external override onlyUpdaters returns (uint256) {
         require(!previousMerkleRoot[newMerkleRoot], "MerkleDistributorSEV: Cannot update to a previous merkle root");
