@@ -253,7 +253,7 @@ contract EdenNetwork is Initializable {
      * @param amount Amount of tokens to stake
      */
     function stake(uint128 amount) external nonReentrant {
-        _stake(amount);
+        _stake(msg.sender, amount);
     }
 
     /**
@@ -272,7 +272,37 @@ contract EdenNetwork is Initializable {
         bytes32 s
     ) external nonReentrant {
         token.permit(msg.sender, address(this), amount, deadline, v, r, s);
-        _stake(amount);
+        _stake(msg.sender, amount);
+    }
+
+    /**
+     * @notice Stake tokens on behalf of recipient
+     * @param recipient Recipient of staked tokens
+     * @param amount Amount of tokens to stake
+     */
+    function stakeFor(address recipient, uint128 amount) external nonReentrant {
+        _stake(recipient, amount);
+    }
+
+    /**
+     * @notice Stake tokens on behalf of recipient using permit for approval
+     * @param recipient Recipient of staked tokens
+     * @param amount Amount of tokens to stake
+     * @param deadline The time at which to expire the signature
+     * @param v The recovery byte of the signature
+     * @param r Half of the ECDSA signature pair
+     * @param s Half of the ECDSA signature pair
+     */
+    function stakeForWithPermit(
+        address recipient,
+        uint128 amount, 
+        uint256 deadline, 
+        uint8 v, 
+        bytes32 r, 
+        bytes32 s
+    ) external nonReentrant {
+        token.permit(msg.sender, address(this), amount, deadline, v, r, s);
+        _stake(recipient, amount);
     }
 
     /**
@@ -383,10 +413,10 @@ contract EdenNetwork is Initializable {
      * @notice Internal implementation of stake
      * @param amount Amount of tokens to stake
      */
-    function _stake(uint128 amount) internal {
+    function _stake(address recipient, uint128 amount) internal {
         token.transferFrom(msg.sender, address(this), amount);
-        lockManager.grantVotingPower(msg.sender, address(token), amount);
-        stakedBalance[msg.sender] += amount;
-        emit Stake(msg.sender, amount);
+        lockManager.grantVotingPower(recipient, address(token), amount);
+        stakedBalance[recipient] += amount;
+        emit Stake(recipient, amount);
     }
 }

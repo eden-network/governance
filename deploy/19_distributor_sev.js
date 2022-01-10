@@ -2,6 +2,7 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const { deploy, log, get } = deployments;
   const { deployer } = await getNamedAccounts();
   const token = await get("EdenToken");
+  const edenNetworkProxy = await get("EdenNetworkProxy")
   const { readUpdatersFromFile } = require('../scripts/readUpdatersFromFile')
   const updaters = []
   const slashers = []
@@ -20,8 +21,8 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
   const deployResult = await deploy("MerkleDistributorSEV", {
       from: deployer,
       contract: "MerkleDistributorSEV",
-      args: [token.address, ADMIN_ADDRESS, DISTRIBUTOR_UPDATE_THRESHOLD, updaters, slashers],
-      skipIfAlreadyDeployed: true,
+      args: [token.address, edenNetworkProxy.address, ADMIN_ADDRESS, DISTRIBUTOR_UPDATE_THRESHOLD, updaters, slashers],
+      skipIfAlreadyDeployed: false,
       log: true
   });
 

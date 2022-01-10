@@ -3,6 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IMerkleDistributorSEV.sol";
 import "./interfaces/IGovernance.sol";
+import "./interfaces/IEdenNetwork.sol";
 import "./lib/AccessControlEnumerable.sol";
 import "./lib/MerkleProof.sol";
 import "./lib/ERC721Enumerable.sol";
@@ -23,6 +24,9 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
 
     /// @notice Token distributed by this contract
     IERC20Mintable public immutable override token;
+
+    /// @notice Eden Network contract
+    IEdenNetwork public edenNetwork;
 
     /// @notice Root of a merkle tree containing total earned amounts
     bytes32 public override merkleRoot;
@@ -81,6 +85,7 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
     /**
      * @notice Create new MerkleDistributorSEV
      * @param _token Token address
+     * @param _edenNetworkProxy Eden Network Proxy contract
      * @param _admin Admin address
      * @param _updateThreshold Number of updaters required to update
      * @param _updaters Initial updaters
@@ -88,6 +93,7 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
      */
     constructor(
         IERC20Mintable _token, 
+        IEdenNetwork _edenNetworkProxy,
         address _admin, 
         uint8 _updateThreshold,
         address[] memory _updaters, 
@@ -95,6 +101,7 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
     ) ERC721("Eden Network SEV Distribution", "EDENSEVD") {
         token = _token;
         previousMerkleRoot[merkleRoot] = true;
+        edenNetwork = _edenNetworkProxy;
 
         for(uint i; i< _updaters.length; i++) {
             _setupRole(UPDATER_ROLE, _updaters[i]);
@@ -176,6 +183,40 @@ contract MerkleDistributorSEV is IMerkleDistributorSEV, AccessControlEnumerable,
         // Apply account changes and transfer unclaimed tokens
         _increaseAccount(account, claimable, 0);
         require(token.transfer(msg.sender, claimable), "MerkleDistributorSEV: Transfer failed");
+    }
+
+    /**
+     * @notice Claim all unclaimed tokens + stake them
+     * @dev Given a merkle proof of (index, account, totalEarned), claim all
+     * unclaimed tokens. Unclaimed tokens are the difference between the total
+     * earned tokens (provided in the merkle tree) and those that have been
+     * either claimed or slashed.
+     *
+     * If no tokens are claimable, this function will revert.
+     * 
+     * @param index Claim index
+     * @param account Account for claim
+     * @param totalEarned Total lifetime amount of tokens earned by account
+     * @param merkleProof Merkle proof
+     */
+    function claimAndStake(uint256 index, address account, uint256 totalEarned, bytes32[] calldata merkleProof) external override {
+        require(msg.sender == account, "MerkleDistributorSEV: Cannot collect rewards");
+        require(token.allowance(address(this), address(edenNetwork)) == 0, "MerkleDistributorSEV: allowance > 0");
+
+        // Verify the merkle proof.
+        bytes32 node = keccak256(abi.encodePacked(index, account, totalEarned));
+        require(MerkleProof.verify(merkleProof, merkleRoot, node), "MerkleDistributorSEV: Invalid proof");
+
+        // Calculate the claimable balance
+        uint256 alreadyDistributed = accountState[account].totalClaimed + accountState[account].totalSlashed;
+        require(totalEarned > alreadyDistributed, "MerkleDistributorSEV: Nothing claimable");
+        uint256 claimable = totalEarned - alreadyDistributed;
+        emit Claimed(index, totalEarned, account, claimable);
+
+        // Apply account changes and stake unclaimed tokens
+        _increaseAccount(account, claimable, 0);
+        token.approve(address(edenNetwork), claimable);
+        edenNetwork.stakeFor(msg.sender, uint128(claimable));
     }
 
     /**

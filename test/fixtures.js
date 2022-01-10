@@ -2,6 +2,7 @@ const { ethers, deployments, getNamedAccounts, getUnnamedAccounts } = require("h
 
 const EDEN_TOKEN_ADDRESS = process.env.EDEN_TOKEN_ADDRESS
 const EDEN_ABI = require("./abis/EdenToken.json")
+const EDEN_NETWORK_ABI = require("./abis/EdenNetwork.json")
 const SUSHI_ADDRESS = process.env.SUSHI_ADDRESS
 const SUSHI_ABI = require("./abis/ERC20.json")
 const MASTERCHEF_ADDRESS = process.env.MASTERCHEF_ADDRESS
@@ -188,9 +189,33 @@ const distributorSEVFixture = deployments.createFixture(async ({deployments, get
     const admin = accounts[0];
     const EdenTokenFactory = await ethers.getContractFactory("EdenToken");
     const EdenToken = await EdenTokenFactory.deploy(admin.address);
+    const VotingPowerFactory = await ethers.getContractFactory("VotingPower");
+    const VotingPowerImp = await VotingPowerFactory.deploy();
+    const VotingPowerPrismFactory = await ethers.getContractFactory("VotingPowerPrism");
+    const VotingPowerPrism = await VotingPowerPrismFactory.deploy(admin.address);
+    const VotingPower = new ethers.Contract(VotingPowerPrism.address, VotingPowerImp.interface, admin)
+    await VotingPower.setPendingProxyImplementation(VotingPowerImp.address)
+    await VotingPowerImp.become(VotingPower.address)
+    const LockManagerFactory = await ethers.getContractFactory("LockManager");
+    const LockManager = await LockManagerFactory.deploy(VotingPowerPrism.address, admin.address)
+    const EdenNetworkFactory = await ethers.getContractFactory("EdenNetwork");
+    const EdenNetwork = await EdenNetworkFactory.deploy(admin.address);
+    const EdenNetworkManagerFactory = await ethers.getContractFactory("EdenNetworkManager");
+    const EdenNetworkManager = await EdenNetworkManagerFactory.deploy()
+    const edenNetworkInterface = new ethers.utils.Interface(EDEN_NETWORK_ABI);
+    const initData = edenNetworkInterface.encodeFunctionData("initialize", [
+        EdenToken.address,
+        LockManager.address,
+        admin.address,
+        1,
+        30
+      ]
+    );
+    const EdenNetworkProxyFactory = await ethers.getContractFactory("EdenNetworkProxy");
+    const EdenNetworkProxy = await EdenNetworkProxyFactory.deploy(EdenNetwork.address, EdenNetworkManager.address, initData)
     const MerkleDistributorSEVFactory = await ethers.getContractFactory("MerkleDistributorSEV");
     const MerkleDistributorSEV = await MerkleDistributorSEVFactory.deploy(
-        EdenToken.address, admin.address, 1, [admin.address], []);
+        EdenToken.address, EdenNetworkProxy.address, admin.address, 1, [admin.address], []);
     return {
         edenToken: EdenToken,
         merkleDistributorSEV: MerkleDistributorSEV,

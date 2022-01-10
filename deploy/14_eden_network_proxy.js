@@ -36,5 +36,17 @@ module.exports = async ({ ethers, getNamedAccounts, deployments }) => {
   }
 };
 
+module.exports.skip = async function({ deployments }) {
+  const edenNetworkProxy = await deployments.get("EdenNetworkProxy")
+  const { log } = deployments;
+  if(edenNetworkProxy && edenNetworkProxy.address) {
+    log(`14) EdenNetworkProxy`)
+    log(`- Skipping step, proxy has already been deployed`)
+    return true
+  } else {
+    return false
+  }
+}
+
 module.exports.tags = ["14", "EdenNetworkProxy"]
 module.exports.dependencies = ["13"]

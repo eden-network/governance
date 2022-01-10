@@ -366,6 +366,176 @@ describe("MerkleDistributorSEV", () => {
         });
     });
 
+    context("claimAndStake", () => {
+        it("rewards claimable", async () => {
+            await fix.edenToken.grantRole(MINTER_ROLE, fix.admin.address);
+            await fix.merkleDistributorSEV.grantRole(UPDATER_ROLE, fix.accounts[1].address);
+            await fix.merkleDistributorSEV.setUpdateThreshold(2);
+            
+            const balances = makeBalances(fix.accounts.slice(2));
+            const totalRewards = balances.reduce((accumulator, currentValue) => {
+                return accumulator.add(currentValue.amount);
+            }, BigNumber.from(0));
+            const tree = new BalanceTree(balances);
+
+            // update the root but without funding
+            await expect(fix.merkleDistributorSEV.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1, totalRewards))
+                .revertedWith("MerkleDistributorSEV: Distribution would leave contract underfunded");
+            
+            // now fund the contract and update
+            await fix.edenToken.mint(fix.merkleDistributorSEV.address, totalRewards);
+            expect(await fix.merkleDistributorSEV.balance()).equals(totalRewards);
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(0);
+            await fix.merkleDistributorSEV.updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1, totalRewards)
+            await fix.merkleDistributorSEV.connect(fix.accounts[1]).updateMerkleRoot(tree.getHexRoot(), `${tree.getHexRoot()}.json`, 1, totalRewards);
+            expect(await fix.merkleDistributorSEV.balance()).equals(0);
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(totalRewards);
+            
+            // check that we cannot claim to someone else
+            proof = tree.getProof(0, balances[0].account, balances[0].amount);
+            await expect(fix.merkleDistributorSEV
+                .claimAndStake(0, balances[0].account, balances[0].amount, proof))
+                .revertedWith("MerkleDistributorSEV: Cannot collect rewards");
+
+            let contractBalance = await fix.merkleDistributorSEV.balance();
+            for (const [index, balance] of balances.entries()) {
+                const proof = tree.getProof(index, balance.account, balance.amount);
+
+                if (index === 2) {
+                    // fund the contract some more part-way through.
+                    // this should increase balance but not debt, and these 
+                    // extra rewards should not be claimable
+                    await fix.edenToken.mint(fix.merkleDistributorSEV.address, 1337);
+                    const newContractBalance = await fix.merkleDistributorSEV.balance();
+                    expect(newContractBalance.sub(contractBalance)).equals(1337);
+                    contractBalance = newContractBalance;
+                }
+
+                // claim and verify tokens were transfered
+
+                const beforeContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                await expect(fix.merkleDistributorSEV.connect(balance.signer)
+                    .claimAndStake(index, balance.account, balance.amount, proof))
+                    .not.reverted;
+
+                const afterBalance = await fix.edenToken.balanceOf(balance.account);
+                const afterContractBalance = await fix.merkleDistributorSEV.balance();
+                const afterContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                expect(afterBalance).equals(balance.amount);
+                expect(afterContractBalance).equals(contractBalance);
+                expect(beforeContractDebt.sub(afterContractDebt)).equals(balance.amount);
+
+                // verify they cannot be claimed again
+                await expect(fix.merkleDistributorSEV.connect(balance.signer)
+                    .claimAndStake(index, balance.account, balance.amount, proof))
+                    .revertedWith("MerkleDistributorSEV: Nothing claimable");
+            }
+
+            // all tokens should have been distributed, except for the extra funding
+            expect(await fix.edenToken.balanceOf(fix.merkleDistributorSEV.address)).eq(1337);
+
+            // now, set a new root with all balances increased by 1, except for the last
+            // account, which will get no new balance. should only be able to claim the increase
+            const newBalances = balances.slice(0, balances.length - 1).map(x => { return {
+                ...x,
+                amount: x.amount.add(1)
+            }});
+            newBalances.push(balances[balances.length - 1]);
+            const newTotalRewards = totalRewards.add(balances.length - 1);
+            const newTree = new BalanceTree(newBalances);
+
+            // verify we have enough funding for this, and don't need to mint any more
+            const newDebt = newTotalRewards.sub(totalRewards);
+            expect(contractBalance).gt(newDebt);
+
+            // apply the new root
+            await fix.merkleDistributorSEV.updateMerkleRoot(newTree.getHexRoot(), `${newTree.getHexRoot()}.json`, 2, newTotalRewards);
+            await fix.merkleDistributorSEV.connect(fix.accounts[1]).updateMerkleRoot(newTree.getHexRoot(), `${newTree.getHexRoot()}.json`, 2, newTotalRewards);
+
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(newDebt);
+            contractBalance = await fix.merkleDistributorSEV.balance();
+
+            // claim two addresses
+            for (let index = 0 ; index < 2 ; ++index) {
+                const balance = newBalances[index];
+                const proof = newTree.getProof(index, balance.account, balance.amount);
+
+                // claim and verify tokens were transfered
+
+                const beforeBalance = await fix.edenToken.balanceOf(balance.account);
+                const beforeContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                await expect(fix.merkleDistributorSEV.connect(balance.signer)
+                    .claimAndStake(index, balance.account, balance.amount, proof))
+                    .not.reverted;
+
+                const afterBalance = await fix.edenToken.balanceOf(balance.account);
+                const afterContractBalance = await fix.merkleDistributorSEV.balance();
+                const afterContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                expect(afterBalance).equals(balance.amount);
+                expect(afterContractBalance).equals(contractBalance);
+                expect(beforeContractDebt.sub(afterContractDebt)).equals(afterBalance.sub(beforeBalance));
+            }
+
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(newDebt.sub(2));
+            expect(await fix.merkleDistributorSEV.balance()).equals(contractBalance);
+
+            // a third distribution adding one to everyone
+            const newNewBalances = newBalances.map(x => { return {
+                ...x,
+                amount: x.amount.add(1)
+            }});
+            const newNewTotalRewards = newTotalRewards.add(newBalances.length);
+            const newNewTree = new BalanceTree(newNewBalances);
+
+            // verify we have enough funding for this, and don't need to mint any more
+            const newNewDebt = newNewTotalRewards.sub(newTotalRewards);
+            expect(contractBalance).gt(newNewDebt);
+
+            // apply the new root
+            await fix.merkleDistributorSEV.updateMerkleRoot(newNewTree.getHexRoot(), `${newNewTree.getHexRoot()}.json`, 3, newNewTotalRewards);
+            await fix.merkleDistributorSEV.connect(fix.accounts[1]).updateMerkleRoot(newNewTree.getHexRoot(), `${newNewTree.getHexRoot()}.json`, 3, newNewTotalRewards);
+
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(newDebt.sub(2).add(newNewDebt));
+            contractBalance = await fix.merkleDistributorSEV.balance();
+
+            // claim all but the first two addresses
+            for (let index = 2 ; index < newNewBalances.length ; ++index) {
+                const balance = newNewBalances[index];
+                const proof = newNewTree.getProof(index, balance.account, balance.amount);
+
+                // claim and verify tokens were transfered
+
+                const beforeBalance = await fix.edenToken.balanceOf(balance.account);
+                const beforeContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                await expect(fix.merkleDistributorSEV.connect(balance.signer)
+                    .claimAndStake(index, balance.account, balance.amount, proof))
+                    .not.reverted;
+
+                const afterBalance = await fix.edenToken.balanceOf(balance.account);
+                const afterContractBalance = await fix.merkleDistributorSEV.balance();
+                const afterContractDebt = await fix.merkleDistributorSEV.debtTotal();
+
+                expect(afterBalance).equals(balance.amount);
+                expect(afterContractBalance).equals(contractBalance);
+                expect(beforeContractDebt.sub(afterContractDebt)).equals(afterBalance.sub(beforeBalance));
+            }
+
+            expect(await fix.merkleDistributorSEV.debtTotal()).equals(2);
+
+            // check that old valid claims do not work
+            const lastBalance = balances[balances.length - 1];
+            const lastProof = tree.getProof(balances.length - 1, lastBalance.account, lastBalance.amount);
+            await expect(fix.merkleDistributorSEV.connect(lastBalance.signer)
+                .claimAndStake(balances.length - 1, lastBalance.account, lastBalance.amount, lastProof))
+                .revertedWith("MerkleDistributorSEV: Invalid proof");
+        });
+    });
+
     context("setUpdateThreshold", () => {
         it("admin can call and change takes effect", async () => {
             await fix.merkleDistributorSEV.grantRole(UPDATER_ROLE, fix.accounts[1].address);
