@@ -7,6 +7,11 @@
         "type": "address"
       },
       {
+        "internalType": "contract IEdenNetwork",
+        "name": "_edenNetworkProxy",
+        "type": "address"
+      },
+      {
         "internalType": "address",
         "name": "_admin",
         "type": "address"
@@ -497,6 +502,34 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "index",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "totalEarned",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes32[]",
+        "name": "merkleProof",
+        "type": "bytes32[]"
+      }
+    ],
+    "name": "claimAndStake",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "debtTotal",
     "outputs": [
@@ -517,6 +550,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "edenNetwork",
+    "outputs": [
+      {
+        "internalType": "contract IEdenNetwork",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
