@@ -52,7 +52,7 @@
     "hardhat-abi-exporter": "^2.0.5",
     "hardhat-gas-reporter": "^1.0.0",
     "hardhat-log-remover": "^2.0.0",
-    "mocha": "^8.2.0",
+    "mocha": "^10.0.0",
     "solidity-docgen": "^0.5.7"
   }
 }
